@@ -1,4 +1,7 @@
-import { useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
+const HousebookDialog = lazy(() =>
+  import("./housebook/HousebookDialog").then((m) => ({ default: m.HousebookDialog })),
+);
 import {
   PencilRuler,
   FilePlus2,
@@ -30,6 +33,7 @@ export function Toolbar() {
   const future = useProjectStore((s) => s.future);
   const [dialog, setDialog] = useState<"new" | "open" | null>(null);
   const [help, setHelp] = useState(false);
+  const [book, setBook] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const showGrid = useEditorStore((s) => s.showGrid);
@@ -162,6 +166,9 @@ export function Toolbar() {
           <option value="m">m</option>
         </select>
         <div className="toolbar-spacer" />
+        <button disabled={!ready || busy} onClick={() => setBook(true)}>
+          Hausakte
+        </button>
         <button
           className="example-button"
           disabled={!ready || busy}
@@ -215,6 +222,11 @@ export function Toolbar() {
         />
       </div>
       {dialog && <ProjectDialog mode={dialog} onClose={() => setDialog(null)} />}
+      {book && (
+        <Suspense fallback={<span role="status">Hausakte wird geöffnet …</span>}>
+          <HousebookDialog onClose={() => setBook(false)} />
+        </Suspense>
+      )}
       {help && (
         <Modal title="Schnell und präzise zeichnen" onClose={() => setHelp(false)}>
           <div className="help-grid">

@@ -52,6 +52,25 @@ export function splitWall(project: Project, wallId: UUID, pointId: UUID): void {
   project.walls[nextId] = { ...structuredClone(wall), id: nextId, startPointId: pointId };
   const previousEnd = wall.endPointId;
   wall.endPointId = pointId;
+  for (const table of [project.furniture, ...Object.values(project.electrical)]) {
+    for (const candidate of Object.values(table)) {
+      if (!candidate || typeof candidate !== "object" || !("metadata" in candidate)) continue;
+      const record = (candidate.metadata as import("../../models/common").Metadata).asset;
+      if (!record || typeof record !== "object" || Array.isArray(record)) continue;
+      const mounting = record.mounting;
+      if (
+        mounting &&
+        typeof mounting === "object" &&
+        !Array.isArray(mounting) &&
+        mounting.wallId === wallId &&
+        typeof mounting.distance === "number" &&
+        mounting.distance > cut
+      ) {
+        mounting.wallId = nextId;
+        mounting.distance -= cut;
+      }
+    }
+  }
   for (const room of Object.values(project.rooms)) {
     const index = room.wallIds.indexOf(wallId);
     if (index < 0) continue;

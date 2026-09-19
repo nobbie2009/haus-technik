@@ -179,6 +179,10 @@ export function syncElectricalRelations(project: Project): void {
 }
 
 export function deleteCircuit(project: Project, id: string): void {
+  for (const cable of Object.values(project.electrical.cables))
+    cable.conductorConnections = cable.conductorConnections.filter(
+      (pair) => !pair.startContactId.startsWith(`${id}:`) && !pair.endContactId.startsWith(`${id}:`),
+    );
   for (const board of Object.values(project.electrical.distributionBoards))
     if (board.upstreamCircuitId === id) board.upstreamCircuitId = null;
   delete project.electrical.circuits[id];

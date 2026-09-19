@@ -9,6 +9,31 @@ export interface Contact {
 }
 /** Generische Kontaktvorlagen, keine herstellerspezifischen Klemmenpläne. */
 export function contactsFor(project: Project, id: string): Contact[] {
+  const supply = project.electrical.supplies[id];
+  const standard = (prefix: string, three = true): Contact[] => [
+    ...(three ? ["L1", "L2", "L3"] : ["L"]).map((phase): Contact => ({
+      id: `${prefix}${phase}`,
+      label: `${prefix}${phase}`,
+      role: "line",
+    })),
+    { id: `${prefix}N`, label: `${prefix}N`, role: "neutral" },
+    { id: `${prefix}PE`, label: `${prefix}PE`, role: "protective" },
+  ];
+  if (supply) return standard("", supply.phases === 3);
+  if (project.electrical.junctions[id]) return standard("");
+  if (project.electrical.meters[id]) return [...standard("IN_"), ...standard("OUT_")];
+  if (project.electrical.distributionBoards[id])
+    return [
+      ...standard("IN_"),
+      ...Object.values(project.electrical.circuits)
+        .filter((c) => c.distributionBoardId === id)
+        .flatMap((c) =>
+          standard(`${c.id}:`, c.phase === "L1/L2/L3").map((port) => ({
+            ...port,
+            label: `${c.label || c.name} · ${port.id.split(":").at(-1)}`,
+          })),
+        ),
+    ];
   const role = switchRole(project, id);
   if (project.electrical.switches[id] && switchControl(project, id)) {
     const pins =

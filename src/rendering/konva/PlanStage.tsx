@@ -1,4 +1,5 @@
 import { CableRenderer } from "./CableRenderer";
+import { BackgroundImage, HousebookOverlay } from "./HousebookOverlay";
 import { ElectricalRenderer, ElectricalPreview } from "./ElectricalRenderer";
 import { FurnitureRenderer, FurniturePreview } from "./FurnitureRenderer";
 import { Stage, Layer } from "react-konva";
@@ -62,6 +63,7 @@ export function PlanStage() {
           />
         </Layer>
         <Layer listening={false}>
+          <BackgroundImage project={preview} floorId={editor.floorId} viewport={editor.viewport} />
           <FloorRenderer
             project={preview}
             floorId={editor.floorId}
@@ -96,6 +98,7 @@ export function PlanStage() {
           <ElectricalPreview />
           <SimulationOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
           <InteractionOverlay />
+          <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
         </Layer>
       </Stage>
       <SimulationPlanControls />

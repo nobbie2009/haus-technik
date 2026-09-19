@@ -1,3 +1,4 @@
+import { syncMountings } from "../../housebook/mounting";
 import { electricalNodes } from "../../electrical/cables";
 import { detachConnectionAssignment } from "../../electrical/contacts";
 import { syncElectricalRelations } from "../../electrical/actions";
@@ -79,6 +80,7 @@ export function transact(before: Project, mutate: ProjectMutation): Project {
   mutate(draft);
   for (const cable of Object.values(before.electrical.cables))
     if (!draft.electrical.cables[cable.id]) detachConnectionAssignment(draft, cable);
+  syncMountings(before, draft);
   assignFurnitureRooms(draft);
   syncElectricalRelations(draft);
   assertLocks(before, draft);

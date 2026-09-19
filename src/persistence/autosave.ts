@@ -41,6 +41,7 @@ export async function initializePersistence(): Promise<void> {
   useEditorStore.getState().setFloor(useProjectStore.getState().project.floorOrder[0]!);
   useEditorStore.setState({ ready: true });
   if (
+    useProjectStore.getState().project.metadata.housebook ||
     Object.keys(useProjectStore.getState().project.points).length ||
     Object.keys(useProjectStore.getState().project.furniture).length ||
     Object.keys(useProjectStore.getState().project.electrical.junctions).length ||

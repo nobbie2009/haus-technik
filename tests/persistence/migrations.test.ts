@@ -381,7 +381,7 @@ describe("Schema-Migrationen nach Version 10", () => {
                         ? version8Fixture()
                         : version9Fixture();
       const db = await new Promise<IDBDatabase>((resolve, reject) => {
-        const request = indexedDB.open(name, 1);
+        const request = indexedDB.open(name);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });

@@ -156,3 +156,22 @@ Der 1000-Wände-Test ist ein funktionaler Belastungstest, keine Garantie einer b
 - Löschen des Hauptkastens oder der Zuleitung erhält den nachgeschalteten Bestand; Undo stellt Referenzen wieder her.
 - Unterverteilung direkt aus der Bestandsübersicht ihrer Zuleitung öffnen; Layout bei 1440/1024 px prüfen.
 - Schema-5-Projekte behalten Quellen und Schutzdaten; Export, Neuladen und einmalige IndexedDB-Migration prüfen.
+
+## Hausakte (0.12.0)
+
+- Bildvorlage anhand zweier Punkte kalibrieren, speichern, neu laden und JSON-Roundtrip vergleichen.
+- PDF-Pläne erzeugen und wieder als Vorlage importieren; maßstäbliche Seitenteilung und Vektorausgabe prüfen.
+- PDF-Seiten rasterisieren und visuell auf Beschnitt, Maßangaben, Legende, Schriften und Lesbarkeit prüfen.
+- Objektakte, Umbauzustand und Wartungsangaben speichern; Fehler und Ebenensperren beachten.
+- Szenario mit 2255 W und 61,3 % höchster Auslastung speichern, vergleichen und im Plan laden.
+- Versorgungsschema durchsuchen und zum Objekt navigieren.
+- Netzwerkgeräte und konkrete Ports verbinden; doppelte Belegung ablehnen.
+- Raumvorlage einfügen: neue IDs, interne Schaltungen und Leiterkontakte erhalten, externe Versorgung getrennt.
+- Wandbefestigung bei Verschieben, T-Anschluss und Duplizieren erhalten; indirekte Änderung gesperrter Objekte ablehnen.
+- Älteren gespeicherten Stand wiederherstellen und Wiederherstellung rückgängig machen.
+- Zwei Repository-Instanzen verwenden; konkurrierendes Überschreiben atomar ablehnen und alte Stände begrenzen.
+- Leiterprüfung: vollständiger Strompfad, fehlender Neutralleiter, offener Schalter, abgeschaltetes Schutzgerät, widersprüchliche Quellen und ideale Trafosekundärspannung.
+- Home-Assistant-Abruf gegen eine simulierte API: ausschließlich GET, Anzeige des Messwertes, kein Token im JSON und leerer Token nach erneutem Öffnen.
+- Hausakte bei 1440 × 1000 und 1024 × 768 prüfen.
+
+Validiert: 244 Modultests, vollständiger Browserdurchlauf mit 30 Tests sowie erneuter gezielter Lauf der sechs Hausakte-Tests nach den abschließenden Anpassungen. TypeScript-Prüfung, Produktionsbuild und Formatprüfung erfolgreich. Keine reale Home-Assistant-Installation war für einen Verbindungstest angegeben.

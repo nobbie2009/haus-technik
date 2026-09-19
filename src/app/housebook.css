@@ -1,0 +1,234 @@
+.housebook-dialog {
+  width: min(1150px, 96vw);
+  max-width: 96vw;
+}
+.book-shell {
+  display: grid;
+  grid-template-columns: 185px minmax(0, 1fr);
+  gap: 24px;
+  height: min(720px, 76vh);
+}
+.book-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: auto;
+  border-right: 1px solid var(--border);
+  padding-right: 16px;
+}
+.book-nav button {
+  text-align: left;
+  justify-content: flex-start;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+}
+.book-nav button[aria-current] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.book-content {
+  overflow: auto;
+  padding: 4px 12px 24px 2px;
+}
+.book-content h3 {
+  font-size: 23px;
+  margin: 6px 0 16px;
+}
+.book-content h4 {
+  margin-top: 28px;
+  font-size: 16px;
+}
+.book-content p {
+  color: var(--muted);
+  max-width: 75ch;
+}
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+  align-items: end;
+}
+.book-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.book-field span {
+  font-weight: 600;
+}
+.book-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  margin: 20px 0;
+}
+.book-actions button {
+  min-height: 40px;
+}
+.book-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+.book-stats div {
+  background: #f2f6f3;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.book-stats strong {
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.book-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.book-cards button {
+  padding: 22px;
+  text-align: left;
+  align-items: start;
+  flex-direction: column;
+  line-height: 1.6;
+}
+.book-cards strong {
+  font-size: 15px;
+}
+.book-cards span {
+  color: var(--muted);
+}
+.book-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.book-list li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.book-list li > span {
+  flex: 1;
+  min-width: 180px;
+  line-height: 1.6;
+}
+.book-list small {
+  display: block;
+  color: var(--muted);
+}
+.book-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.book-table th,
+.book-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.book-table button {
+  margin: 3px;
+}
+.book-message {
+  background: var(--accent-soft);
+  padding: 12px;
+  border-radius: 5px;
+}
+.book-error {
+  background: #fff0e9;
+  padding: 12px;
+  border-radius: 5px;
+}
+.calibration-image {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  margin: 20px 0;
+  max-width: 100%;
+  cursor: crosshair;
+}
+.calibration-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 350px;
+}
+.calibration-image span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #167863;
+  color: white;
+  width: 22px;
+  height: 22px;
+  text-align: center;
+}
+.asset-dialog {
+  width: min(750px, 94vw);
+}
+.book-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.asset-photo {
+  max-width: 100%;
+  max-height: 250px;
+  display: block;
+  margin: 12px 0;
+}
+.book-field textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px;
+  resize: vertical;
+}
+.book-field textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.schematic-scroll {
+  overflow: auto;
+  max-height: 510px;
+  background: #f5f8f5;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.schematic-scroll g:focus {
+  outline: none;
+}
+.schematic-scroll g:focus rect {
+  stroke: #167863;
+  stroke-width: 3px;
+}
+@media (max-width: 1100px) {
+  .book-shell {
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .book-grid,
+  .book-cards {
+    grid-template-columns: 1fr;
+  }
+  .book-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

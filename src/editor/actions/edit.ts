@@ -345,6 +345,19 @@ export function duplicateSelection(
     project.electrical.cables[id] = {
       ...structuredClone(original),
       riser: original.riser ? add(original.riser, delta) : null,
+      conductorConnections: original.conductorConnections.filter(
+        (pair) =>
+          !(
+            nodeCopies.has(original.startNodeId) &&
+            project.electrical.distributionBoards[original.startNodeId] &&
+            pair.startContactId.includes(":")
+          ) &&
+          !(
+            nodeCopies.has(original.endNodeId) &&
+            project.electrical.distributionBoards[original.endNodeId] &&
+            pair.endContactId.includes(":")
+          ),
+      ),
       endPath: original.endPath.map((p) => add(p, delta)),
       connectionAssignment:
         (nodeCopies.has(original.startNodeId) && project.electrical.devices[original.startNodeId]) ||
@@ -358,6 +371,33 @@ export function duplicateSelection(
       path,
     };
     output.push({ kind: "cables", id });
+  }
+  for (const selected of output) {
+    const item =
+      selected.kind === "furniture"
+        ? project.furniture[selected.id]
+        : selected.kind in project.electrical
+          ? (
+              project.electrical[selected.kind as keyof typeof project.electrical] as Record<
+                string,
+                { metadata: import("../../models/common").Metadata }
+              >
+            )[selected.id]
+          : null;
+    const record = item?.metadata.asset;
+    if (record && typeof record === "object" && !Array.isArray(record)) {
+      const mounting = record.mounting;
+      if (
+        mounting &&
+        typeof mounting === "object" &&
+        !Array.isArray(mounting) &&
+        typeof mounting.wallId === "string"
+      ) {
+        if (wallMap.has(mounting.wallId)) mounting.wallId = wallMap.get(mounting.wallId)!;
+        else record.mounting = null;
+      }
+      record.homeAssistantEntity = "";
+    }
   }
   return output;
 }

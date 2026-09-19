@@ -352,3 +352,7 @@ Verbleibende MVP-Grenzen stehen in der [README](../README.md).
 ## Schaltgruppen, Trafos und Geschossleitungen (Schema 10)
 
 Die aktuelle Erweiterung ist in [electrical-schema10.md](electrical-schema10.md) beschrieben.
+
+## Hausakte (App 0.12.0)
+
+Die Metadaten-Erweiterungen, separate Leiterprüfung, IndexedDB-Version 2 und neuen Arbeitsabläufe sind in [housebook.md](housebook.md) dokumentiert. Die ältere Roadmap oben beschreibt den jeweiligen historischen Phasenstand.

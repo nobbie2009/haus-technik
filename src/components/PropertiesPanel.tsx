@@ -1,4 +1,6 @@
 import { CableProperties } from "./electrical/CableProperties";
+import { useState } from "react";
+import { AssetDialog } from "./housebook/AssetDialog";
 import { ElectricalProperties } from "./electrical/ElectricalProperties";
 import { FurnitureProperties } from "./properties/FurnitureProperties";
 import { MousePointer2, Lock } from "lucide-react";
@@ -32,6 +34,7 @@ const labels = {
   dimensions: "Bemaßung",
 };
 export function PropertiesPanel() {
+  const [assetOpen, setAssetOpen] = useState(false);
   const project = useProjectStore((s) => s.project);
   const selection = useEditorStore((s) => s.selection);
   const floorId = useEditorStore((s) => s.floorId);
@@ -75,6 +78,12 @@ export function PropertiesPanel() {
             </div>
           )}
           <SelectionActions locked={locked} />
+          {selected && entity && (
+            <button onClick={() => setAssetOpen(true)}>Objektakte und Umbauzustand</button>
+          )}
+          {assetOpen && selected && entity && (
+            <AssetDialog key={selected.id} target={selected} onClose={() => setAssetOpen(false)} />
+          )}
         </>
       ) : (
         <>

@@ -3,6 +3,12 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
+## Neu in 0.12.0: Hausakte
+
+Über **Hausakte** stehen Grundrissvorlagen (Bild/PDF), Projektprüfung, maßstäbliche PDF-/SVG-Ausgabe, Materiallisten, gespeicherte Szenarien, Versorgungsschema, separate Leiterprüfung, Objektakten, Umbauzustände, Raumvorlagen, Netzwerkplanung, Wiederherstellung und lesender Home-Assistant-Abruf bereit.
+
+Bedienung, Datenformat und genaue Grenzen: [Hausakte](docs/housebook.md). Änderungen: [Changelog](CHANGELOG.md).
+
 ## Starten
 
 Voraussetzung: Node.js 24 oder neuer und npm.
@@ -175,7 +181,7 @@ Grundlagen: [HIOKI – Leistungsmessung](https://www.hioki.com/us-en/products/po
 und [Hager – thermische und magnetische Auslösung](https://hager.com/de/katalog/produkt/ndn113-ls-schalter-1-polig-10ka-15ka-d-13a-1m).
 
 Szenarioschalter verändern weder Projektdaten noch Undo/Redo oder den manuellen Zählerstand.
-Jede Projektänderung und jedes Neuladen beendet die Simulation. Szenarien werden noch nicht gespeichert.
+Jede Projektänderung und jedes Neuladen beendet die Simulation. Szenarien können seit 0.12.0 in der Hausakte benannt gespeichert und erneut geladen werden.
 
 ## Lichtschalter
 
@@ -330,7 +336,7 @@ Das Verschieben erzeugt keine neuen topologischen Verbindungen; solche Anschlüs
 
 Die Validierung erkennt ungültige Polygone und Referenzen. Sie erkennt noch nicht jede Überlappung voneinander
 unabhängiger Räume und ersetzt keine allgemeine Raumerkennung aus beliebigen Wandsammlungen.
-Räume mit Löchern, Bogenwände, Druckmaßstäbe, PDF-/SVG-Export und ein allgemeiner Constraint-Solver sind nicht Bestandteil des MVP.
+Räume mit Löchern, Bogenwände und ein allgemeiner Constraint-Solver sind nicht enthalten. Druckmaßstäbe und PDF-/SVG-Export sind seit 0.12.0 in der Hausakte verfügbar.
 
 Die Oberfläche ist für Desktop ab etwa 1024 px Breite ausgelegt. Smartphone-Bedienung ist nicht optimiert.
 Der Editor ist lokal für einen Benutzer ausgelegt; gleichzeitige Bearbeitung desselben Projekts in mehreren Tabs
@@ -350,7 +356,7 @@ Momentanverbrauch noch Stromaufnahme oder Sicherungsauslastung. Die separate Sim
 für das gewählte Szenario unter den oben beschriebenen Annahmen. Ein Stromkreis referenziert ein Schutzgerät und dessen ausdrücklich verknüpfte Vorgänger
 im selben Kasten. Zyklen und Schutzgeräte aus fremden Kästen werden abgelehnt.
 
-Steckdosen erhalten einen räumlichen Wandbezug. Elektroobjekte bleiben beim Verschieben von Wänden oder Möbeln an
+Steckdosen erhalten einen räumlichen Wandbezug. Frei positionierte Elektroobjekte bleiben beim Verschieben von Wänden oder Möbeln an
 ihrer Weltposition; Zuordnungen ersetzen keine geometrische Befestigung. Verteilerkopien enthalten noch keine
 Stromkreiskopien. Beim Löschen eines Verteilers werden seine Stromkreise/Schutzgeräte entfernt und Zuordnungen gelöst;
 Steckdosen und Verbraucher bleiben erhalten. Undo stellt den gesamten Schritt wieder her.
@@ -365,10 +371,10 @@ Ein Verbindungspunkt verbindet nur Leitungen, deren Enden ausdrücklich diesem O
 Kabelwege und ihre Stromkreisangabe ersetzen nicht automatisch bestehende Anschluss-/Stromkreiszuordnungen.
 Planlängen sind horizontale 2D-Längen; Geschoss-Steigstrecken werden separat automatisch addiert, weitere Höhenwege und Reserven als Zuschlag dokumentiert.
 Die Versorgungskette ist eine separate ID-Zuordnung zur Ableitung von Planungswerten, noch kein Leiter-/Polmodell.
-Eine statische Simulation der Zuordnungen ist implementiert; ein Leiter-/Kontaktmodell steht noch aus. Verteilerzuordnungen sind radial und
+Neben der statischen Zuordnungssimulation gibt es seit 0.12.0 eine separate Leiterprüfung in der Hausakte; deren Umfang und Grenzen stehen in [docs/housebook.md](docs/housebook.md). Verteilerzuordnungen sind radial und
 dürfen keine Kreise bilden. Die Bestandsübersicht summiert direkt zugeordnete Verbraucher; Verbraucher hinter
 Unterverteilungen stehen in deren Stromkreisen. Löschen einer Zuleitung löst den Eingang der Unterverteilung,
 erhält aber deren eigene Stromkreise und Objekte. Einphasige Zuleitungen mit widersprüchlicher nachgeschalteter
 Phasenzuordnung werden als Planungskonflikt angezeigt.
-Weitere technische Netze, Home Assistant, 3D, Backend und Benutzerverwaltung bleiben spätere Phasen.
+Netzwerkdokumentation und lesender Home-Assistant-Abruf sind seit 0.12.0 in der Hausakte verfügbar. 3D, Backend, Benutzerverwaltung und weitere technische Netze bleiben spätere Phasen.
 Die Erweiterungsgrenzen sind in [docs/architecture.md](docs/architecture.md) festgehalten.

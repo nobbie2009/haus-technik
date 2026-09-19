@@ -1,4 +1,5 @@
 import { cableFloorPath } from "../../electrical/cables";
+import { housebook } from "../../housebook/model";
 import { furnitureCorners } from "../../geometry/furniture";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -34,6 +35,14 @@ export function fitView(): void {
   const positions = Object.values(project.points)
     .filter((p) => p.floorId === editor.floorId)
     .map((p) => p.position);
+  const book = housebook(project),
+    background = book.backgrounds[editor.floorId];
+  if (background?.visible)
+    positions.push(background.position, {
+      x: background.position.x + background.width,
+      y: background.position.y - (background.width * background.pixelHeight) / background.pixelWidth,
+    });
+  positions.push(...book.networkNodes.filter((n) => n.floorId === editor.floorId).map((n) => n.position));
   positions.push(
     ...Object.values(project.furniture)
       .filter((item) => item.floorId === editor.floorId)
