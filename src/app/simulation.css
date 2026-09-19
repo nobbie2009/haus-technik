@@ -1,0 +1,218 @@
+.simulation-dialog {
+  width: min(1120px, 94vw);
+  max-height: 91vh;
+}
+.simulation-dialog > .modal-heading {
+  position: sticky;
+  top: -26px;
+  background: white;
+  z-index: 2;
+  padding: 12px 0;
+}
+.simulation-dialog p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.simulation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.simulation-assumption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.simulation-model {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  margin: 12px 0;
+  border-radius: 5px;
+}
+.simulation-model summary {
+  cursor: pointer;
+}
+.simulation-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 22px;
+}
+.simulation-layout h3 {
+  font-size: 15px;
+}
+.simulation-layout label {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.simulation-layout input[type="checkbox"],
+.simulation-assumption input {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.simulation-controls fieldset {
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin: 0 0 14px;
+  border-radius: 5px;
+  min-width: 0;
+}
+.simulation-controls legend {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.simulation-controls fieldset p {
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.simulation-controls fieldset strong {
+  display: block;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.simulation-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.simulation-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0 14px;
+}
+.simulation-metrics > div {
+  padding: 16px;
+  background: #eff3eb;
+  border-radius: 5px;
+  font-size: 13px;
+}
+.simulation-metrics output {
+  display: block;
+  margin-top: 8px;
+  font: 24px var(--mono);
+  overflow-wrap: anywhere;
+}
+.simulation-note,
+.simulation-overload {
+  background: #fff3e4;
+  color: #853b14;
+  padding: 10px;
+}
+.simulation-table-wrap {
+  overflow-x: auto;
+}
+.simulation-results table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+.simulation-results caption {
+  text-align: left;
+  margin: 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.simulation-results td,
+.simulation-results th {
+  vertical-align: top;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.simulation-results thead {
+  background: #eff3eb;
+}
+.simulation-results th label {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  min-width: 115px;
+}
+.simulation-results small {
+  display: block;
+  margin-top: 6px;
+  line-height: 1.5;
+  min-width: 100px;
+}
+.simulation-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 18px;
+  background: #e0f0eb;
+  border-bottom: 1px solid #9bbbad;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.simulation-banner span {
+  flex: 1;
+}
+.simulation-banner button {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+@media (max-width: 1100px) {
+  .simulation-layout {
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .simulation-metrics output {
+    font-size: 19px;
+  }
+}
+.simulation-plan-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.simulation-plan-controls button {
+  position: absolute;
+  pointer-events: auto;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #52685d;
+  border-radius: 5px;
+  font-size: 11px;
+  color: #334c40;
+  box-shadow: 0 2px 5px #17352e12;
+}
+.simulation-plan-controls button.is-on {
+  border-color: #14694e;
+  background: #f0faf4;
+}
+.simulation-plan-controls button:hover {
+  box-shadow: 0 0 0 2px #16846b40;
+}
+.simulation-plan-controls .switch-track {
+  width: 23px;
+  height: 13px;
+  background: #a6b5ac;
+  border-radius: 9px;
+  position: relative;
+}
+.simulation-plan-controls .switch-track span {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  top: 2px;
+  left: 2px;
+  background: white;
+  border-radius: 50%;
+}
+.simulation-plan-controls .is-on .switch-track {
+  background: #14694e;
+}
+.simulation-plan-controls .is-on .switch-track span {
+  left: 12px;
+}
