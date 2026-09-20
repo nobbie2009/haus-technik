@@ -25,7 +25,23 @@ export function MaintenancePanel({
   const p = useProjectStore((s) => s.project),
     b = homeBook(p),
     rows = dueOverview(p);
-  const [draft, setDraft] = useState(() => b.tasks.find((t) => t.id === initialId) ?? fresh()),
+  const [draft, setDraft] = useState(() => {
+      const item = initialId?.startsWith("item:")
+        ? b.items.find((i) => i.id === initialId.slice(5))
+        : undefined;
+      return (
+        b.tasks.find((t) => t.id === initialId) ??
+        (item
+          ? {
+              ...fresh(),
+              title: `Pflege: ${item.name}`,
+              location: item.location,
+              itemId: item.id,
+              target: item.target,
+            }
+          : fresh())
+      );
+    }),
     [done, setDone] = useState(""),
     [date, setDate] = useState(localDate),
     [note, setNote] = useState("");

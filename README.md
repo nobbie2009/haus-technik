@@ -3,7 +3,13 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.20.0: Sicherungskasten-Aushang
+## Neu in 0.21.0: Hausalltag und Gerätewechsel
+
+Startseite mit Terminen, Ablesungen und Sicherungshinweisen, Hauschronik mit Fotos und Belegen,
+geprüfte Sicherungsdateien und Gerätewechsel, QR-Aufkleber, druckbare Haus-Schnellübersicht sowie
+Bewässerungszonen und Außenwasserstellen mit Pflegeaufgaben. [Anleitung](docs/house-life.md).
+
+## Seit 0.20.0: Sicherungskasten-Aushang
 
 Druckbare Stromkreisübersicht pro Verteiler mit Sicherungskennzeichnung, Räumen/Geräten,
 FI-Zuordnung und eigenen Hinweisen als A4-PDF. [Anleitung](docs/board-schedule.md).

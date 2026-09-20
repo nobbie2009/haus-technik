@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "../dialogs/Modal";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -30,6 +30,13 @@ import { SearchPanel } from "./SearchPanel";
 import { SolarPanel } from "./SolarPanel";
 import { WallPhotoDialog } from "./WallPhotoDialog";
 import { BoardSchedulePanel } from "./BoardSchedulePanel";
+import { BackupPanel } from "./BackupPanel";
+import { ChroniclePanel } from "./ChroniclePanel";
+import { HomeDashboard } from "./HomeDashboard";
+import { QuickOverviewPanel } from "./QuickOverviewPanel";
+import { QrPanel } from "./QrPanel";
+import { searchEntries } from "../../housebook/search";
+import { activateProject } from "../dialogs/ProjectDialog";
 import { AssetDialog } from "./AssetDialog";
 import { Field, updateBook } from "./shared";
 import type { Selection } from "../../editor/types";
@@ -39,6 +46,10 @@ import { saveRoomTemplate, insertRoomTemplate } from "../../housebook/templates"
 import type { Project } from "../../models/project";
 const sections = {
   overview: "Übersicht",
+  backup: "Sicherung & Gerätewechsel",
+  chronicle: "Hauschronik",
+  quick: "Haus-Schnellübersicht",
+  qr: "QR-Aufkleber",
   setup: "Einrichtung",
   search: "Suche",
   solar: "Balkonkraftwerk",
@@ -60,7 +71,13 @@ const sections = {
   history: "Wiederherstellung",
   homeAssistant: "Home Assistant",
 };
-export function HousebookDialog({ onClose }: { onClose: () => void }) {
+export function HousebookDialog({
+  onClose,
+  qrTarget,
+}: {
+  onClose: () => void;
+  qrTarget?: { projectId: string; key: string } | null | undefined;
+}) {
   const project = useProjectStore((s) => s.project),
     globalError = useProjectStore((s) => s.error),
     floorId = useEditorStore((s) => s.floorId);
@@ -106,6 +123,22 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
     if (focusObject(target)) onClose();
     else setMessage("Die Ebene ist ausgeblendet. Bitte zuerst im Editor einblenden.");
   };
+  useEffect(() => {
+    if (!qrTarget || qrTarget.projectId !== project.id) return;
+    const row = searchEntries(project).find((r) => r.key === qrTarget.key);
+    if (!row) {
+      setMessage("Das Ziel dieses QR-Aufklebers wurde im Projekt nicht gefunden.");
+      return;
+    }
+    if (row.target) {
+      setSection("assets");
+      setRecord(row.target);
+    } else if (row.wallId) setPhoto({ wallId: row.wallId, photoId: row.photoId });
+    else if (row.section) {
+      setSection(row.section);
+      setEntryId(row.id);
+    }
+  }, [qrTarget?.key, qrTarget?.projectId, project.id]);
   return (
     <>
       <Modal title="Hausakte" className="housebook-dialog" onClose={onClose}>
@@ -132,6 +165,28 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
             ))}
           </nav>
           <div className="book-content" aria-busy={busy}>
+            {qrTarget && qrTarget.projectId !== project.id && (
+              <div className="home-summary">
+                <p>
+                  Dieser QR-Aufkleber gehört zu einem anderen Projekt. Es wurde keine falsche Akte geöffnet.
+                </p>
+                <button
+                  onClick={() =>
+                    void run(async () => {
+                      const p = await projectRepository.load(qrTarget.projectId);
+                      if (!p)
+                        throw new Error(
+                          "Das passende Projekt ist hier noch nicht vorhanden. Bitte zuerst die Projektdatei vom PC importieren.",
+                        );
+                      await activateProject(p);
+                    })
+                  }
+                >
+                  Passendes lokales Projekt öffnen
+                </button>
+                <button onClick={() => openSection("backup")}>Projektdatei übertragen</button>
+              </div>
+            )}
             {fromSetup && section !== "setup" && (
               <div className="book-actions">
                 <button onClick={() => openSection("setup")}>Zur Einrichtung zurück</button>
@@ -152,6 +207,7 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
               <section>
                 <span className="eyebrow">DEIN HAUS IM ÜBERBLICK</span>
                 <h3>{project.name}</h3>
+                <HomeDashboard onOpen={openSection} issueCount={issues.length} />
                 <div className="book-actions">
                   <button
                     onClick={() => {
@@ -309,6 +365,12 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
               </section>
             )}
             {section === "boardSchedule" && <BoardSchedulePanel />}
+            {section === "backup" && <BackupPanel />}
+            {section === "chronicle" && (
+              <ChroniclePanel key={`${project.id}:${entryId}`} initialId={entryId} onClose={onClose} />
+            )}
+            {section === "quick" && <QuickOverviewPanel key={project.id} />}
+            {section === "qr" && <QrPanel />}
             {section === "scenarios" && <ScenariosPanel onClose={onClose} />}
             {section === "schematic" && <SchematicPanel onClose={onClose} />}
             {section === "assets" && (
@@ -392,6 +454,7 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 key={`garden:${entryId}`}
                 initialId={entryId}
                 kinds={["garden", "outdoorLight"]}
+                onOpen={openSection}
                 onClose={onClose}
               />
             )}

@@ -1,6 +1,6 @@
 {
   "name": "home-technik",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "private": true,
   "type": "module",
   "description": "Modularer technischer Hausplaner mit lokalem 2D-Grundrisseditor",
@@ -22,10 +22,12 @@
     "test:ipad": "playwright test --config playwright.ipad.config.ts"
   },
   "dependencies": {
+    "@noble/hashes": "^2.4.0",
     "jspdf": "^4.2.1",
     "konva": "^10.5.0",
     "lucide-react": "^1.47.0",
     "pdfjs-dist": "^6.3.289",
+    "qrcode": "^1.5.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-konva": "^19.3.0",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.2",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",

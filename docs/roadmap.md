@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.20.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.21.0.
 
 ## Bereits vorhanden
 
@@ -19,12 +19,13 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Unterbrechbarer Einrichtungsassistent und zentrale Suche mit Navigation zu vorhandenen Datensätzen.
 - Balkonkraftwerk-Akte mit Modulen, Wechselrichter, optionalem Speicher und verknüpftem Ertragszähler.
 - Druckbarer Sicherungskasten-Aushang mit Stromkreisen, Räumen/Geräten und FI-Zuordnung.
+- Haus-Startseite, Sicherungserinnerung mit Dateiprüfung und Gerätewechsel per Projektdatei.
+- Hauschronik mit Kosten, Belegen und Vorher-/Nachher-Fotos; QR-Aufkleber und druckbare Haus-Schnellübersicht.
+- Bewässerungszonen, Außenwasserstellen und zugehörige Pflegeaufgaben.
 
 ## Nächste Schritte
 
-Für die private Hausübersicht außerdem vorgeschlagen, bisher nicht umgesetzt: eine druckbare
-Schnellübersicht mit wichtigen Standorten und Kontakten, eine Hauschronik mit Vorher-/Nachher-Fotos
-und eine Erinnerung an die letzte exportierte Sicherung. Eine zentrale Unterlagenbibliothek wäre eine
+Eine zentrale Unterlagenbibliothek wäre eine
 weitere Ergänzung; Fotos und Unterlagen-Links gibt es bereits an Objekten und in der Suche.
 
 1. **iPad-Praxistest:** Safari, Apple Pencil, Bildschirmtastatur und Dateien-Import/-Export am echten Gerät.

@@ -102,6 +102,12 @@ export function addSetupRoom(
   );
 }
 export type GuideSection =
+  | "overview"
+  | "backup"
+  | "chronicle"
+  | "quick"
+  | "qr"
+  | "check"
   | "setup"
   | "search"
   | "solar"

@@ -307,3 +307,22 @@ TypeScript, Produktionsbuild und Formatprüfung erfolgreich. Die achtseitige PDF
 synthetischen Daten wurde mit Poppler gerendert und visuell geprüft. PDF-Textprüfung bestätigt
 Seitenbegrenzungen, wiederholte Köpfe, Fortsetzungskennzeichnungen und vollständige Testgeräte/-stromkreise.
 Kein physischer Ausdruck oder echtes iPad getestet; die Probe enthält keine tatsächlichen Hausdaten.
+
+## Hausalltag und Gerätewechsel (0.21.0)
+
+- Hauschronik mit Kosten, Vorher-/Nachher-Fotos und Bildbeleg speichern und im JSON erhalten.
+- Kontakte und ausgewählte Absperrstellen in der Haus-Schnellübersicht ausgeben.
+- Sicherungsdatei gegen den aktuellen Inhalt prüfen; abweichende Datei ohne Übernahme ablehnen.
+- Älteren Transferstand bewusst übernehmen und vorherigen Stand in der Wiederherstellung behalten.
+- Transfer als getrennte Projektkopie öffnen und ursprüngliches Projekt über dessen QR-Ziel wiederfinden.
+- QR-Aufkleber ausgeben, Ziel wiederholt öffnen und fremde Projektkennungen ausdrücklich behandeln.
+- iPad: Chronik erfassen, Bewässerungszone mit Pflegeaufgabe verknüpfen und neue Ansichten in beiden
+  Orientierungen ohne horizontalen Inhaltsüberlauf bedienen.
+
+Validiert am 20.09.2026: 313 Modultests, 44 Desktop-Browsertests und zwölf iPad-WebKit-Tests erfolgreich.
+Die iPad-Prüfungen liefen gegen den Produktionsbuild 0.21.0 über die HTTP-WLAN-Adresse.
+TypeScript, Build und Formatprüfung erfolgreich. Haus-Schnellübersicht und QR-Druckprobe wurden
+mit Poppler gerendert und visuell geprüft; erwartete PDF-Texte waren vollständig vorhanden.
+Der QR-Code wurde aus der gerenderten Druckseite mit ZXing decodiert und auf das erwartete WLAN-Ziel geprüft.
+Die iPad-Oberfläche wurde zusätzlich anhand des Screenshots kontrolliert. Keine echte iPad-Kamera,
+kein physisches Gerät und kein Papierausdruck getestet; sämtliche Druckproben verwenden synthetische Daten.

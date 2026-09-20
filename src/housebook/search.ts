@@ -6,6 +6,7 @@ import { homeBook, homeKinds } from "./home";
 import { solarPlants } from "./solar";
 import { wallPhotos } from "./wallPhotos";
 import type { GuideSection } from "./setup";
+import { life, eventKinds } from "./life";
 export type SearchResult = {
   key: string;
   title: string;
@@ -131,6 +132,16 @@ export function searchEntries(p: Project): SearchResult[] {
         wallId: w.id,
         photoId: photo.id,
       });
+  for (const e of life(p).events)
+    rows.push({
+      key: `event:${e.id}`,
+      title: e.title,
+      category: `Hauschronik · ${eventKinds[e.kind]}`,
+      location: e.location,
+      description: [e.date, e.notes, e.receipt?.name ?? ""].join(" · "),
+      section: "chronicle",
+      id: e.id,
+    });
   return rows;
 }
 const normalize = (v: string) =>

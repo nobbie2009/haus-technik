@@ -15,16 +15,19 @@ import { readPlanImage } from "../../housebook/images";
 import { focusObject } from "../../housebook/navigation";
 import { Field } from "./shared";
 import { TargetField, updateHome } from "./HomeShared";
+import type { OpenSection } from "../../housebook/setup";
 export function HomeItemsPanel({
   kinds,
   onClose,
   initialId,
   initialLocation,
+  onOpen,
 }: {
   kinds: HomeKind[];
   onClose: () => void;
   initialId?: string | undefined;
   initialLocation?: string | undefined;
+  onOpen?: OpenSection | undefined;
 }) {
   const p = useProjectStore((s) => s.project),
     b = homeBook(p);
@@ -64,6 +67,9 @@ export function HomeItemsPanel({
             {i.location} · {homeKinds[i.kind]}
           </span>
           <button onClick={() => setDraft(structuredClone(i))}>Bearbeiten: {i.name}</button>
+          {kinds.includes("garden") && onOpen && (
+            <button onClick={() => onOpen("maintenance", `item:${i.id}`)}>Pflege planen: {i.name}</button>
+          )}
           <button
             onClick={() => {
               if (window.confirm(`„${i.name}“ löschen?`)) {
@@ -130,6 +136,20 @@ export function HomeItemsPanel({
                     {homeKinds[k]}
                   </option>
                 ))}
+              </select>
+            </Field>
+          )}
+          {draft.kind === "garden" && (
+            <Field label="Gartenbereich">
+              <select
+                value={draft.gardenRole ?? "other"}
+                onChange={(e) =>
+                  change({ gardenRole: e.target.value as NonNullable<HomeItem["gardenRole"]> })
+                }
+              >
+                <option value="other">Gartenobjekt</option>
+                <option value="irrigationZone">Bewässerungszone</option>
+                <option value="outdoorTap">Außenwasserstelle</option>
               </select>
             </Field>
           )}

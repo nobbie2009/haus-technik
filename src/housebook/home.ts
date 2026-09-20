@@ -35,6 +35,7 @@ export const homeItemSchema = z.strictObject({
   battery: text,
   controls: text,
   powerW: n.nonnegative().nullable(),
+  gardenRole: z.enum(["other", "irrigationZone", "outdoorTap"]).optional(),
 });
 export const readingSchema = z.strictObject({
   id,
@@ -130,7 +131,7 @@ export function homeBook(p: Project): HomeBook {
 export function setHomeBook(p: Project, value: HomeBook) {
   const parsed = homeSchema.safeParse(value);
   if (!parsed.success) throw new Error(parsed.error.issues.map((i) => i.message).join(" "));
-  p.metadata.homeOverview = parsed.data;
+  p.metadata.homeOverview = JSON.parse(JSON.stringify(parsed.data));
 }
 export function newHomeItem(kind: HomeKind): HomeItem {
   return {

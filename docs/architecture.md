@@ -1,5 +1,25 @@
 # Architekturentscheidungen
 
+## Hausalltag (App 0.21.0)
+
+Optionale, strikt validierte `metadata.houseLife` enthalten Chronik, Kontakte, wichtige Stellen und
+Auswahlkennungen für die Schnellübersicht. Bestehende Projekte behalten Schema-Version 10; ein lesender
+Zugriff erzeugt keine Metadaten. Änderungen verwenden Projekttransaktionen, Undo/Redo und IndexedDB.
+Fotos und Belege unterliegen der bestehenden Gesamtgrößenprüfung. Gartenrollen sind optionale Felder
+bestehender Hausobjekte; Pflegeaufgaben verwenden deren Kennungen.
+
+Der Sicherungsnachweis liegt unabhängig vom Projekt in lokalem Browser-Speicher. Ein SHA-256 über
+kanonisch sortierte Objektschlüssel vergleicht den vollständigen Projektinhalt; Arrayreihenfolgen bleiben
+erhalten. `@noble/hashes` funktioniert auch über HTTP im Heimnetz ohne Web-Crypto-Secure-Context.
+Downloadstart und erfolgreich eingelesene Sicherungsdatei sind getrennte Nachweise. Die Transferansicht
+vergleicht vor Übernahme nochmals den aktuellen Stand und verwendet die bestehende Projektsicherung.
+
+QR-Ziele speichern Projekt- und Datensatzkennungen im URL-Fragment. Abweichende Projekte benötigen einen
+gezielten Wechsel; entfernte Datensätze werden gemeldet. Beim Schließen wird das verbrauchte QR-Fragment
+entfernt, damit derselbe Code erneut geöffnet werden kann. `qrcode` erzeugt die Codes lokal, jsPDF die
+Etiketten und die Haus-Schnellübersicht mit eingebetteter Schrift. Keine neuen Serverdienste oder
+automatische Synchronisierung. Bedienung: [Hausalltag](house-life.md).
+
 ## Umfang und Stack
 
 Phase 1 ist ein lokaler Grundrisseditor mit React, TypeScript, Vite, Zustand und react-konva.

@@ -6,11 +6,13 @@ import { wallPhotosSchema } from "./wallPhotos";
 import { homeIssues } from "./home";
 import { setupSchema } from "./setup";
 import { solarSchema } from "./solar";
+import { lifeSchema } from "./life";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [...homeIssues(project)];
   for (const [key, schema] of [
     ["setupGuide", setupSchema],
     ["solarPlants", solarSchema],
+    ["houseLife", lifeSchema],
   ] as const) {
     if (project.metadata[key] === undefined) continue;
     const result = schema.safeParse(project.metadata[key]);
@@ -123,6 +125,7 @@ export function housebookIssues(project: Project): { path: string; message: stri
     (project.metadata.housebook ||
       project.metadata.homeOverview ||
       project.metadata.solarPlants ||
+      project.metadata.houseLife ||
       hasAssets ||
       hasWallPhotos) &&
     JSON.stringify(project).length > 18_000_000

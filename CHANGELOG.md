@@ -1,5 +1,16 @@
 # Änderungen
 
+## 0.21.0 · 20.09.2026
+
+- Haus-Startseite mit Wartungsterminen, letzten Zählerständen, fehlenden Angaben und Schnellaktionen.
+- Sicherungserinnerung mit Inhaltsprüfung der exportierten Datei und bewusster Übernahme beim Gerätewechsel.
+- Vorschau unterschiedlicher und älterer Projektstände; Import als separate Kopie möglich.
+- Hauschronik für Reparaturen, Umbauten und Anschaffungen mit Kosten, Vorher-/Nachher-Fotos und Belegen.
+- QR-Aufkleber als A4-PDF mit direktem Aktenaufruf und Prüfung der zugehörigen Projektkennung.
+- Druckbare Haus-Schnellübersicht mit wichtigen Stellen, eigenen Hinweisen und Kontakten.
+- Bewässerungszonen und Außenwasserstellen mit direkt verknüpften Pflegeaufgaben.
+- Projektvalidierung, Suche, Undo/Redo und JSON-Sicherung erweitert; zusätzliche Desktop- und iPad-Prüfungen.
+
 ## 0.20.0 · 20.09.2026
 
 - Eigener Sicherungskasten-Aushang in der Hausakte und aus dem Ausgabebereich erreichbar.

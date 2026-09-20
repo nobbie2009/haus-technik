@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState, useEffect } from "react";
 const HousebookDialog = lazy(() =>
   import("./housebook/HousebookDialog").then((m) => ({ default: m.HousebookDialog })),
 );
@@ -25,6 +25,7 @@ import { ProjectDialog, activateProject } from "./dialogs/ProjectDialog";
 import { Modal } from "./dialogs/Modal";
 import { createDemoProject } from "../editor/demoProject";
 import type { DisplayUnit } from "../models/common";
+import { readQrLink } from "../housebook/qr";
 
 export function Toolbar() {
   const project = useProjectStore((s) => s.project);
@@ -39,6 +40,18 @@ export function Toolbar() {
   const showGrid = useEditorStore((s) => s.showGrid);
   const measurements = useEditorStore((s) => s.showMeasurements);
   const ready = useEditorStore((s) => s.ready);
+  const [qrTarget, setQrTarget] = useState<ReturnType<typeof readQrLink>>(null);
+  useEffect(() => {
+    if (!ready) return;
+    const read = () => {
+      const target = readQrLink(window.location.hash);
+      setQrTarget(target);
+      if (target) setBook(true);
+    };
+    read();
+    window.addEventListener("hashchange", read);
+    return () => window.removeEventListener("hashchange", read);
+  }, [ready]);
   const run = async (action: () => Promise<void>) => {
     setBusy(true);
     try {
@@ -224,7 +237,16 @@ export function Toolbar() {
       {dialog && <ProjectDialog mode={dialog} onClose={() => setDialog(null)} />}
       {book && (
         <Suspense fallback={<span role="status">Hausakte wird geöffnet …</span>}>
-          <HousebookDialog onClose={() => setBook(false)} />
+          <HousebookDialog
+            key={project.id}
+            qrTarget={qrTarget}
+            onClose={() => {
+              setBook(false);
+              setQrTarget(null);
+              if (readQrLink(window.location.hash))
+                window.history.replaceState(null, "", window.location.pathname + window.location.search);
+            }}
+          />
         </Suspense>
       )}
       {help && (

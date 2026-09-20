@@ -1,6 +1,7 @@
 import { migrateProject } from "./migrations";
 import type { Project } from "../models/project";
 import { parseProject } from "../core/validation";
+import { recordExport } from "./backupLog";
 
 /** Alte Dateiversionen werden an dieser Grenze validiert und migriert. */
 export function importProjectText(text: string): Project {
@@ -26,4 +27,5 @@ export function downloadProject(project: Project): void {
   link.download = `${project.name.replace(/[^\p{L}\p{N}_-]+/gu, "-").slice(0, 80) || "Grundriss"}.homeplan.json`;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+  recordExport(project);
 }
