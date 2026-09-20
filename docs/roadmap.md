@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.13.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.14.0.
 
 ## Bereits vorhanden
 
@@ -9,13 +9,16 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Raumvorlagen, Wandbefestigung, Netzwerkdokumentation und Wiederherstellung früherer Stände.
 - Separate Leiterprüfung und lesender Home-Assistant-Abruf.
 - Tablet-Oberfläche und Touch-Bedienung; WLAN-Start und WebKit-Prüfungen.
+- Verdrahtete Stromstoßrelais, explizite Fehlerwiderstände und idealisierte FI-Reaktionen in der Leiterprüfung.
+- GitHub-Vorbereitung mit CI, Dependabot und Beitragsvorlagen.
 
 ## Nächste Schritte
 
 1. **iPad-Praxistest:** Safari, Apple Pencil, Bildschirmtastatur und Dateien-Import/-Export am echten Gerät.
    Für den Einsatz unterwegs anschließend Offline-Start und eine Geräteabgleich-Strategie festlegen.
-2. **Elektriksimulation vertiefen:** Fehlerströme, Schutzreaktionen und über Adern geführte Relaissteuerung
-   über den aktuellen dokumentierten Leitergraphen hinaus.
+2. **Elektriksimulation weiter vertiefen:** Verteilte Leitungsimpedanzen, LS-/Schmelzsicherungskennlinien,
+   Selektivität, dynamische Relaisrückkopplungen und Spulennennwerte. Das aktuelle Fehlerstrommodell ist
+   auf ausdrücklich angegebene Fehlerwiderstände und ideale FI-Schwellwerte begrenzt.
 3. **Home Assistant mit der echten Installation prüfen:** Erreichbarkeit, CORS und Zuordnung realer Entitäten.
 4. **3D-Ansicht aus dem Planmodell:** Geschoss-, Wand-, Tür- und Fensterhöhen nutzen; zunächst Gebäudeansicht.
 5. **Weitere technische Netze:** Wasser, Gas und Zigbee. Netzwerkdokumentation ist bereits vorhanden;

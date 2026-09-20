@@ -1,9 +1,13 @@
 import { useProjectStore } from "../../stores/projectStore";
 import { useSimulationStore } from "../../stores/simulationStore";
 import { emptyScenario } from "../../simulation/models";
-import { solveConductors } from "../../simulation/conductors";
+import { solveConductors, pulseConductorSwitch } from "../../simulation/conductors";
+import { switchRole } from "../../electrical/switchingControls";
+import { ConductorFaultPanel } from "./ConductorFaultPanel";
+import { useState } from "react";
 import { focusObject } from "../../housebook/navigation";
 export function ConductorPanel({ onClose }: { onClose: () => void }) {
+  const [pulseMessage, setPulseMessage] = useState("");
   const project = useProjectStore((s) => s.project),
     simulation = useSimulationStore();
   const scenario = simulation.active ? simulation.scenario : emptyScenario(),
@@ -20,13 +24,14 @@ export function ConductorPanel({ onClose }: { onClose: () => void }) {
       <p>
         Diese separate Berechnung verfolgt die ausdrücklich verbundenen Kontakte der Kabel. Eine logische
         Stromkreiszuordnung allein versorgt hier keinen Verbraucher. Einspeisung, Zähler, Verteilerabgänge,
-        einfache Schalter, Wechsel-/Kreuzkontakte und ideale Trafos werden berücksichtigt.
+        einfache Schalter, Wechsel-/Kreuzkontakte, verdrahtete Taster und Stromstoßrelais sowie ideale Trafos
+        werden berücksichtigt.
       </p>
       <p>
-        {result.contacts} Kontakte · {result.connections} dokumentierte Aderverbindungen. Keine
-        Leitungswiderstände, Kurzschlussströme oder Auslösezeiten. Stromstoßrelais-Steuerkreise werden in
-        dieser Leiterprüfung noch nicht ausgewertet; ihre funktionale Simulation bleibt im Versorgungsszenario
-        verfügbar.
+        {result.contacts} Kontakte · {result.connections} dokumentierte Aderverbindungen. Keine automatisch
+        ermittelten Leitungsimpedanzen oder Auslösezeiten. Fehlerströme verwenden einen ausdrücklich
+        vorgegebenen Gesamtwiderstand. Diese Ergebnisse gelten für die Leiterprüfung; die Plananzeige und die
+        Lastübersicht verwenden weiterhin das funktionale Versorgungsszenario.
       </p>
       <details>
         <summary>Einspeisungen und Leitungen im Szenario unterbrechen</summary>
@@ -49,25 +54,70 @@ export function ConductorPanel({ onClose }: { onClose: () => void }) {
       <details>
         <summary>Schalterstellungen testen</summary>
         <ul className="book-list">
-          {Object.values(project.electrical.switches).map((item) => (
-            <li key={item.id}>
-              <span>
-                {item.label} · {item.name}
-              </span>
-              <button
-                aria-pressed={scenario.switchStates[item.id] ?? item.closed}
-                onClick={() =>
-                  simulation.update((s) => {
-                    s.switchStates[item.id] = !(s.switchStates[item.id] ?? item.closed);
-                  })
-                }
-              >
-                Stellung {(scenario.switchStates[item.id] ?? item.closed) ? "1" : "2"}
-              </button>
-            </li>
-          ))}
+          {Object.values(project.electrical.switches).map((item) =>
+            switchRole(project, item.id) === "Taster" ? (
+              <li key={item.id}>
+                <span>
+                  {item.label} · {item.name}
+                </span>
+                <button
+                  disabled={scenario.disabledNodeIds.includes(item.id)}
+                  onClick={() =>
+                    simulation.update((s) => {
+                      const changed = pulseConductorSwitch(project, s, item.id);
+                      setPulseMessage(
+                        changed.length
+                          ? `${changed.length} Relais durch verdrahteten Tastimpuls umgeschaltet.`
+                          : "Keine neue Spulenspannung: Verdrahtung und Versorgung prüfen.",
+                      );
+                    })
+                  }
+                >
+                  Tastimpuls · {item.label || item.name}
+                </button>
+              </li>
+            ) : (
+              <li key={item.id}>
+                <span>
+                  {item.label} · {item.name}
+                </span>
+                <button
+                  aria-pressed={scenario.switchStates[item.id] ?? item.closed}
+                  onClick={() =>
+                    simulation.update((s) => {
+                      s.switchStates[item.id] = !(s.switchStates[item.id] ?? item.closed);
+                    })
+                  }
+                >
+                  Stellung {(scenario.switchStates[item.id] ?? item.closed) ? "1" : "2"}
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       </details>
+      {pulseMessage && <p role="status">{pulseMessage}</p>}
+      {!!result.relays.length && (
+        <div>
+          <h4>Stromstoßrelais</h4>
+          <p>
+            Ideale bistabile Kontakte: Eine neue Spannung an A1/A2 schaltet um. Spulennennspannung,
+            Anzugszeiten und Spulenleistung sind nicht modelliert.
+          </p>
+          <ul className="book-list">
+            {result.relays.map((relay) => (
+              <li key={relay.id}>
+                <span>
+                  {project.electrical.controls[relay.id]!.label} ·{" "}
+                  {relay.closed ? "Kontakt geschlossen" : "Kontakt offen"} · Spule{" "}
+                  {relay.coilVoltage === null ? "nicht versorgt" : `${relay.coilVoltage.toFixed(1)} V`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <ConductorFaultPanel result={result} />
       {result.issues.map((issue, i) => (
         <p role="alert" key={i}>
           {issue}

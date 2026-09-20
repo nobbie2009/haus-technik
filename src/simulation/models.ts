@@ -1,6 +1,13 @@
 export const phases = ["L1", "L2", "L3"] as const;
 export type Phase = (typeof phases)[number];
+export interface ConductorFault {
+  deviceId: string;
+  kind: "line-pe" | "line-neutral";
+  /** Assumed total resistive fault-loop impedance, not inferred from cable length. */
+  resistanceOhms: number;
+}
 export interface SimulationScenario {
+  conductorFaults?: ConductorFault[] | undefined;
   /** Nur Szenariozustand; Projekt und dokumentierte Betriebsarten bleiben unverändert. */
   deviceStates: Record<string, "on" | "off">;
   switchStates: Record<string, boolean>;

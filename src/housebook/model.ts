@@ -12,6 +12,16 @@ export const imageData = z
   .max(4_000_000)
   .regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/);
 export const scenarioSchema = z.strictObject({
+  conductorFaults: z
+    .array(
+      z.strictObject({
+        deviceId: id,
+        kind: z.enum(["line-pe", "line-neutral"]),
+        resistanceOhms: n.min(0.001).max(1e9),
+      }),
+    )
+    .max(100)
+    .optional(),
   deviceStates: z.record(id, z.enum(["on", "off"])),
   switchStates: z.record(id, z.boolean()),
   relayStates: z.record(id, z.boolean()),
@@ -114,6 +124,9 @@ export function setAsset(entity: Entity, value: Asset) {
 }
 export function cleanScenario(project: Project, scenario: SimulationScenario): SimulationScenario {
   const result = structuredClone(scenario);
+  result.conductorFaults = (result.conductorFaults ?? []).filter(
+    (fault) => project.electrical.devices[fault.deviceId],
+  );
   const all = Object.assign({}, ...Object.values(project.electrical).filter((v) => typeof v === "object"));
   result.disabledNodeIds = result.disabledNodeIds.filter((id) => all[id]);
   result.deviceStates = Object.fromEntries(

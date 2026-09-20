@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.14.0 · 20.09.2026
+
+- Stromstoßrelais reagieren in der Leiterprüfung auf vollständig verdrahtete Tasterimpulse an A1/A2.
+- L–PE-/L–N-Fehlerszenarien mit explizitem Schleifenwiderstand, vektorieller Differenzstromrechnung und idealisierter FI-Abschaltung.
+- Tatsächliche Leiterpfade bestimmen die Schutzreaktion; fehlende Rückwege, parallele Pfade und widersprüchliche Quellen bleiben unbestimmt.
+- Schutzleiterkontinuität bleibt bei abgeschalteten Verteilern und Schutzgeräten erhalten.
+- Fehlerszenarien lassen sich speichern und wiederherstellen; ältere Szenarien bleiben lesbar.
+- GitHub-Vorbereitung: CI mit Desktop-/WebKit-Tests, Dependabot, Vorlagen, Beitragsregeln und Veröffentlichungshinweise.
+- Erweiterte Modell-, Desktop- und iPad-Browserprüfungen und Dokumentation der Rechengrenzen.
+
 ## 0.13.0 · 20.09.2026
 
 - Tablet-Layout mit einklappbaren Werkzeugen und Eigenschaften, größeren Touch-Zielen und anpassbaren Dialogen.

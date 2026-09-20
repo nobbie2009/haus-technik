@@ -189,3 +189,19 @@ Validiert am 20.09.2026: 244 Modultests, 30 Desktop-Browsertests und vier WebKit
 Die vier iPad-Tests wurden auch gegen den Produktionsbuild über die tatsächliche HTTP-WLAN-Adresse ausgeführt.
 TypeScript, Build und Formatprüfung erfolgreich. Physisches iPad, Apple Pencil und die native Bildschirmtastatur
 sind noch nicht am echten Gerät geprüft. Der erste Nutzungsumfang ist auf Wunsch das heimische WLAN.
+
+## GitHub-Vorbereitung und verdrahtete Simulation (0.14.0)
+
+- Verdrahtete Taster, Flankenerkennung, fehlendes A2, unterbrochene Steuerader, ausgeschaltete Quelle und bistabiler Zustand.
+- 50-mA-L–PE-Fehler am 30-mA-FI: Abschaltung und anschließender Leiterzustand ohne Projekt-/Szenarioänderung.
+- L–N mit gemeinsamem Rückweg: kein Differenzstrom; Neutralleiter am FI vorbei: Differenzstrom.
+- Mehrere gleichphasige Fehler summieren sich; symmetrische dreiphasige Fehler werden vektoriell addiert.
+- Fehlender PE, fehlende FI-Schwelle und parallele Speisepfade erzeugen keine behauptete Schutzreaktion.
+- PE bleibt bei deaktiviertem Schutzgerät kontinuierlich; alte Szenarien übernehmen keine vorherigen Fehler.
+- Browserablauf mit Relaisimpuls, Fehlerstrom, gespeichertem Szenario, Neuladen und Fehlerentfernung.
+- iPad-WebKit-Prüfung gegen den aktualisierten Produktionsbuild über die WLAN-Adresse.
+
+Validiert: 261 Modultests, 32 Desktop-Browsertests, fünf iPad-WebKit-Tests sowie TypeScript,
+Produktionsbuild und Formatprüfung. CI-Workflow mit Actionlint geprüft. Suchlauf nach gängigen
+Zugangsdatenmustern im vorgesehenen Git-Inhalt ohne Treffer; dies ist kein umfassendes Sicherheitsaudit.
+GitHub Actions wurden noch nicht auf GitHub ausgeführt: Es ist bislang kein Remote eingerichtet.

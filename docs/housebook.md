@@ -47,7 +47,7 @@ Zusätzliche generische Kontakte:
 
 Ein einphasiger Verbraucher benötigt einen vollständigen Außenleiter-/Neutralleiterpfad zur selben Quelle. Dreiphasige Verbraucher benötigen drei verschiedene Außenleiter derselben Quelle. Widersprüchliche Quellen oder Leiter auf demselben Netz werden gemeldet und dort nicht als gültige Versorgung ausgewertet. Einzelne Kabel können im Szenario unterbrochen werden. Lastwerte werden pro Verbraucher mit dem bestehenden idealen Lastmodell berechnet.
 
-Grenzen: keine Widerstände, Spannungsabfälle, zeitabhängigen Schutzkennlinien, Kurzschluss- oder Fehlerstromberechnung und keine Verteilung von Strömen auf parallele Leiter. Die Prüfung stellt keinen Schutz- oder Installationsnachweis aus. Stromstoßrelais-Steuerkreise werden hier noch nicht auf Leiterebene ausgewertet; die vorhandene funktionale Relaissimulation bleibt verfügbar. Die Leiterergebnisse stehen in der separaten Tabelle; die Plan-Betriebsanzeigen zeigen weiterhin die funktionale Zuordnungssimulation.
+Seit 0.14.0 sind verdrahtete Stromstoßrelais und Fehlerstrom-Szenarien mit ausdrücklich angegebenem Gesamtwiderstand sowie idealisierter FI-Reaktion enthalten. Bedienung und Rechengrenzen stehen in [Verdrahtete Simulation](conductor-simulation.md). Verteilte Impedanzen, Spannungsabfälle, zeitabhängige Schutzkennlinien und Stromaufteilung auf parallele Leiter sind nicht enthalten. Die Prüfung stellt keinen Schutz- oder Installationsnachweis aus. Die Leiterergebnisse stehen in der separaten Tabelle; die Plan-Betriebsanzeigen zeigen weiterhin die funktionale Zuordnungssimulation.
 
 ## Raumvorlagen und Netzwerk
 

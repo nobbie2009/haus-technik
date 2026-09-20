@@ -65,6 +65,11 @@ export function ScenariosPanel({ onClose }: { onClose: () => void }) {
                 <td>{devices.reduce((s, d) => s + (d.power ?? 0), 0).toFixed(0)} W</td>
                 <td>{utilization.length ? `${Math.max(...utilization).toFixed(1)} %` : "Unbekannt"}</td>
                 <td>
+                  {!!saved.scenario.conductorFaults?.length && (
+                    <span>
+                      {saved.scenario.conductorFaults.length} Leiterfehler (Ergebnis in Leiterprüfung) ·{" "}
+                    </span>
+                  )}
                   {devices.filter((d) => d.status === "incomplete").length} unvollständig
                   {devices.some((d) => d.estimated) ? " · Schätzung" : ""}
                 </td>

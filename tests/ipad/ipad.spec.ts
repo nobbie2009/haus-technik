@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import type { Project } from "../../src/models/project";
 import { createDemoProject } from "../../src/editor/demoProject";
+import { conductorFixture } from "../simulation/conductorFixture";
 
 async function exportProject(page: Page): Promise<Project> {
   const event = page.waitForEvent("download");
@@ -24,6 +25,23 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(crypto, "randomUUID", { value: undefined }));
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Neu", exact: true })).toBeEnabled();
+});
+
+test("Fehlerstrom-Szenario lässt sich auf dem iPad bedienen", async ({ page }) => {
+  const { project } = conductorFixture();
+  await page.getByLabel("Projektdatei importieren").setInputFiles({
+    name: "fehler.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(project)),
+  });
+  await page.getByRole("button", { name: "Hausakte", exact: true }).tap();
+  await page.getByRole("button", { name: "Leiterprüfung", exact: true }).tap();
+  await page.getByLabel("Gesamtwiderstand des Fehlerkreises (Ω)").fill("4600");
+  await page.getByRole("button", { name: "Fehler simulieren", exact: true }).tap();
+  await expect(page.getByText("Im Modell abgeschaltet", { exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/conductor-ipad.png" });
+  await page.getByRole("button", { name: "Fehler bei Testlampe entfernen", exact: true }).tap();
+  await expect(page.getByText("Im Modell abgeschaltet", { exact: true })).toHaveCount(0);
 });
 
 test("Hochformat, Querformat und Split View bleiben bedienbar", async ({ page }) => {

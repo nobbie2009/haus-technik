@@ -364,3 +364,17 @@ Mehrfinger-Gesten ändern ausschließlich den Viewport und verwerfen laufende Ve
 Dialoge verwenden ein Portal am Dokumentkörper, damit ausgeblendete Seitenleisten sie nicht verstecken.
 UUIDs entstehen über eine zentrale Funktion mit `getRandomValues` als Alternative für HTTP-LAN-Adressen.
 Bedienung und Testgrenzen: [iPad](ipad.md). Aktueller offener Umfang: [Roadmap](roadmap.md).
+
+## Verdrahtete Fehler- und Relaisszenarien (App 0.14.0)
+
+Die Leiterberechnung behält neben den Zusammenhangskomponenten einen gerichtungsmarkierten,
+ansonsten ungerichteten Kontaktgraphen. Geschützte Verteilerkanten tragen die Schutzketten-IDs.
+Fehlerpfade liefern vorzeichenbehaftete Beiträge zu deren phasenbezogenen Differenzströmen.
+Parallele Pfade werden über alternative Wege erkannt und nicht mit einer willkürlichen Stromaufteilung bewertet.
+Erreichte FI-Modellschwellen erzeugen einen neuen Berechnungspass mit geöffneten Schutzkontakten.
+Eingabeprojekt und Szenario bleiben unverändert; automatische Abschaltungen sind abgeleitete Ergebnisse.
+
+Ein Tasterimpuls vergleicht den Leitergraphen vor und während eines temporären Tastendrucks.
+Nur neu versorgte Relaisspulen verändern den bistabilen Szenariozustand. Das Dokument bleibt unverändert.
+Optionale `conductorFaults` in gespeicherten Szenarien sind streng validiert, ältere Szenarien bleiben lesbar.
+Details und Grenzen: [Verdrahtete Simulation](conductor-simulation.md).

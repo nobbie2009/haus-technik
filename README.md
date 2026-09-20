@@ -3,7 +3,15 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.13.0: iPad und Touch
+## Neu in 0.14.0: verdrahtete Relais und Fehlerstrom-Szenarien
+
+Die Leiterprüfung wertet Tasterimpulse an tatsächlich verbundenen Relaisspulen aus. L–PE-/L–N-Fehler
+mit angegebenem Gesamtwiderstand zeigen Fehlerstrom und idealisierte FI-Reaktionen.
+[Bedienung und Modellgrenzen](docs/conductor-simulation.md).
+
+GitHub-CI, Dependabot und Beitragsvorlagen sind vorbereitet: [GitHub-Anleitung](docs/github.md).
+
+## Seit 0.13.0: iPad und Touch
 
 Einklappbare Seitenleisten, Hoch-/Querformat, Zwei-Finger-Zoom, Zeichenaktionen ohne Tastatur und WLAN-Start.
 Anleitung und Testgrenzen: [iPad](docs/ipad.md). Offene Schritte: [Roadmap](docs/roadmap.md).
