@@ -1,5 +1,64 @@
 # Deployment und Betrieb
 
+## Bevorzugt: interaktiver Installer und Update-Befehl
+
+Den vollständigen Repository-Checkout auf dem Proxmox-Host bereitstellen. Als root:
+
+```bash
+bash .agents/skills/home-technik-proxmox-lxc/scripts/install.sh
+```
+
+Alle Zielwerte werden im Terminal abgefragt: freie CT-ID, Hostname, Rootfs-/Template-Storage,
+vorhandenes Debian-Template, Bridge, VLAN, DHCP oder IPv4/CIDR mit Gateway, DNS, CPU, RAM, Disk und
+Browseradresse. Leere optionale Antworten sind erlaubt. Das Skript zeigt die ermittelten Werte und
+wartet auf `ja`, bevor es den Container erstellt. Der Aufruf erfolgt direkt auf dem Proxmox-Host;
+deshalb werden weder Hostpasswort noch SSH-Schlüssel benötigt. Bestehende CT-IDs werden abgelehnt.
+Es werden keine Templates, IP-Adressen oder Kennwörter erfunden. Ein fehlendes Template vorher mit
+Proxmox herunterladen. DNS/Paketquellen und GitHub müssen aus dem neuen Container erreichbar sein.
+
+Der Installer lädt das neueste vollständige GitHub-Release, das erst nach erfolgreichen CI-Prüfungen
+veröffentlicht wird. Er richtet Nginx und den Symlink `/usr/local/bin/Update` auf
+`/opt/home-technik/update.py` ein. Im Container als root:
+
+```bash
+Update --check
+Update
+Update --rollback
+```
+
+Diese Befehle einzeln nach Bedarf verwenden, nicht als gemeinsame Installationsfolge.
+`Update` zeigt alte/neue Version und fragt vor der Installation; `--yes` erlaubt ausdrücklich
+unbeaufsichtigte Installation. `--check` ändert keine App-Dateien. `--rollback` fragt vor dem Wechsel
+auf das vorherige Release. Vom Proxmox-Host zuerst `pct enter CT-ID` verwenden; für eine rein lesende
+Prüfung ist `pct exec CT-ID -- Update --check` möglich.
+
+Downloads sind an das Repository gebunden, werden per SHA-256 geprüft und ohne Archiv-Symlinks entpackt.
+Ein Prozess-Lock verhindert parallele Updates. Der atomare `current`-Wechsel wird mit HTTP geprüft;
+bei Fehlern wird ein vorhandener vorheriger Stand wieder aktiviert. Nach einem Rollback kann das bereits
+vorhandene neuere Release nur dann wiederverwendet werden, wenn alle Dateien dem geprüften Paket entsprechen.
+Der Updater selbst wird bei erfolgreichem Update ebenfalls erneuert. Releases/Assets bleiben erhalten.
+
+Die App fragt beim Öffnen und einmal pro Stunde bei sichtbarem Fenster die GitHub-Release-API ab;
+parallel prüft sie `version.json` auf dem eigenen Server. Sie unterscheidet „Update verfügbar“ von einer
+bereits installierten neuen Serverversion. Keine automatische Installation oder erzwungenes Neuladen.
+Bei Netzfehlern oder API-Limit bleibt die App bedienbar; manuelle Prüfung über die Versionsanzeige.
+
+Pro Änderung `npm version patch --no-git-tag-version` (bei Funktionen entsprechend `minor`) verwenden,
+deutsches Changelog aktualisieren und beide Paketdateien committen. CI lehnt unveränderte/rückläufige
+Versionen gegenüber dem vorherigen Push beziehungsweise PR-Basisstand ab. Bereits veröffentlichte Releases
+werden nicht überschrieben. Der Installer benötigt mindestens das Release 0.22.0.
+
+Bei fehlgeschlagener Erstinstallation bleibt der Container zur Diagnose erhalten. Nicht wiederholt mit
+derselben belegten ID starten. Netzwerk, Paketinstallation und den letzten erfolgreichen Schritt prüfen;
+wenn `Update` samt Verwaltungsmarker schon eingerichtet ist, kann dessen Erstinstallation erneut gestartet
+werden. Keine Container oder Releaseverzeichnisse automatisch entfernen.
+
+## Manueller Weg für Sonderfälle
+
+Die folgenden Schritte dienen vorhandenen Umgebungen oder separat vorbereiteten Builds.
+Sie installieren den Update-Symlink nicht automatisch. Einen vorhandenen Container erst nach Inventarisierung
+gezielt auf den Installer-Verzeichnisaufbau umstellen; der interaktive Installer übernimmt ihn nicht.
+
 Die Befehle sind Vorlagen für die jeweils bezeichnete Shell. Werte aus der tatsächlichen Umgebung setzen.
 Bei einem Fehler stoppen und den erreichten Zustand prüfen; keine folgenden Mutationen blind fortsetzen.
 Hostzugang und Containerparameter gehören in den aktuellen Auftrag, nicht in die veröffentlichten Skill-Dateien.

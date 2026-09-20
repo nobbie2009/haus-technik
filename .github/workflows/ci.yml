@@ -21,11 +21,22 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - name: Versionsnummer prüfen
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-version.mjs "$BASE_SHA"
+      - name: Deployment-Skripte prüfen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nginx
+          bash -n .agents/skills/home-technik-proxmox-lxc/scripts/install.sh
+          python3 -m unittest discover -s tests/deployment -p 'test_*.py'
       - run: npm run format:check
       - run: npm run check
       - run: npm run build
@@ -42,3 +53,29 @@ jobs:
           path: test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+  release:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/package-release.mjs
+      - name: Geprüftes Installationspaket veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "Release v$VERSION existiert bereits; es wird nicht überschrieben."
+            exit 1
+          fi
+          gh release create "v$VERSION" "exports/home-technik-$VERSION.tar.gz" "exports/home-technik-$VERSION.tar.gz.sha256" --target "$GITHUB_SHA" --title "Home-Technik $VERSION" --notes-file CHANGELOG.md

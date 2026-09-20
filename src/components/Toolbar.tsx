@@ -26,6 +26,7 @@ import { Modal } from "./dialogs/Modal";
 import { createDemoProject } from "../editor/demoProject";
 import type { DisplayUnit } from "../models/common";
 import { readQrLink } from "../housebook/qr";
+import { UpdateStatus } from "./UpdateStatus";
 
 export function Toolbar() {
   const project = useProjectStore((s) => s.project);
@@ -95,7 +96,7 @@ export function Toolbar() {
             }[status]
           }
         </div>
-        <span className="build-label">GRUNDRISS · 2D</span>
+        <UpdateStatus />
       </header>
       <div className="command-bar">
         <div className="project-commands">

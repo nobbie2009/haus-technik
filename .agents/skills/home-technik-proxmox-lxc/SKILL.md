@@ -42,6 +42,18 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
 
 ## Ablauf
 
+Für neue Installationen bevorzugt das interaktive [install.sh](scripts/install.sh) auf dem Proxmox-Host
+ausführen. Es fragt CT-ID, Hostname, Storages, vorhandenes Debian-Template, Netzwerk einschließlich
+VLAN/DNS, Ressourcen und Zieladresse ab. Es erstellt ausschließlich einen neuen Container und zeigt
+vorher die vollständige Zusammenfassung. Keine weiteren Rückfragen des Assistenten nötig, wenn der Nutzer
+die Daten direkt im Skript eingeben möchte. Den ganzen Skill bereitstellen, nicht nur die Shell-Datei.
+
+Im LXC zeigt `/usr/local/bin/Update` auf [update.py](scripts/update.py). `Update` prüft das neueste stabile
+GitHub-Release und fragt vor Installation; `Update --check` prüft nur, `Update --rollback` aktiviert den
+vorherigen App-Stand. Downloads werden per SHA-256 geprüft; Releases kommen aus erfolgreicher Projekt-CI.
+Die App prüft beim Start und stündlich auf neue Releases, installiert aber nicht selbst.
+Versionen bei jedem ausgelieferten Update erhöhen; `AGENTS.md` und CI-Versionsprüfung beachten.
+
 Für die konkreten Befehle [Deployment und Betrieb](references/deployment.md) lesen.
 Die [Nginx-Vorlage](assets/home-technik.conf) ist für einen dedizierten Debian-LXC an der URL-Wurzel gedacht.
 Vorhandene Sites und Reverse Proxies gezielt integrieren; fremde Konfiguration nicht pauschal überschreiben.

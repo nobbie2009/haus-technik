@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.22.0 · 20.09.2026
+
+- Interaktiver Proxmox-Installer fragt Container, Storage, Debian-Template, Netzwerk und Ressourcen ab.
+- Update-Symlink im LXC mit Prüfsummenprüfung, atomarem Releasewechsel und Rollback auf den vorherigen Stand.
+- App zeigt ihre Version und prüft beim Öffnen sowie stündlich auf neue GitHub-Releases.
+- Neue Serverversion wird erkannt; offene Eingaben bleiben bis zum selbst gewählten Neuladen erhalten.
+- Versionsnummern in Paket und Lockdatei werden pro Update erhöht und in CI gegen den bisherigen Stand geprüft.
+- Nach erfolgreichen CI-Prüfungen veröffentlicht GitHub ein versioniertes Installationspaket mit SHA-256.
+
 ## 20.09.2026 · Deployment-Skill (App weiterhin 0.21.0)
 
 - Wiederverwendbarer Codex-Skill für Home-Technik auf einem unprivilegierten Proxmox-LXC.

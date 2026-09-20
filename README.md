@@ -12,7 +12,27 @@ Im Repository liegt er unter `.agents/skills/`; zur persönlichen Verwendung den
 nach `~/.codex/skills/` kopieren. Aufruf: `$home-technik-proxmox-lxc`.
 Die Erstellung des Skills führt noch kein Deployment auf einem Server aus.
 
-## Neu in 0.21.0: Hausalltag und Gerätewechsel
+Auf dem Proxmox-Host das Repository herunterladen und den Assistenten als root starten:
+
+```bash
+git clone https://github.com/nobbie2009/haus-technik.git
+cd haus-technik
+bash .agents/skills/home-technik-proxmox-lxc/scripts/install.sh
+```
+
+Das Skript fragt alle Containerdaten ab. Ein Debian-Template muss bereits im Proxmox-Storage liegen.
+Nach der Einrichtung im **LXC-Terminal** `Update` ausführen; `Update --check` prüft nur,
+`Update --rollback` stellt die vorherige App-Version wieder her.
+Vom Proxmox-Host zuerst mit `pct enter CT-ID` in den Container wechseln.
+Die Versionsanzeige in der App meldet neue Releases automatisch; sie installiert nichts ohne dein Zutun.
+
+## Neu in 0.22.0: Installation und Updates
+
+Interaktiver LXC-Installer, Update-Befehl mit Rollback und automatische Updatehinweise.
+GitHub erstellt nach bestandener Projektprüfung versionierte Installationspakete.
+Die CI verlangt für jeden neuen Update-Stand eine höhere Versionsnummer.
+
+## Seit 0.21.0: Hausalltag und Gerätewechsel
 
 Startseite mit Terminen, Ablesungen und Sicherungshinweisen, Hauschronik mit Fotos und Belegen,
 geprüfte Sicherungsdateien und Gerätewechsel, QR-Aufkleber, druckbare Haus-Schnellübersicht sowie

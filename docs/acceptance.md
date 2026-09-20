@@ -326,3 +326,17 @@ mit Poppler gerendert und visuell geprüft; erwartete PDF-Texte waren vollständ
 Der QR-Code wurde aus der gerenderten Druckseite mit ZXing decodiert und auf das erwartete WLAN-Ziel geprüft.
 Die iPad-Oberfläche wurde zusätzlich anhand des Screenshots kontrolliert. Keine echte iPad-Kamera,
 kein physisches Gerät und kein Papierausdruck getestet; sämtliche Druckproben verwenden synthetische Daten.
+
+## Installation und Updates (0.22.0)
+
+Lokal erfolgreich: 315 Modultests, 45 Desktop-Browsertests und 13 iPad-WebKit-Tests gegen den
+Produktionsbuild im WLAN. Updatehinweise unterscheiden neue Releases, neue Serverversionen und
+Netzwerkfehler. Die Ansicht wurde bei 600, 810 und 1080 Pixeln geprüft und im Screenshot kontrolliert.
+TypeScript, Produktionsbuild, Formatprüfung, Versionsprüfung und Skill-Validierung erfolgreich.
+
+Deployment-Prüfungen: Bash-Syntax, Versionsvergleich, Archivpfade, Prüfsummen und Wiederverwendung
+identischer Release-Dateien lokal geprüft. Produktionspaket mit dem tatsächlichen Updater entpackt
+und Version/Inhalt verglichen. Linux-CI führt zusätzlich die Symlink-Aktivierung und Rückkehr nach
+fehlgeschlagener HTTP-Prüfung, einen echten Nginx-Test für MIME/Cache/404 sowie den interaktiven
+Installer gegen simulierte Proxmox-Befehle aus. Erstinstallation auf einem echten Proxmox-Host
+und physisches iPad bleiben ungetestet.
