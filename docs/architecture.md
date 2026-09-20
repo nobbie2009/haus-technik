@@ -405,3 +405,17 @@ werden aus den Anschlussobjekten abgeleitet. Die Transaktionsprüfung berücksic
 auch bei gesperrten Leitungen. Die Importprüfung validiert Datenformen vor dem Zugriff auf die Tabellen.
 Numerische Betriebsdaten und Ventilstellungen sind reine Dokumentation; es gibt keinen Strömungslöser.
 Bedienung und genaue Längenannahmen: [Wasser, Heizung und Gas](utilities.md).
+
+## Wandfotos (App 0.17.0)
+
+Wände speichern unter `metadata.wallPhotos` eine validierte Liste eingebetteter Bilder mit Beschreibungen,
+Fotoverläufen und optionaler Zwei-Punkt-Referenz. Alle Punktkoordinaten sind auf die Bildbreite und -höhe
+normiert; Bildanzeige und Zoom verändern diese Daten nicht. Längen verwenden beide Pixeldimensionen und
+den Maßstab der Referenz. Fotoverläufe sind unabhängig von elektrischen und hydraulischen Netzobjekten.
+
+Gespeicherte Änderungen laufen durch die gemeinsame Transaktionshistorie und Wandsperrprüfung.
+Zeichenentwürfe bleiben lokal im Dialog, bis der Benutzer sie speichert. Pointer-Gesten unterscheiden
+Tippen, Ziehen und Mehrfinger-Eingabe. Modal-Abbruch kann verhindert werden, um das Verwerfen eines
+Entwurfs bestätigen zu lassen. Die bestehende Bildverarbeitung begrenzt die Auflösung; die Projektprüfung
+wendet die 18-MB-Gesamtgrenze auch auf Projekte an, die ausschließlich Wandfotos enthalten.
+Bedienung und Grenzen: [Wandfotos](wall-photos.md).

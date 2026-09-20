@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.17.0 · 20.09.2026
+
+- Mehrere Fotos direkt an einer Wand, mit Titel, Wandseite und Notizen.
+- Farbige Fotoverläufe für Elektrik, Wasser, Heizung, Gas und Netzwerk, inklusive Beschriftung und Bearbeitung.
+- Zoom, Fingerpunkte, Koordinateneingabe und Abbruchschutz für begonnene Zeichnungen.
+- Optionale Fotoreferenz für ausdrücklich ungefähre Verlaufslängen; eigenständiger SVG-Export mit eingebettetem Foto.
+- Integration in Projektspeicherung, JSON-Export, Undo/Redo und Wandsperren; validierte Bild- und Verlaufsdaten.
+- Modell-, Desktop- und iPad-Prüfungen für Zuordnung, Zeichnung, Kalibrierung, Wiederherstellung und Touch-Bedienung.
+
 ## 0.16.0 · 20.09.2026
 
 - Neuer Planungsbereich für Kalt-/Warmwasser, Heizungsvor-/rücklauf und Gas mit getrennten Ebenen.

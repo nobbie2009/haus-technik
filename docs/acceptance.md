@@ -238,3 +238,19 @@ Planungstab beziehungsweise den tatsächlichen zugänglichen Etagen-Buttonnamen 
 bestanden beim gezielten Nachlauf. Die beiden Rohrnetz-Tests und der iPad-Rohrnetz-Test wurden nach
 der abschließenden Beschriftungsanpassung erneut erfolgreich ausgeführt. TypeScript, Produktionsbuild
 und Formatprüfung erfolgreich. Desktop- und iPad-Testbilder visuell geprüft; kein physisches iPad getestet.
+
+## Wandfotos und Fotoverläufe (0.17.0)
+
+- JPEG-/PNG-Foto an eine Wand hängen und Wandseite beschreiben.
+- Eckpunkte zeichnen, Verlauf beschriften und mit einer Referenzstrecke näherungsweise messen.
+- Foto samt Markierungen als SVG exportieren und über JSON beziehungsweise Neuladen erhalten.
+- Foto einschließlich Verläufen löschen und im Dialog rückgängig machen.
+- Escape bei begonnenen Punkten lässt die Entscheidung zwischen Weiterzeichnen und Verwerfen offen.
+- Mehrere Wandseiten, unabhängige Wandkopien, Ebenensperren und Projektgrößenbegrenzung prüfen.
+- Ungültige Koordinaten, doppelte IDs, externe Bild-URLs und Nullstrecken ablehnen.
+- iPad-WebKit: Fingerpunkte bei 200 % Zoom behalten ihre Bildkoordinaten; synthetische Mehrfinger-Eingabe setzt keine Punkte.
+
+Validiert am 20.09.2026: 283 Modultests, 36 Desktop-Browsertests und acht iPad-WebKit-Tests erfolgreich.
+Die iPad-Prüfung lief gegen den Produktionsbuild über die HTTP-WLAN-Adresse. TypeScript, Build und
+Formatprüfung erfolgreich. Desktop-, iPad- und gerenderte SVG-Ausgabe anhand eines ausdrücklich
+synthetischen Wandbilds geprüft. Ein physisches iPad und echte Wandaufnahmen waren nicht Teil der Prüfung.

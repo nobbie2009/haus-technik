@@ -4,6 +4,8 @@ import type { Project } from "../../src/models/project";
 import { createDemoProject } from "../../src/editor/demoProject";
 import { conductorFixture } from "../simulation/conductorFixture";
 import { utilities } from "../../src/utilities/model";
+import { wallProject, wallPng } from "../wallPhotoFixture";
+import { wallPhotos } from "../../src/housebook/wallPhotos";
 
 async function exportProject(page: Page): Promise<Project> {
   const event = page.waitForEvent("download");
@@ -26,6 +28,65 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(crypto, "randomUUID", { value: undefined }));
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Neu", exact: true })).toBeEnabled();
+});
+
+test("Wandfoto auf dem iPad mit Fingerpunkten und Zoom annotieren", async ({ page }) => {
+  const { project, wall } = wallProject();
+  await page.getByLabel("Projektdatei importieren").setInputFiles({
+    name: "wand.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(project)),
+  });
+  await page.getByRole("button", { name: "Eigenschaften", exact: true }).tap();
+  await page.locator(".object-list summary").tap();
+  await page.getByRole("button", { name: /^Wand 1/ }).tap();
+  await page.getByRole("button", { name: "Wandfotos und Verläufe (0)", exact: true }).tap();
+  const dialog = page.getByRole("dialog", { name: "Wandfotos und Leitungsverläufe", exact: true });
+  await dialog
+    .getByLabel("Wandfoto hinzufügen")
+    .setInputFiles({ name: "Wand.png", mimeType: "image/png", buffer: await wallPng(page) });
+  const canvas = page.getByTestId("wall-photo-canvas");
+  await expect(canvas).toBeVisible();
+  await dialog.getByRole("button", { name: "Neuen Verlauf zeichnen", exact: true }).tap();
+  await canvas.evaluate((svg) => {
+    const r = svg.getBoundingClientRect();
+    for (const [type, pointerId] of [
+      ["pointerdown", 1],
+      ["pointerdown", 2],
+      ["pointerup", 1],
+      ["pointerup", 2],
+    ] as const)
+      svg.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          pointerType: "touch",
+          pointerId,
+          button: 0,
+          clientX: r.x + 30 * pointerId,
+          clientY: r.y + 30,
+        }),
+      );
+  });
+  await expect(
+    dialog.getByText("Verlauf: 0 Punkte. Eckpunkte antippen, dann Verlauf speichern.", { exact: true }),
+  ).toBeVisible();
+  await dialog.getByLabel("Fotozoom", { exact: true }).selectOption("2");
+  for (const factor of [0.2, 0.4]) {
+    const box = (await canvas.boundingBox())!;
+    await canvas.tap({ position: { x: box.width * factor, y: box.height * factor } });
+  }
+  await dialog.getByLabel("Verlaufsname", { exact: true }).fill("Wasser in der Wand");
+  await dialog.getByLabel("Leitungsart im Foto", { exact: true }).selectOption("cold");
+  await dialog.getByRole("button", { name: "Verlauf speichern", exact: true }).tap();
+  await dialog.getByLabel("Fotozoom", { exact: true }).selectOption("1");
+  await canvas.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "test-results/wall-photo-ipad.png" });
+  await dialog.getByRole("button", { name: "Dialog schließen", exact: true }).tap();
+  const photo = wallPhotos(await exportProject(page), wall)[0]!;
+  expect(photo.traces).toHaveLength(1);
+  expect(photo.traces[0]!.type).toBe("cold");
+  expect(photo.traces[0]!.points[0]!.x).toBeCloseTo(0.2, 2);
+  expect(photo.traces[0]!.points[1]!.y).toBeCloseTo(0.4, 2);
 });
 
 test("Rohrnetz auf dem iPad per Finger platzieren und verbinden", async ({ page }) => {

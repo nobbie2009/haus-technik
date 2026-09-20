@@ -2,8 +2,19 @@ import type { Project } from "../models/project";
 import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
 import { consumerLibrarySchema, consumerShapeSchema } from "../electrical/consumerLibrary";
+import { wallPhotosSchema } from "./wallPhotos";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [];
+  let hasWallPhotos = false;
+  for (const wall of Object.values(project.walls)) {
+    if (wall.metadata.wallPhotos === undefined) continue;
+    hasWallPhotos = true;
+    if (!wallPhotosSchema.safeParse(wall.metadata.wallPhotos).success)
+      issues.push({
+        path: `${wall.id}.wallPhotos`,
+        message: "Ungültige Wandfotos, Referenzstrecken oder Fotoverläufe.",
+      });
+  }
   if (project.metadata.consumerLibrary !== undefined) {
     const result = consumerLibrarySchema.safeParse(project.metadata.consumerLibrary);
     if (!result.success)
@@ -91,7 +102,10 @@ export function housebookIssues(project: Project): { path: string; message: stri
           });
       }
     }
-  if ((project.metadata.housebook || hasAssets) && JSON.stringify(project).length > 18_000_000)
+  if (
+    (project.metadata.housebook || hasAssets || hasWallPhotos) &&
+    JSON.stringify(project).length > 18_000_000
+  )
     issues.push({
       path: "metadata.housebook",
       message: "Projekt zu groß: maximal 18 MB einschließlich Bildern und Vorlagen.",

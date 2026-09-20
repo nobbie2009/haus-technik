@@ -180,6 +180,32 @@
 .asset-dialog {
   width: min(750px, 94vw);
 }
+.wall-photo-dialog {
+  width: min(1100px, 94vw);
+}
+.wall-photo-scroll {
+  overflow: auto;
+  max-height: 60vh;
+  border: 1px solid var(--border);
+  background: #edf1ed;
+  margin: 12px 0;
+}
+.wall-photo-canvas {
+  display: block;
+  height: auto;
+  max-width: none;
+  touch-action: pan-x pan-y pinch-zoom;
+  user-select: none;
+}
+.wall-photo-tools {
+  align-items: end;
+}
+.wall-photo-tools .book-field {
+  min-width: 110px;
+}
+.wall-photo-dialog .book-list button {
+  overflow-wrap: anywhere;
+}
 .book-fieldset {
   border: 0;
   padding: 0;

@@ -3,7 +3,12 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.16.0: Wasser, Heizung und Gas
+## Neu in 0.17.0: Wandfotos und Leitungsverläufe
+
+Fotos direkt an Wänden sammeln, Wandseiten beschreiben und Leitungsverläufe auf den Bildern markieren.
+Mit Fingerbedienung, Zoom, optionaler Referenzstrecke und SVG-Ausgabe. [Anleitung](docs/wall-photos.md).
+
+## Seit 0.16.0: Wasser, Heizung und Gas
 
 Technische Rohrnetze mit maßstäblichen Komponenten, getrennten Medien, Leitungsverläufen und
 Etagenverbindungen dokumentieren. Rohrmaterial, DN, Dämmung, Heizleistung und Objektakten bearbeiten;

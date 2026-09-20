@@ -3,14 +3,21 @@ import { getWallMeasurements } from "../../core/selectors";
 import { resizeWall } from "../../editor/actions/edit";
 import { TextField } from "../Fields";
 import { usePropertyFields } from "./usePropertyFields";
+import { WallPhotoDialog } from "../housebook/WallPhotoDialog";
+import { wallPhotos } from "../../housebook/wallPhotos";
 
 export function WallProperties({ id }: { id: string }) {
   const { project, locked, change, lengthField } = usePropertyFields({ kind: "walls", id });
   const [fixed, setFixed] = useState<"start" | "end">("start");
+  const [photosOpen, setPhotosOpen] = useState(false);
   const wall = project.walls[id]!;
   const data = getWallMeasurements(project, id);
   return (
     <>
+      <button className="full-width" onClick={() => setPhotosOpen(true)}>
+        Wandfotos und Verläufe ({wallPhotos(project, id).length})
+      </button>
+      {photosOpen && <WallPhotoDialog wallId={id} onClose={() => setPhotosOpen(false)} />}
       {lengthField("Länge", data.length, (draft, value) => resizeWall(draft, id, value, fixed))}
       <label className="field">
         Fester Endpunkt
