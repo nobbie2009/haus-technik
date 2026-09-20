@@ -379,6 +379,7 @@ export function csv(rows: string[][]) {
       .join("\r\n")
   );
 }
+import { addPdfFooter } from "./pdfFooter";
 let fontData: Promise<string> | undefined;
 export async function embedFont(doc: import("jspdf").jsPDF) {
   fontData ??= fetch(`${import.meta.env.BASE_URL}fonts/NotoSans-Regular.ttf`)
@@ -462,6 +463,7 @@ export async function exportPlanPdf(
       doc.line(15, 198, 15 + 1000 / scale, 198);
       doc.text("1 m", 17 + 1000 / scale, 199);
     }
+  addPdfFooter(doc);
   doc.save("Hausplan.pdf");
 }
 export async function exportInventoryPdf(project: Project) {
@@ -499,5 +501,6 @@ export async function exportInventoryPdf(project: Project) {
   line("Materialbestand (keine automatisch berechnete Bestellung)", true);
   for (const row of materialRows(project).slice(1))
     line(`${row[1]} ${row[2]} | ${row[3]} | ${row[4]} | ${row[5]} ${row[6]} ${row[7]}`);
+  addPdfFooter(doc);
   doc.save("Verteiler-und-Material.pdf");
 }

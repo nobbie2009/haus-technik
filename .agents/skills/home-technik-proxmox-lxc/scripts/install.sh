@@ -52,6 +52,16 @@ ask public_url 'Dauerhafte Browser-Adresse (leer = zunächst Container-IP)'
 if [[ -n $public_url ]]; then
   python3 -c 'from urllib.parse import urlsplit; import sys; u=urlsplit(sys.argv[1]); assert u.scheme in ("http","https") and u.hostname and not u.username and not u.password and u.path in ("", "/") and not u.query and not u.fragment' "$public_url"
 fi
+read -r -s -p 'Update-Passwort (mindestens 12 Zeichen, leer = sicher erzeugen): ' update_password
+printf '\n'
+if [[ -z $update_password ]]; then
+  update_password=$(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')
+else
+  [[ ${#update_password} -ge 12 && ${#update_password} -le 1024 ]] || { echo 'Passwortlänge ungültig'; exit 1; }
+  read -r -s -p 'Update-Passwort wiederholen: ' password_repeat
+  printf '\n'
+  [[ $update_password == "$password_repeat" ]] || { echo 'Passwörter stimmen nicht überein'; exit 1; }
+fi
 net="name=eth0,bridge=$bridge,ip=$address,firewall=1"
 [[ -z $gateway ]] || net+=",gw=$gateway"
 [[ -z $vlan ]] || net+=",tag=$vlan"
@@ -74,6 +84,12 @@ pct push "$ctid" "$script_dir/update.py" /opt/home-technik/update.py --perms 075
 pct push "$ctid" "$script_dir/../assets/home-technik.conf" /etc/nginx/sites-available/home-technik
 pct exec "$ctid" -- bash -c 'set -e; test ! -e /usr/local/bin/Update; test ! -L /usr/local/bin/Update; test -L /etc/nginx/sites-enabled/default; test "$(readlink /etc/nginx/sites-enabled/default)" = /etc/nginx/sites-available/default; unlink /etc/nginx/sites-enabled/default; ln -s /etc/nginx/sites-available/home-technik /etc/nginx/sites-enabled/home-technik; ln -s /opt/home-technik/update.py /usr/local/bin/Update; touch /var/lib/home-technik/managed; nginx -t'
 pct exec "$ctid" -- /usr/local/bin/Update --yes
+pct push "$ctid" "$script_dir/update_api.py" /opt/home-technik/update_api.py --perms 0755
+pct push "$ctid" "$script_dir/../assets/home-technik-update.service" /etc/systemd/system/home-technik-update.service
+printf '%s' "$update_password" | pct exec "$ctid" -- python3 -c 'import hashlib,json,secrets,sys,os; salt=secrets.token_bytes(32); value={"salt":salt.hex(),"hash":hashlib.pbkdf2_hmac("sha256",sys.stdin.read().encode(),salt,600000).hex()}; path="/var/lib/home-technik/update-auth.json"; fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600); os.write(fd,json.dumps(value).encode()); os.close(fd)'
+pct exec "$ctid" -- bash -c 'systemctl daemon-reload && systemctl enable --now home-technik-update.service'
 pct exec "$ctid" -- hostname -I
 printf '\nInstallation abgeschlossen. Browser-Adresse: %s\nUpdate im LXC: Update\nVom Host zuerst: pct enter %s\nNur prüfen: Update --check\nZurücksetzen: Update --rollback\n' "${public_url:-http://CONTAINER-IP/ (siehe oben)}" "$ctid"
 echo 'Bei DHCP jetzt eine feste Reservierung setzen. JSON-Projektdatei an der neuen Browseradresse importieren.'
+printf 'Update-Passwort für die App (sicher aufbewahren): %s\n' "$update_password"
+unset update_password password_repeat

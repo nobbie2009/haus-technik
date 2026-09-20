@@ -1,5 +1,8 @@
 # Projektregeln
 
+- App-Footer und jede erzeugte PDF-Seite zeigen Appname, aktuelle Build-Version und
+  `Copyright by nobbie2009`. Für neue PDF-Ausgaben den gemeinsamen Footer verwenden.
+
 - Jede ausgelieferte Änderung erhält eine höhere App-Version in `package.json` und `package-lock.json`:
   mindestens Patch, bei neuen Funktionen Minor. Vor einem neuen Update den letzten Stand von `origin/master`
   prüfen. Nicht dieselbe Versionsnummer für unterschiedliche ausgelieferte Stände verwenden.

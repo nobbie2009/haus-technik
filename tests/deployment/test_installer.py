@@ -22,7 +22,7 @@ class InstallerTests(unittest.TestCase):
             if os.geteuid()!=0:
                 if not shutil.which('sudo'): self.skipTest('No root/sudo available')
                 command=['sudo','-n','env',f'PATH={env["PATH"]}',f'CALL_LOG={log}',f'OCCUPIED_EXIT={env["OCCUPIED_EXIT"]}',*command]
-            answers=['203','','local-lvm','local','local:vztmpl/debian-13-standard_test_amd64.tar.zst','','','dhcp','','','','','',confirm]
+            answers=['203','','local-lvm','local','local:vztmpl/debian-13-standard_test_amd64.tar.zst','','','dhcp','','','','','','test-password-123','test-password-123',confirm]
             result=subprocess.run(command,input='\n'.join(answers)+'\n',text=True,capture_output=True,env=env,timeout=15)
             return result, log.read_text() if log.exists() else ''
 

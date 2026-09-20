@@ -1,6 +1,7 @@
 import hashlib
 import importlib.util
 import io
+import os
 import json
 from pathlib import Path
 import sys
@@ -47,6 +48,16 @@ class UpdateTests(unittest.TestCase):
             updater.extract_verified(data, hashlib.sha256(data).hexdigest().encode(), Path(tmp))
             self.assertEqual((Path(tmp)/'dist/index.html').read_text(), 'house')
             with self.assertRaises(ValueError): updater.extract_verified(data, b'0'*64, Path(tmp))
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX permissions')
+    def test_service_umask_keeps_web_files_readable(self):
+        data=archive('dist/assets/app.js')
+        with tempfile.TemporaryDirectory() as tmp:
+            mask=os.umask(0o077)
+            try: updater.extract_verified(data,hashlib.sha256(data).hexdigest().encode(),Path(tmp))
+            finally: os.umask(mask)
+            self.assertEqual((Path(tmp)/'dist/assets').stat().st_mode & 0o777,0o755)
+            self.assertEqual((Path(tmp)/'dist/assets/app.js').stat().st_mode & 0o777,0o644)
 
     def test_reject_paths_and_links_before_writing(self):
         for name, link in [('dist/../../etc/passwd',False),('/etc/passwd',False),('deploy/evil',True),('other/data',False)]:

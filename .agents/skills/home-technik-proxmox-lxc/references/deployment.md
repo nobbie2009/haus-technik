@@ -10,10 +10,11 @@ bash .agents/skills/home-technik-proxmox-lxc/scripts/install.sh
 
 Alle Zielwerte werden im Terminal abgefragt: freie CT-ID, Hostname, Rootfs-/Template-Storage,
 vorhandenes Debian-Template, Bridge, VLAN, DHCP oder IPv4/CIDR mit Gateway, DNS, CPU, RAM, Disk und
-Browseradresse. Leere optionale Antworten sind erlaubt. Das Skript zeigt die ermittelten Werte und
+Browseradresse. Anschließend Update-Passwort eingeben oder leer lassen, um eines sicher zu erzeugen.
+Das Passwort am Ende sicher aufbewahren. Leere optionale Antworten sind erlaubt. Das Skript zeigt die ermittelten Werte und
 wartet auf `ja`, bevor es den Container erstellt. Der Aufruf erfolgt direkt auf dem Proxmox-Host;
 deshalb werden weder Hostpasswort noch SSH-Schlüssel benötigt. Bestehende CT-IDs werden abgelehnt.
-Es werden keine Templates, IP-Adressen oder Kennwörter erfunden. Ein fehlendes Template vorher mit
+Es werden keine Templates oder IP-Adressen erfunden. Ein fehlendes Template vorher mit
 Proxmox herunterladen. DNS/Paketquellen und GitHub müssen aus dem neuen Container erreichbar sein.
 
 Der Installer lädt das neueste vollständige GitHub-Release, das erst nach erfolgreichen CI-Prüfungen
@@ -47,6 +48,27 @@ Pro Änderung `npm version patch --no-git-tag-version` (bei Funktionen entsprech
 deutsches Changelog aktualisieren und beide Paketdateien committen. CI lehnt unveränderte/rückläufige
 Versionen gegenüber dem vorherigen Push beziehungsweise PR-Basisstand ab. Bereits veröffentlichte Releases
 werden nicht überschrieben. Der Installer benötigt mindestens das Release 0.22.0.
+
+### Updates in der App ab 0.23.0
+
+Der Installer richtet `home-technik-update.service` ein. Der Python-Dienst lauscht ausschließlich
+auf `127.0.0.1:9087`; Nginx leitet nur `/api/home-technik-update` dorthin weiter. Er akzeptiert einen
+festen Update-Befehl, keine frei wählbaren Shellbefehle, URLs oder Dateipfade. Das Update-Passwort wird
+mit Salt und PBKDF2 im LXC gespeichert, nicht im Browser. Fehlversuche werden begrenzt und parallele
+Installationen abgewiesen. Das ist für das vertrauenswürdige Heimnetz vorgesehen; bei HTTP wird auch
+die Passwortanfrage nicht transportverschlüsselt. Bei vorhandenem HTTPS-Proxy dessen Adresse benutzen.
+
+Bestehender LXC: zuerst `Update`, danach einmalig `Update --setup-web`. Dieser Dialog fragt das Passwort ab
+und ersetzt nach Bestätigung die verwaltete Nginx-Site; angepasste Proxy-/Hostnamenkonfiguration vorher
+prüfen. Die vorherige Site wird gesichert. Danach die Versionsanzeige in der App öffnen, Passwort eingeben
+und **Update installieren** drücken. Der Fortschritt wird abgefragt; nach Erfolg bewusst **Neue Version laden**.
+Die API startet nach einem erfolgreichen Update neu und behält das Ergebnis für die Anzeige.
+
+Diagnose: `systemctl status home-technik-update`, `journalctl -u home-technik-update` sowie
+`/var/log/home-technik-update.log`. Bei vergessenem Passwort im LXC die Auth-Datei
+`/var/lib/home-technik/update-auth.json` gezielt umbenennen und `Update --setup-web` erneut ausführen.
+Die App-Version ändert sich bei Updates, Hausdaten und ihre Schema-Version werden dadurch nicht automatisch
+zurückgesetzt. Ein Proxmox-Backup ersetzt die JSON-Sicherung aus dem Browser nicht.
 
 Bei fehlgeschlagener Erstinstallation bleibt der Container zur Diagnose erhalten. Nicht wiederholt mit
 derselben belegten ID starten. Netzwerk, Paketinstallation und den letzten erfolgreichen Schritt prüfen;

@@ -12,7 +12,10 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import urllib.request
+import getpass
+import secrets
 
 ROOT = Path('/var/www/home-technik')
 STATE = Path('/var/lib/home-technik')
@@ -77,6 +80,10 @@ def extract_verified(archive, checksum, dest):
                 with tar.extractfile(member) as source, target.open('wb') as out:
                     shutil.copyfileobj(source, out)
                 target.chmod(0o644)
+        # The API service uses umask 0077; Nginx still needs directory traversal.
+        for directory in dest.rglob('*'):
+            if directory.is_dir():
+                directory.chmod(0o755)
 
 
 def run(*args):
@@ -136,11 +143,45 @@ def activate(target):
         (STATE / 'previous').write_text(previous.name)
 
 
+def setup_web():
+    cache = Path('/opt/home-technik')
+    config = Path('/etc/nginx/sites-available/home-technik')
+    if not config.is_file() or not (cache / 'home-technik.conf').is_file():
+        raise ValueError('Zuerst mit Update das aktuelle Release installieren; verwaltete Nginx-Site erforderlich')
+    print('Richtet den lokalen Update-Dienst ein und ersetzt die Home-Technik-Nginx-Site durch die aktuelle Vorlage.')
+    if input('Fortfahren? [ja/NEIN] ') != 'ja':
+        return
+    auth = STATE / 'update-auth.json'
+    if not auth.exists():
+        password = getpass.getpass('Neues Update-Passwort (mindestens 12 Zeichen): ')
+        if not 12 <= len(password) <= 1024 or password != getpass.getpass('Passwort wiederholen: '):
+            raise ValueError('Passwörter stimmen nicht überein oder Länge ungültig')
+        salt = secrets.token_bytes(32)
+        value = {'salt': salt.hex(), 'hash': hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 600000).hex()}
+        fd = os.open(auth, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, 'w') as stream:
+            json.dump(value, stream)
+    backup = config.read_bytes()
+    config.with_name('home-technik.before-web-' + str(time.time_ns())).write_bytes(backup)
+    try:
+        shutil.copyfile(cache / 'home-technik.conf', config)
+        run('nginx', '-t')
+    except Exception:
+        config.write_bytes(backup)
+        raise
+    shutil.copyfile(cache / 'home-technik-update.service', '/etc/systemd/system/home-technik-update.service')
+    run('systemctl', 'daemon-reload')
+    run('systemctl', 'enable', '--now', 'home-technik-update.service')
+    run('systemctl', 'reload', 'nginx')
+    print('Direkte Updates sind eingerichtet. In der App die Versionsanzeige öffnen.')
+
+
 def main():
     parser = argparse.ArgumentParser(description='Home-Technik im LXC aktualisieren')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--check', action='store_true', help='Nur auf neue Version prüfen')
     group.add_argument('--rollback', action='store_true', help='Vorheriges Release aktivieren')
+    group.add_argument('--setup-web', action='store_true', help='Update aus der App einrichten')
     parser.add_argument('--yes', action='store_true', help='Installation ohne Rückfrage')
     args = parser.parse_args()
     if os.geteuid() != 0:
@@ -149,6 +190,9 @@ def main():
         raise ValueError('Dieser Container wurde nicht mit dem Home-Technik-Installer eingerichtet')
     with (STATE / 'update.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if args.setup_web:
+            setup_web()
+            return
         current = active()
         current_version = json.loads((current / 'version.json').read_text())['version'] if current else '0.0.0'
         version(current_version)
@@ -197,6 +241,18 @@ def main():
             shutil.copyfile(updater, next_updater)
             next_updater.chmod(0o755)
             os.replace(next_updater, installed_updater)
+            api_source = staged / 'deploy/update_api.py'
+            if api_source.is_file():
+                api_next = Path('/opt/home-technik/update_api.next')
+                shutil.copyfile(api_source, api_next)
+                api_next.chmod(0o755)
+                os.replace(api_next, Path('/opt/home-technik/update_api.py'))
+            for name in ('home-technik.conf', 'home-technik-update.service'):
+                source = staged / 'deploy' / name
+                if source.is_file():
+                    shutil.copyfile(source, Path('/opt/home-technik') / name)
+        if not os.environ.get('HOME_TECHNIK_WEB_UPDATE') and Path('/etc/systemd/system/home-technik-update.service').is_file():
+            run('systemctl', 'try-restart', 'home-technik-update.service')
         print(f'Version {number} installiert. Browser neu laden. Rückweg: Update --rollback')
 
 

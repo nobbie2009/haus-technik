@@ -1,4 +1,14 @@
 /* System-Fallbacks ermöglichen vollständige Offline-Bedienung. */
+.app-footer {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  text-align: center;
+  background: #fff;
+  color: #334b50;
+  border-top: 1px solid #dce3de;
+  font-size: 12px;
+  line-height: 1.4;
+}
 .app-update-button {
   flex-shrink: 0;
   min-height: 44px;

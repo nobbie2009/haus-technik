@@ -1,6 +1,7 @@
 import type { Project } from "../models/project";
 import { boardSchedule } from "./boardSchedule";
 import { embedFont } from "./export";
+import { addPdfFooter } from "./pdfFooter";
 export async function createBoardSchedulePdf(project: Project, boardIds: string[], note = "") {
   const ids = [...new Set(boardIds)];
   if (!ids.length) throw new Error("Bitte einen Sicherungskasten auswählen.");
@@ -117,6 +118,7 @@ export async function createBoardSchedulePdf(project: Project, boardIds: string[
     doc.text("LS = Leitungsschutzschalter · FI = Fehlerstromschutzschalter · FI/LS = Kombination", 12, 194);
     doc.text(`Verteilerblatt ${pages[page - 1]!.page} · Gesamt ${page}/${total}`, 12, 200);
   }
+  addPdfFooter(doc);
   return doc;
 }
 export async function exportBoardSchedulePdf(project: Project, boardIds: string[], note = "") {

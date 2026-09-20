@@ -1,5 +1,13 @@
 # Änderungen
 
+## 0.23.0 · 20.09.2026
+
+- Updates direkt aus der App starten, mit Update-Passwort, Fortschritt und kontrolliertem Neuladen.
+- Lokaler Update-Dienst im LXC; Installer richtet Passwort und Dienst ein, bestehende Installationen mit `Update --setup-web` nachrüstbar.
+- Dauerhaft sichtbarer App-Footer mit Home-Technik, Versionsnummer und Copyright by nobbie2009.
+- Einheitlicher Footer auf jeder Seite sämtlicher erzeugter PDF-Ausgaben, einschließlich QR-Aufklebern.
+- PDF-Version stammt aus demselben Build wie die App-Anzeige; Seitennummern bleiben erhalten.
+
 ## 0.22.0 · 20.09.2026
 
 - Interaktiver Proxmox-Installer fragt Container, Storage, Debian-Template, Netzwerk und Ressourcen ab.

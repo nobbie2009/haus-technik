@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./dialogs/Modal";
 import { latestVersion, newer, releasePage, versionParts } from "../updates/check";
+import { UpdateInstall } from "./UpdateInstall";
 
 export function UpdateStatus() {
   const [open, setOpen] = useState(false),
@@ -74,8 +75,8 @@ export function UpdateStatus() {
             </p>
           ) : available ? (
             <p>
-              Im LXC-Terminal <code>Update</code> ausführen. Danach hier erneut prüfen und die Seite neu
-              laden.
+              Eine neuere Version ist verfügbar. Installiere sie hier oder führe im LXC-Terminal{" "}
+              <code>Update</code> aus.
             </p>
           ) : (
             <p>Updates werden nicht automatisch installiert.</p>
@@ -92,6 +93,17 @@ export function UpdateStatus() {
               Releases auf GitHub
             </a>
           </div>
+          <UpdateInstall onInstalled={() => void check()} />
+          {reload && (
+            <button
+              onClick={() => {
+                if (window.confirm("Offene Eingaben gespeichert? Neue App-Version jetzt laden?"))
+                  window.location.reload();
+              }}
+            >
+              Neue Version laden
+            </button>
+          )}
         </Modal>
       )}
     </>

@@ -340,3 +340,17 @@ und Version/Inhalt verglichen. Linux-CI führt zusätzlich die Symlink-Aktivieru
 fehlgeschlagener HTTP-Prüfung, einen echten Nginx-Test für MIME/Cache/404 sowie den interaktiven
 Installer gegen simulierte Proxmox-Befehle aus. Erstinstallation auf einem echten Proxmox-Host
 und physisches iPad bleiben ungetestet.
+
+## Updates aus der App und Footer (0.23.0)
+
+315 Modultests, TypeScript und Build erfolgreich. Gezielte Desktop-Prüfungen decken alle PDF-Ausgaben,
+die Update-API-Anbindung, falsche Passwörter, gesperrte Parallelstarts und die Erkennung des neuen
+Serverstands ab. iPad-Prüfungen kontrollieren Footer und Updateansicht bis 600 px Breite.
+Alle 13 Seiten der fünf erzeugten PDF-Formate enthalten Appname, Version 0.23.0, Copyright und
+Seitennummer; automatisch extrahiert und nach Poppler-Rendering visuell kontrolliert.
+
+Die Deployment-Suite prüft zusätzlich Authentifizierung, Rate-Limit, Cross-Origin-Abweisung und
+Parallelstarts über einen echten lokalen HTTP-Testserver, ohne reale Updates auszuführen.
+Linux-spezifische Prüfungen einschließlich Dateirechten bei restriktiver Dienst-Umask laufen in CI.
+Kein tatsächlicher Proxmox-Host oder physisches iPad verändert; der End-to-End-Betriebstest auf dem
+Ziel-LXC ist nach dessen Einrichtung noch durchzuführen.

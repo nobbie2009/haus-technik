@@ -28,7 +28,8 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
 - React/Vite-App: `npm ci`, `npm run check`, `npm run build`; Ausgabe `dist/`.
   Node-Version aus `.nvmrc`/`engines` verwenden (zur Erstellung dieses Skills: 24).
   Node nur auf dem Build-Rechner nötig. Kein Vite-Entwicklungs- oder Preview-Server als Dauerdienst.
-- Kein Backend, keine serverseitige Hausdatenbank und kein automatischer PC/iPad-Abgleich.
+- Kein Hausdaten-Backend, keine serverseitige Hausdatenbank und kein automatischer PC/iPad-Abgleich.
+  Der zusätzliche lokale Dienst ist ausschließlich für App-Updates zuständig.
   IndexedDB und Sicherungsnachweise liegen im jeweiligen Browser unter der jeweiligen Origin.
 - Vor Wechsel von Host, Port oder HTTP zu HTTPS am alten Ziel JSON exportieren und prüfen.
   Am neuen Ziel unter **Hausakte → Sicherung & Gerätewechsel** importieren.
@@ -52,6 +53,11 @@ Im LXC zeigt `/usr/local/bin/Update` auf [update.py](scripts/update.py). `Update
 GitHub-Release und fragt vor Installation; `Update --check` prüft nur, `Update --rollback` aktiviert den
 vorherigen App-Stand. Downloads werden per SHA-256 geprüft; Releases kommen aus erfolgreicher Projekt-CI.
 Die App prüft beim Start und stündlich auf neue Releases, installiert aber nicht selbst.
+Ab 0.23.0 kann der Nutzer die Installation in der App mit einem Update-Passwort starten.
+Der Installer fragt dieses ab (leer erzeugt ein zufälliges Passwort) und richtet einen nur auf Loopback
+gebundenen Python-Dienst mit festem Update-Befehl hinter Nginx ein. Bestehende Installationen nach `Update`
+einmalig mit `Update --setup-web` nachrüsten. Kein Passwort im Browser speichern oder ins Repository schreiben.
+Im App- und PDF-Footer müssen Name, Build-Version und `Copyright by nobbie2009` erhalten bleiben.
 Versionen bei jedem ausgelieferten Update erhöhen; `AGENTS.md` und CI-Versionsprüfung beachten.
 
 Für die konkreten Befehle [Deployment und Betrieb](references/deployment.md) lesen.

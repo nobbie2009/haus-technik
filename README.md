@@ -26,7 +26,17 @@ Nach der Einrichtung im **LXC-Terminal** `Update` ausführen; `Update --check` p
 Vom Proxmox-Host zuerst mit `pct enter CT-ID` in den Container wechseln.
 Die Versionsanzeige in der App meldet neue Releases automatisch; sie installiert nichts ohne dein Zutun.
 
-## Neu in 0.22.0: Installation und Updates
+## Neu in 0.23.0: Updates aus der App und Versionsangaben
+
+Über die Versionsanzeige **Update installieren** auswählen, Update-Passwort eingeben und den Fortschritt
+verfolgen. Bei neuen Installationen richtet der Assistent den Dienst automatisch ein. Für vorhandene
+LXC-Installationen einmalig `Update` und danach `Update --setup-web` im Container ausführen.
+Nach erfolgreicher Installation die neue Version bewusst über **Neue Version laden** öffnen.
+
+Appname, Versionsnummer und „Copyright by nobbie2009“ stehen dauerhaft im App-Footer und
+auf jeder Seite aller erzeugten PDFs.
+
+## Seit 0.22.0: Installation und Updates
 
 Interaktiver LXC-Installer, Update-Befehl mit Rollback und automatische Updatehinweise.
 GitHub erstellt nach bestandener Projektprüfung versionierte Installationspakete.

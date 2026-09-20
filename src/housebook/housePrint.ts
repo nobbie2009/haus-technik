@@ -3,6 +3,7 @@ import { life } from "./life";
 import { searchEntries, type SearchResult } from "./search";
 import { embedFont } from "./export";
 import { qrLink } from "./qr";
+import { addPdfFooter } from "./pdfFooter";
 export async function quickOverviewPdf(p: Project) {
   const { jsPDF } = await import("jspdf"),
     doc = new jsPDF(),
@@ -58,11 +59,7 @@ export async function quickOverviewPdf(p: Project) {
     line("Eigene Hinweise", true);
     line(b.quickNotes);
   }
-  for (let i = 1; i <= doc.getNumberOfPages(); i++) {
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.text(`Private Hausübersicht · ${i}/${doc.getNumberOfPages()}`, 14, 288);
-  }
+  addPdfFooter(doc);
   return doc;
 }
 export async function qrLabelsPdf(p: Project, entries: SearchResult[], base: string) {
@@ -90,5 +87,6 @@ export async function qrLabelsPdf(p: Project, entries: SearchResult[], base: str
     doc.text("Hausakte öffnen", x + 3, y + 59);
     doc.text(`${i + 1}/${entries.length}`, x + 77, y + 59);
   }
+  addPdfFooter(doc);
   return doc;
 }

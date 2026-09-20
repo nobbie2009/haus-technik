@@ -1,0 +1,17 @@
+[Unit]
+Description=Home-Technik local update control
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/home-technik/update_api.py
+Restart=on-failure
+RestartSec=5
+User=root
+UMask=0077
+PrivateTmp=true
+ProtectHome=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
