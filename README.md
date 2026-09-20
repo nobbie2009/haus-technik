@@ -3,7 +3,12 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.12.0: Hausakte
+## Neu in 0.13.0: iPad und Touch
+
+Einklappbare Seitenleisten, Hoch-/Querformat, Zwei-Finger-Zoom, Zeichenaktionen ohne Tastatur und WLAN-Start.
+Anleitung und Testgrenzen: [iPad](docs/ipad.md). Offene Schritte: [Roadmap](docs/roadmap.md).
+
+## Seit 0.12.0: Hausakte
 
 Über **Hausakte** stehen Grundrissvorlagen (Bild/PDF), Projektprüfung, maßstäbliche PDF-/SVG-Ausgabe, Materiallisten, gespeicherte Szenarien, Versorgungsschema, separate Leiterprüfung, Objektakten, Umbauzustände, Raumvorlagen, Netzwerkplanung, Wiederherstellung und lesender Home-Assistant-Abruf bereit.
 
@@ -338,7 +343,7 @@ Die Validierung erkennt ungültige Polygone und Referenzen. Sie erkennt noch nic
 unabhängiger Räume und ersetzt keine allgemeine Raumerkennung aus beliebigen Wandsammlungen.
 Räume mit Löchern, Bogenwände und ein allgemeiner Constraint-Solver sind nicht enthalten. Druckmaßstäbe und PDF-/SVG-Export sind seit 0.12.0 in der Hausakte verfügbar.
 
-Die Oberfläche ist für Desktop ab etwa 1024 px Breite ausgelegt. Smartphone-Bedienung ist nicht optimiert.
+Die Oberfläche unterstützt Desktop und Tablet einschließlich Split View ab 600 px. Smartphone-Bedienung ist nicht optimiert.
 Der Editor ist lokal für einen Benutzer ausgelegt; gleichzeitige Bearbeitung desselben Projekts in mehreren Tabs
 wird nicht zusammengeführt. Undo/Redo ist sitzungsbezogen und begrenzt. JSON-Dateien tragen `schemaVersion: 10`;
 Versionen 1 bis 9 werden beim Import und lokalen Laden automatisch migriert. Unbekannte neuere Versionen werden abgelehnt.

@@ -29,6 +29,8 @@ interface EditorState {
   snapWalls: boolean;
   showMeasurements: boolean;
   spacePressed: boolean;
+  orthogonal: boolean;
+  multiSelect: boolean;
   dragOffset: Vec2 | null;
   ready: boolean;
   message: string | null;
@@ -71,6 +73,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   snapWalls: true,
   showMeasurements: true,
   spacePressed: false,
+  orthogonal: false,
+  multiSelect: false,
   dragOffset: null,
   ready: false,
   message: null,

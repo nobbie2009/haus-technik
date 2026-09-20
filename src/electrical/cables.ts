@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import type { Cable } from "./models";
@@ -85,7 +86,7 @@ export function addCable(project: Project, startNodeId: string, endNodeId: strin
     (layer) => layer.kind === "electrical" && layer.visible && !layer.locked,
   );
   if (!layer) throw new Error("Bitte die Elektrikebene einblenden und entsperren.");
-  const id = crypto.randomUUID();
+  const id = newId();
   let number = 1;
   const labels = new Set(Object.values(project.electrical.cables).map((item) => item.label));
   while (labels.has(`L-${String(number).padStart(2, "0")}`)) number++;

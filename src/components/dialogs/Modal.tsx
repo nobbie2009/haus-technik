@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
 
@@ -19,7 +20,7 @@ export function Modal({
     dialog.showModal();
     return () => dialog.close();
   }, []);
-  return (
+  return createPortal(
     <dialog
       ref={ref}
       className={`modal ${className}`}
@@ -45,6 +46,7 @@ export function Modal({
         </button>
       </div>
       {children}
-    </dialog>
+    </dialog>,
+    document.body,
   );
 }

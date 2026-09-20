@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -30,7 +31,7 @@ export function NetworkPanel() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const id = editing ?? crypto.randomUUID();
+          const id = editing ?? newId();
           if (
             updateBook(editing ? "Netzwerkgerät ändern" : "Netzwerkgerät anlegen", (b) => {
               const previous = b.networkNodes.find((n) => n.id === id);
@@ -135,7 +136,7 @@ export function NetworkPanel() {
           e.preventDefault();
           updateBook("Netzwerkverbindung anlegen", (b) => {
             b.networkLinks.push({
-              id: crypto.randomUUID(),
+              id: newId(),
               name: label,
               from,
               to,

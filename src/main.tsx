@@ -5,6 +5,7 @@ import "./app/styles.css";
 import "./app/panels.css";
 import "./app/simulation.css";
 import "./app/housebook.css";
+import "./app/tablet.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

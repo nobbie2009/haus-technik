@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import { emptyElectrical } from "../electrical/models";
 import type { Floor } from "../models/floor";
 import type { Project } from "../models/project";
@@ -7,14 +8,14 @@ import { parseProject } from "./validation";
 export function createProject(name = "Mein Haus"): Project {
   const now = new Date().toISOString();
   const floor: Floor = {
-    id: crypto.randomUUID(),
+    id: newId(),
     name: "Erdgeschoss",
     elevation: 0,
     defaultRoomHeight: 2500,
     metadata: {},
   };
   const floorPlan: PlanLayer = {
-    id: crypto.randomUUID(),
+    id: newId(),
     kind: "floorPlan",
     name: "Grundriss",
     visible: true,
@@ -23,7 +24,7 @@ export function createProject(name = "Mein Haus"): Project {
     metadata: {},
   };
   const dimensions: PlanLayer = {
-    id: crypto.randomUUID(),
+    id: newId(),
     kind: "dimensions",
     name: "Bemaßung",
     visible: true,
@@ -33,18 +34,18 @@ export function createProject(name = "Mein Haus"): Project {
   };
   const furniture: PlanLayer = {
     ...floorPlan,
-    id: crypto.randomUUID(),
+    id: newId(),
     kind: "furniture",
     name: "M\u00f6bel",
   };
   const electrical: PlanLayer = {
     ...floorPlan,
-    id: crypto.randomUUID(),
+    id: newId(),
     kind: "electrical",
     name: "Elektrik",
   };
   return parseProject({
-    id: crypto.randomUUID(),
+    id: newId(),
     schemaVersion: 10,
     electrical: emptyElectrical(),
     furniture: {},

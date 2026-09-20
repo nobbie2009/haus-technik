@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { Selection } from "../editor/types";
 import { duplicateSelection } from "../editor/actions/edit";
@@ -12,7 +13,7 @@ export function saveRoomTemplate(project: Project, roomId: string, name: string)
   const snapshot = structuredClone(project);
   delete snapshot.metadata.housebook;
   const book = housebook(project);
-  book.templates.push({ id: crypto.randomUUID(), name, roomId, project: JSON.stringify(snapshot) });
+  book.templates.push({ id: newId(), name, roomId, project: JSON.stringify(snapshot) });
   setHousebook(project, book);
 }
 export function insertRoomTemplate(
@@ -84,7 +85,7 @@ export function insertRoomTemplate(
     }
     const chain = protectionChain(source, circuit.protectionDeviceId);
     for (const protection of chain)
-      if (!protectionMap.has(protection.id)) protectionMap.set(protection.id, crypto.randomUUID());
+      if (!protectionMap.has(protection.id)) protectionMap.set(protection.id, newId());
     for (const protection of chain) {
       const id = protectionMap.get(protection.id)!;
       project.electrical.protectionDevices[id] = {
@@ -96,7 +97,7 @@ export function insertRoomTemplate(
           : null,
       };
     }
-    const id = crypto.randomUUID();
+    const id = newId();
     circuitMap.set(oldId, id);
     project.electrical.circuits[id] = {
       ...structuredClone(circuit),

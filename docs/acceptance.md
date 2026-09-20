@@ -175,3 +175,17 @@ Der 1000-Wände-Test ist ein funktionaler Belastungstest, keine Garantie einer b
 - Hausakte bei 1440 × 1000 und 1024 × 768 prüfen.
 
 Validiert: 244 Modultests, vollständiger Browserdurchlauf mit 30 Tests sowie erneuter gezielter Lauf der sechs Hausakte-Tests nach den abschließenden Anpassungen. TypeScript-Prüfung, Produktionsbuild und Formatprüfung erfolgreich. Keine reale Home-Assistant-Installation war für einen Verbindungstest angegeben.
+
+## iPad und WLAN (0.13.0)
+
+- WebKit im iPad-Profil bei 810 × 1080, 1080 × 810 und 600 × 900: erreichbare Bedienelemente und Dialoge ohne Seitenüberlauf.
+- Fingerzeichnung eines Polygonraums, Abschluss ohne Tastatur, Eigenschaften bearbeiten und nach Neuladen erhalten.
+- Projektimport, PDF-Export und erneuter PDF-Import als Planvorlage.
+- Synthetische Zwei-Finger-Pointer-Gesten verändern den Zoom ohne Modelländerung; Pointer-Abbruch platziert nichts.
+- HTTP-kompatible UUID-Erzeugung ohne `crypto.randomUUID` einschließlich Autosave.
+- Dialoge bleiben beim Wechsel zwischen Desktop- und Tablet-Layout unabhängig von Seitenleisten sichtbar.
+
+Validiert am 20.09.2026: 244 Modultests, 30 Desktop-Browsertests und vier WebKit-iPad-Tests.
+Die vier iPad-Tests wurden auch gegen den Produktionsbuild über die tatsächliche HTTP-WLAN-Adresse ausgeführt.
+TypeScript, Build und Formatprüfung erfolgreich. Physisches iPad, Apple Pencil und die native Bildschirmtastatur
+sind noch nicht am echten Gerät geprüft. Der erste Nutzungsumfang ist auf Wunsch das heimische WLAN.

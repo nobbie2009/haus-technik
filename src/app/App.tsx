@@ -1,6 +1,6 @@
 import { elementTables } from "../core/elementTables";
 import { categoryForObject } from "../editor/categories";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useProjectStore } from "../stores/projectStore";
 import { useEditorStore } from "../stores/editorStore";
@@ -15,6 +15,7 @@ import { useKeyboard } from "../editor/interaction/keyboard";
 import { initializePersistence } from "../persistence/autosave";
 
 export function App() {
+  const [panel, setPanel] = useState<"tools" | "properties" | null>(null);
   const project = useProjectStore((s) => s.project);
   const error = useProjectStore((s) => s.error);
   const saveError = useProjectStore((s) => s.saveError);
@@ -45,10 +46,41 @@ export function App() {
     <div className="app-shell">
       <Toolbar />
       <SimulationBanner />
+      <nav className="tablet-navigation" aria-label="Planbereiche">
+        <button
+          aria-expanded={panel === "tools"}
+          aria-controls="tools-panel"
+          onClick={() => setPanel(panel === "tools" ? null : "tools")}
+        >
+          Werkzeuge
+        </button>
+        <span>Mit zwei Fingern zoomen und verschieben</span>
+        <button
+          aria-expanded={panel === "properties"}
+          aria-controls="properties-panel"
+          onClick={() => setPanel(panel === "properties" ? null : "properties")}
+        >
+          Eigenschaften
+        </button>
+      </nav>
       <div className="workspace">
-        <ToolPanel />
+        {panel && (
+          <button
+            className="panel-backdrop"
+            aria-label="Seitenleiste schließen"
+            onClick={() => setPanel(null)}
+          />
+        )}
+        <div id="tools-panel" className={`panel-slot tools-slot ${panel === "tools" ? "panel-open" : ""}`}>
+          <ToolPanel />
+        </div>
         <PlanStage />
-        <PropertiesPanel />
+        <div
+          id="properties-panel"
+          className={`panel-slot properties-slot ${panel === "properties" ? "panel-open" : ""}`}
+        >
+          <PropertiesPanel />
+        </div>
       </div>
       <StatusBar />
       {connectionRequest && <ConnectionDialog />}

@@ -1,0 +1,202 @@
+.panel-slot {
+  display: contents;
+}
+.tablet-navigation,
+.panel-backdrop,
+.touch-drawing-controls {
+  display: none;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  .app-shell {
+    min-width: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .workspace {
+    display: block;
+    position: relative;
+  }
+  .drawing-host {
+    width: 100%;
+    height: 100%;
+  }
+  .tablet-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 12px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+  .tablet-navigation span {
+    color: var(--muted);
+    font-size: 11px;
+    text-align: center;
+  }
+  .tablet-navigation button[aria-expanded="true"],
+  .touch-drawing-controls button[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .panel-slot {
+    display: none;
+    position: absolute;
+    inset-block: 0;
+    width: min(330px, 85%);
+    z-index: 6;
+    box-shadow: 0 6px 24px #172b302b;
+  }
+  .panel-slot.panel-open {
+    display: block;
+  }
+  .panel-slot > aside {
+    height: 100%;
+  }
+  .tools-slot {
+    left: 0;
+  }
+  .properties-slot {
+    right: 0;
+  }
+  .panel-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #172b302b;
+    border: 0;
+    border-radius: 0;
+    z-index: 5;
+  }
+  .command-bar {
+    height: auto;
+    min-height: 54px;
+    flex-wrap: wrap;
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  .command-bar > *,
+  .toolbar-group,
+  .project-commands {
+    flex-shrink: 0;
+  }
+  .toolbar-spacer,
+  .toolbar-divider {
+    display: none;
+  }
+  .app-header {
+    height: 56px;
+    padding: 0 12px;
+    gap: 12px;
+  }
+  .project-heading {
+    min-width: 0;
+  }
+  .project-heading strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 32vw;
+  }
+  .build-label {
+    display: none;
+  }
+  .status-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .status-bar > * {
+    flex-shrink: 0;
+  }
+  button,
+  .tool,
+  .icon-button,
+  .canvas-controls button,
+  .book-nav button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  input:not([type="checkbox"]),
+  select,
+  textarea {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .toolbar-check {
+    min-height: 44px;
+    padding: 0 5px;
+  }
+  .touch-drawing-controls {
+    display: flex;
+    position: absolute;
+    z-index: 3;
+    left: 12px;
+    right: 12px;
+    bottom: 68px;
+    gap: 5px;
+    flex-wrap: wrap;
+    pointer-events: none;
+  }
+  .touch-drawing-controls button {
+    pointer-events: auto;
+    background: #fffffff5;
+  }
+  .canvas-help {
+    display: none;
+  }
+  .canvas-title {
+    top: 16px;
+    left: 16px;
+  }
+  .canvas-title strong {
+    font-size: 17px;
+  }
+  .modal {
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+  }
+  .toast {
+    width: max-content;
+    max-width: calc(100vw - 24px);
+  }
+}
+@media (max-width: 700px) {
+  .tablet-navigation span,
+  .header-divider,
+  .project-heading > span {
+    display: none;
+  }
+  .app-header {
+    gap: 8px;
+  }
+  .brand {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .save-indicator {
+    font-size: 10px;
+  }
+  .book-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+    height: 72dvh;
+  }
+  .book-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 0 8px;
+  }
+  .book-nav button {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .modal {
+    padding: 16px;
+  }
+}

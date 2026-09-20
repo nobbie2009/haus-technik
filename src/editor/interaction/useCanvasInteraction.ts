@@ -7,6 +7,7 @@ import type { PointerEvent } from "react";
 import { useEditorStore } from "../../stores/editorStore";
 import { useProjectStore } from "../../stores/projectStore";
 import { panBy, screenToWorld, zoomAt } from "../../geometry/coordinates";
+import type { Viewport } from "../../geometry/coordinates";
 import { subtract } from "../../geometry/vector";
 import type { Vec2 } from "../../models/common";
 import type { Selection } from "../types";
@@ -27,6 +28,10 @@ interface Gesture {
 export function useCanvasInteraction() {
   const host = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
+  const touches = useRef(new Map<number, Vec2>());
+  const pinch = useRef<{ viewport: Viewport; center: Vec2; distance: number } | null>(null);
+  const navigating = useRef(false);
+  const pen = useRef<number | null>(null);
   const project = useProjectStore((s) => s.project);
   const editor = useEditorStore();
   useEffect(() => {
@@ -70,8 +75,8 @@ export function useCanvasInteraction() {
     const rect = event.currentTarget.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
   };
-  const down = (event: PointerEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLElement).closest("button") || !editor.ready) return;
+  const performDown = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button, input, label, select") || !editor.ready) return;
     event.currentTarget.focus();
     const screen = pointer(event);
     const world = screenToWorld(screen, editor.viewport);
@@ -123,16 +128,17 @@ export function useCanvasInteraction() {
       let selection: Selection[] = [];
       if (hit) {
         const already = editor.selection.some((s) => s.id === hit.id);
-        selection = event.shiftKey
-          ? already
-            ? editor.selection.filter((s) => s.id !== hit.id)
-            : [...editor.selection, hit]
-          : already
-            ? editor.selection
-            : [hit];
+        selection =
+          event.shiftKey || editor.multiSelect
+            ? already
+              ? editor.selection.filter((s) => s.id !== hit.id)
+              : [...editor.selection, hit]
+            : already
+              ? editor.selection
+              : [hit];
       }
       useEditorStore.setState({ selection });
-      if (hit && !event.shiftKey) {
+      if (hit && !event.shiftKey && !editor.multiSelect) {
         event.currentTarget.setPointerCapture(event.pointerId);
         gesture.current = { type: "move", screen, world, selection, moved: false };
       }
@@ -160,8 +166,61 @@ export function useCanvasInteraction() {
     }
     confirmDrawing(updateCursor(world, event.shiftKey));
   };
+  const touchPair = () => {
+    const [a, b] = [...touches.current.values()];
+    if (!a || !b) return null;
+    return {
+      center: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+      distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+    };
+  };
+  const down = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button, input, label, select") || !editor.ready) return;
+    if (event.pointerType === "touch") {
+      if (pen.current !== null) return;
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      touches.current.set(event.pointerId, pointer(event));
+      const pair = touchPair();
+      if (pair) {
+        navigating.current = true;
+        pinch.current = { ...pair, viewport: useEditorStore.getState().viewport };
+        gesture.current = null;
+        useEditorStore.setState({ dragOffset: null });
+      } else if (!navigating.current && (editor.tool === "select" || editor.tool === "pan"))
+        performDown(event);
+      return;
+    }
+    if (event.pointerType === "pen") {
+      if (touches.current.size) return;
+      pen.current = event.pointerId;
+    }
+    performDown(event);
+  };
   const move = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button, input, label, select")) return;
     const screen = pointer(event);
+    if (event.pointerType === "touch") {
+      if (!touches.current.has(event.pointerId)) return;
+      touches.current.set(event.pointerId, screen);
+      const pair = touchPair();
+      if (navigating.current) {
+        if (pair && pinch.current) {
+          const initial = pinch.current;
+          const scale = Math.max(
+            0.003,
+            Math.min(2, (initial.viewport.scale * pair.distance) / initial.distance),
+          );
+          useEditorStore.setState({
+            viewport: panBy(
+              zoomAt(initial.viewport, initial.center, scale),
+              subtract(pair.center, initial.center),
+            ),
+          });
+        }
+        return;
+      }
+    }
     const current = useEditorStore.getState();
     const world = screenToWorld(screen, current.viewport);
     const active = gesture.current;
@@ -193,6 +252,23 @@ export function useCanvasInteraction() {
     updateCursor(world, event.shiftKey);
   };
   const up = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") {
+      if (!touches.current.has(event.pointerId)) return;
+      touches.current.delete(event.pointerId);
+      if (navigating.current) {
+        if (!touches.current.size) {
+          navigating.current = false;
+          pinch.current = null;
+        }
+        return;
+      }
+      // Place only on release: a second finger can start navigation without editing the model.
+      if (!["select", "pan"].includes(useEditorStore.getState().tool)) performDown(event);
+    }
+    if (event.pointerType === "pen") {
+      if (pen.current !== event.pointerId) return;
+      pen.current = null;
+    }
     const active = gesture.current;
     const current = useEditorStore.getState();
     if (active?.type === "connect" && active.moved && current.tool === "connect" && current.cableStartId)
@@ -217,6 +293,10 @@ export function useCanvasInteraction() {
   const cancel = () => {
     if (gesture.current?.type === "connect") useEditorStore.getState().cancel();
     gesture.current = null;
+    touches.current.clear();
+    pinch.current = null;
+    navigating.current = false;
+    pen.current = null;
     useEditorStore.setState({ dragOffset: null });
   };
   return { host, project, editor, preview, down, move, up, cancel, zoom };

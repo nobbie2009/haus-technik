@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { ProtectionDevice } from "./models";
 
@@ -7,7 +8,7 @@ export function addProtectionDevice(
   type: ProtectionDevice["type"] = "MCB",
 ): string {
   if (!project.electrical.distributionBoards[boardId]) throw new Error("Sicherungskasten fehlt.");
-  const id = crypto.randomUUID();
+  const id = newId();
   const labels = new Set(Object.values(project.electrical.protectionDevices).map((item) => item.label));
   let number = 1;
   while (labels.has(`F${number}`)) number++;

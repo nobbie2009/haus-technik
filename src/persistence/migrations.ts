@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import { z } from "zod";
 import { projectSchema } from "../core/projectSchema";
 import { isJsonTree } from "../core/json";
@@ -177,7 +178,7 @@ export function migrateProject(raw: unknown): Project {
   const legacy =
     raw.schemaVersion === 1 ? { ...legacySchema.parse(raw), furniture: {} } : version2Schema.parse(raw);
   if (!Object.values(legacy.layers).some((layer) => layer.kind === "furniture")) {
-    const id = crypto.randomUUID();
+    const id = newId();
     legacy.layers[id] = {
       id,
       kind: "furniture",
@@ -190,7 +191,7 @@ export function migrateProject(raw: unknown): Project {
     legacy.layerOrder.push(id);
   }
   if (!Object.values(legacy.layers).some((layer) => layer.kind === "electrical")) {
-    const id = crypto.randomUUID();
+    const id = newId();
     legacy.layers[id] = {
       id,
       kind: "electrical",

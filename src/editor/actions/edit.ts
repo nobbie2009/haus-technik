@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import { cablePath } from "../../electrical/cables";
 import { elementTables } from "../../core/elementTables";
 import { detachDeletedElectricalReferences } from "../../electrical/actions";
@@ -182,7 +183,7 @@ export function duplicateSelection(
     const wall = project.walls[wallId]!;
     for (const pointId of [wall.startPointId, wall.endPointId])
       if (!pointMap.has(pointId)) {
-        const id = crypto.randomUUID();
+        const id = newId();
         pointMap.set(pointId, id);
         project.points[id] = {
           ...structuredClone(project.points[pointId]!),
@@ -190,7 +191,7 @@ export function duplicateSelection(
           position: add(project.points[pointId]!.position, delta),
         };
       }
-    const id = crypto.randomUUID();
+    const id = newId();
     wallMap.set(wallId, id);
     project.walls[id] = {
       ...structuredClone(wall),
@@ -202,7 +203,7 @@ export function duplicateSelection(
   }
   for (const roomId of roomIds) {
     const room = project.rooms[roomId]!;
-    const id = crypto.randomUUID();
+    const id = newId();
     project.rooms[id] = {
       ...structuredClone(room),
       id,
@@ -216,7 +217,7 @@ export function duplicateSelection(
     for (const opening of Object.values(project[kind])) {
       const selected = selection.some((s) => s.kind === kind && s.id === opening.id);
       if (!wallMap.has(opening.wallId) && !selected) continue;
-      const id = crypto.randomUUID();
+      const id = newId();
       const copy = {
         ...structuredClone(opening),
         id,
@@ -230,7 +231,7 @@ export function duplicateSelection(
     }
   for (const selected of selection.filter((s) => s.kind === "dimensions")) {
     const original = project.dimensions[selected.id]!;
-    const id = crypto.randomUUID();
+    const id = newId();
     const copy = structuredClone(original);
     copy.id = id;
     for (const key of ["start", "end"] as const) {
@@ -252,7 +253,7 @@ export function duplicateSelection(
   const furnitureCopies = new Map<string, string>();
   for (const selected of selection.filter((s) => s.kind === "furniture")) {
     const original = project.furniture[selected.id]!;
-    const id = crypto.randomUUID();
+    const id = newId();
     project.furniture[id] = {
       ...structuredClone(original),
       id,
@@ -276,7 +277,7 @@ export function duplicateSelection(
   ] as const)
     for (const selected of selection.filter((s) => s.kind === kind)) {
       const original = project.electrical[kind][selected.id]!;
-      const id = crypto.randomUUID();
+      const id = newId();
       let label = `${original.label}-K`;
       let number = 2;
       while (Object.values(project.electrical[kind]).some((item) => item.label === label))
@@ -335,7 +336,7 @@ export function duplicateSelection(
   }
   for (const selected of selection.filter((s) => s.kind === "cables")) {
     const original = project.electrical.cables[selected.id]!;
-    const id = crypto.randomUUID();
+    const id = newId();
     const points = cablePath(project, original);
     const bothCopied = nodeCopies.has(original.startNodeId) && nodeCopies.has(original.endNodeId);
     const path =

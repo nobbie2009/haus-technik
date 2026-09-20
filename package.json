@@ -1,6 +1,6 @@
 {
   "name": "home-technik",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "type": "module",
   "description": "Modularer technischer Hausplaner mit lokalem 2D-Grundrisseditor",
@@ -17,7 +17,9 @@
     "preview": "vite preview --host 127.0.0.1",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "start:lan": "npm run build && vite preview --host 0.0.0.0 --port 4173 --strictPort",
+    "test:ipad": "playwright test --config playwright.ipad.config.ts"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

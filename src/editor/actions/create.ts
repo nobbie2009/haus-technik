@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import type { Project } from "../../models/project";
 import type { UUID, Vec2 } from "../../models/common";
 import type { Selection } from "../types";
@@ -19,7 +20,7 @@ export function createRoom(project: Project, floorId: UUID, vertices: Vec2[], na
     pointIds.push(...path.pointIds.slice(0, -1));
     wallIds.push(...path.wallIds);
   }
-  const id = crypto.randomUUID();
+  const id = newId();
   project.rooms[id] = {
     id,
     floorId,
@@ -42,7 +43,7 @@ export function createOpening(
 ): Selection {
   const wall = project.walls[wallId]!;
   if (!wall) throw new Error("Bitte eine Wand auswählen.");
-  const id = crypto.randomUUID();
+  const id = newId();
   const length = distance(
     project.points[wall.startPointId]!.position,
     project.points[wall.endPointId]!.position,
@@ -83,7 +84,7 @@ export function createDimension(project: Project, floorId: UUID, start: Vec2, en
       ? { kind: "point" as const, pointId: point.id }
       : { kind: "position" as const, position: { ...position } };
   };
-  const id = crypto.randomUUID();
+  const id = newId();
   project.dimensions[id] = {
     id,
     floorId,

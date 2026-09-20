@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import { electricalNodes } from "./cables";
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
@@ -15,7 +16,7 @@ export function addElectrical(
     (layer) => layer.kind === "electrical" && layer.visible && !layer.locked,
   );
   if (!layer) throw new Error("Bitte die Elektrikebene einblenden und entsperren.");
-  const id = crypto.randomUUID();
+  const id = newId();
   const prefix =
     kind === "controls"
       ? "SG"

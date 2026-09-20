@@ -12,6 +12,7 @@ import { selectedPointIds } from "../actions/edit";
 
 export function updateCursor(raw: Vec2, shift = false): Vec2 {
   const editor = useEditorStore.getState();
+  shift ||= editor.orthogonal;
   const project = useProjectStore.getState().project;
   const excluded = editor.dragOffset ? selectedPointIds(project, editor.selection) : new Set<string>();
   const walls = Object.values(project.walls).filter(

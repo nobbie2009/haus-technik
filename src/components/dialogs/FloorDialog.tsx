@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -24,7 +25,7 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
         onSubmit={(event) => {
           event.preventDefault();
           try {
-            const id = floorId ?? crypto.randomUUID();
+            const id = floorId ?? newId();
             const floorElevation = parseLength(elevation, "m");
             const roomHeight = parseLength(height, "m");
             const ok = useProjectStore

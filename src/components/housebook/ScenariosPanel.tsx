@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { useSimulationStore } from "../../stores/simulationStore";
@@ -14,7 +15,7 @@ export function ScenariosPanel({ onClose }: { onClose: () => void }) {
     const scenario = structuredClone(simulation.active ? simulation.scenario : emptyScenario());
     if (
       updateBook("Szenario speichern", (b) => {
-        b.scenarios.push({ id: crypto.randomUUID(), name, scenario });
+        b.scenarios.push({ id: newId(), name, scenario });
       })
     ) {
       setMessage("Szenario gespeichert.");

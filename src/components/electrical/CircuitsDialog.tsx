@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { Modal } from "../dialogs/Modal";
@@ -28,7 +29,7 @@ export function CircuitsDialog({
   const current = circuits.some((item) => item.id === selected) ? selected! : circuits[0]?.id;
   const create = () => {
     if (!board || !canCreate) return;
-    const id = crypto.randomUUID();
+    const id = newId();
     if (
       useProjectStore.getState().commit("Stromkreis anlegen", (draft) => {
         const labels = new Set(Object.values(draft.electrical.circuits).map((item) => item.label));

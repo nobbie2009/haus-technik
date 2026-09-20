@@ -1,3 +1,4 @@
+import { newId } from "../../utils/uuid";
 import type { Project } from "../../models/project";
 import type { UUID, Vec2 } from "../../models/common";
 import type { Wall } from "../../models/wall";
@@ -18,7 +19,7 @@ export function pointAt(project: Project, floorId: UUID, position: Vec2): UUID {
     (point) => point.floorId === floorId && distance(point.position, position) <= LENGTH_EPSILON,
   );
   if (existing) return existing.id;
-  const id = crypto.randomUUID();
+  const id = newId();
   project.points[id] = { id, floorId, position: { ...position }, metadata: {} };
   return id;
 }
@@ -48,7 +49,7 @@ export function splitWall(project: Project, wallId: UUID, pointId: UUID): void {
       "Hier liegt eine Tür oder ein Fenster. Der Wandanschluss muss außerhalb der Öffnung liegen.",
     );
   }
-  const nextId = crypto.randomUUID();
+  const nextId = newId();
   project.walls[nextId] = { ...structuredClone(wall), id: nextId, startPointId: pointId };
   const previousEnd = wall.endPointId;
   wall.endPointId = pointId;
@@ -144,7 +145,7 @@ export function addWallPath(
       wallIds.push(existing.id);
       continue;
     }
-    const id = crypto.randomUUID();
+    const id = newId();
     const wall: Wall = {
       id,
       floorId,

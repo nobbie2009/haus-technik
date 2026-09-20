@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import { migrateProject } from "./migrations";
 import { parseProject } from "../core/validation";
 import type { Project } from "../models/project";
@@ -103,7 +104,7 @@ export class IndexedDbRepository implements ProjectRepository {
         }
         if (current && serialized !== JSON.stringify(validated)) {
           const snapshots = transaction.objectStore("snapshots");
-          snapshots.put({ id: crypto.randomUUID(), savedAt: new Date().toISOString(), project: current });
+          snapshots.put({ id: newId(), savedAt: new Date().toISOString(), project: current });
           const all = snapshots.getAll();
           all.onsuccess = () => {
             const entries = (all.result as { id: string; savedAt: string; project: Project }[])

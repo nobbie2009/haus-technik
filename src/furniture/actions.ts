@@ -1,3 +1,4 @@
+import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { Vec2, UUID } from "../models/common";
 import { furnitureCatalog } from "./catalog";
@@ -22,7 +23,7 @@ export function addFurniture(project: Project, floorId: UUID, position: Vec2, ty
     (layer) => layer.kind === "furniture" && layer.visible && !layer.locked,
   );
   if (!layer) throw new Error("Bitte die Möbelebene einblenden und entsperren.");
-  const id = crypto.randomUUID();
+  const id = newId();
   project.furniture[id] = {
     ...preset,
     id,

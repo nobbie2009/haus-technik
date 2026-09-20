@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.13.0 · 20.09.2026
+
+- Tablet-Layout mit einklappbaren Werkzeugen und Eigenschaften, größeren Touch-Zielen und anpassbaren Dialogen.
+- Zwei-Finger-Zoom/Pan, verzögerte Fingerplatzierung und Abbruch ohne versehentliche Modelländerungen.
+- Bildschirmaktionen zum Schließen von Räumen, Beenden von Wandzügen, Abbrechen und Entfernen von Entwurfspunkten.
+- Rechtwinkliges Zeichnen und Mehrfachauswahl ohne Tastatur.
+- UUID-Erzeugung für HTTP im Heimnetz und eigener WLAN-Startbefehl.
+- WebKit-Prüfungen im iPad-Profil sowie dokumentierter Bedienumfang und verbleibende Roadmap.
+
 ## 0.12.0 · 19.09.2026
 
 - Hausakte als zentralen Arbeitsbereich ergänzt.

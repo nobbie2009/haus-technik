@@ -356,3 +356,11 @@ Die aktuelle Erweiterung ist in [electrical-schema10.md](electrical-schema10.md)
 ## Hausakte (App 0.12.0)
 
 Die Metadaten-Erweiterungen, separate Leiterprüfung, IndexedDB-Version 2 und neuen Arbeitsabläufe sind in [housebook.md](housebook.md) dokumentiert. Die ältere Roadmap oben beschreibt den jeweiligen historischen Phasenstand.
+
+## Tablet-Bedienung (App 0.13.0)
+
+Touch-Gesten werden in der Eingabesteuerung verarbeitet. Fingerplatzierungen erfolgen erst beim Loslassen;
+Mehrfinger-Gesten ändern ausschließlich den Viewport und verwerfen laufende Verschiebevorschauen.
+Dialoge verwenden ein Portal am Dokumentkörper, damit ausgeblendete Seitenleisten sie nicht verstecken.
+UUIDs entstehen über eine zentrale Funktion mit `getRandomValues` als Alternative für HTTP-LAN-Adressen.
+Bedienung und Testgrenzen: [iPad](ipad.md). Aktueller offener Umfang: [Roadmap](roadmap.md).

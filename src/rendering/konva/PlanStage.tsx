@@ -1,4 +1,5 @@
 import { CableRenderer } from "./CableRenderer";
+import { TouchDrawingControls } from "../../components/TouchDrawingControls";
 import { BackgroundImage, HousebookOverlay } from "./HousebookOverlay";
 import { ElectricalRenderer, ElectricalPreview } from "./ElectricalRenderer";
 import { FurnitureRenderer, FurniturePreview } from "./FurnitureRenderer";
@@ -102,6 +103,7 @@ export function PlanStage() {
         </Layer>
       </Stage>
       <SimulationPlanControls />
+      <TouchDrawingControls />
       <div className="canvas-help">{hints[editor.tool]}</div>
       <div className="canvas-controls">
         <button aria-label="Verkleinern" onClick={() => zoom(0.8)}>
