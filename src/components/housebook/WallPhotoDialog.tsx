@@ -19,14 +19,22 @@ import {
 import { newId } from "../../utils/uuid";
 import { WallPhotoCanvas } from "./WallPhotoCanvas";
 
-export function WallPhotoDialog({ wallId, onClose }: { wallId: string; onClose: () => void }) {
+export function WallPhotoDialog({
+  wallId,
+  onClose,
+  initialPhotoId,
+}: {
+  wallId: string;
+  onClose: () => void;
+  initialPhotoId?: string | undefined;
+}) {
   const project = useProjectStore((s) => s.project),
     commit = useProjectStore((s) => s.commit);
   const canUndo = useProjectStore((s) => s.past.length > 0),
     canRedo = useProjectStore((s) => s.future.length > 0);
   const photos = wallPhotos(project, wallId),
     locked = !project.walls[wallId] || project.layers[project.walls[wallId]!.layerId]!.locked;
-  const [photoId, setPhotoId] = useState(photos[0]?.id ?? ""),
+  const [photoId, setPhotoId] = useState(initialPhotoId ?? photos[0]?.id ?? ""),
     [mode, setMode] = useState<"select" | "draw" | "calibrate">("select");
   const [points, setPoints] = useState<PhotoPoint[]>([]),
     [selected, setSelected] = useState<string | null>(null);

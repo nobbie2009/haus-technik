@@ -24,6 +24,11 @@ import { HomeItemsPanel } from "./HomeItemsPanel";
 import { UsagePanel } from "./UsagePanel";
 import { MaintenancePanel } from "./MaintenancePanel";
 import { dueOverview } from "../../housebook/home";
+import { setup, type OpenSection } from "../../housebook/setup";
+import { SetupPanel } from "./SetupPanel";
+import { SearchPanel } from "./SearchPanel";
+import { SolarPanel } from "./SolarPanel";
+import { WallPhotoDialog } from "./WallPhotoDialog";
 import { AssetDialog } from "./AssetDialog";
 import { Field, updateBook } from "./shared";
 import type { Selection } from "../../editor/types";
@@ -33,6 +38,9 @@ import { saveRoomTemplate, insertRoomTemplate } from "../../housebook/templates"
 import type { Project } from "../../models/project";
 const sections = {
   overview: "Übersicht",
+  setup: "Einrichtung",
+  search: "Suche",
+  solar: "Balkonkraftwerk",
   background: "Grundrissvorlage",
   check: "Projektprüfung",
   export: "Ausgabe",
@@ -56,6 +64,14 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
     floorId = useEditorStore((s) => s.floorId);
   const [section, setSection] = useState<keyof typeof sections>("overview"),
     [record, setRecord] = useState<Selection | null>(null);
+  const [entryId, setEntryId] = useState<string | undefined>(),
+    [fromSetup, setFromSetup] = useState(false),
+    [photo, setPhoto] = useState<{ wallId: string; photoId?: string | undefined } | null>(null);
+  const openSection: OpenSection = (section, id) => {
+    setEntryId(id);
+    setSection(section);
+    setMessage("");
+  };
   const [filter, setFilter] = useState(""),
     [status, setStatus] = useState("all"),
     [scale, setScale] = useState(50),
@@ -99,6 +115,8 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 aria-current={section === id ? "page" : undefined}
                 onClick={() => {
                   setSection(id as keyof typeof sections);
+                  setEntryId(undefined);
+                  if (id === "setup") setFromSetup(true);
                   setMessage("");
                   if (id === "history")
                     void run(async () => {
@@ -112,6 +130,12 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
             ))}
           </nav>
           <div className="book-content" aria-busy={busy}>
+            {fromSetup && section !== "setup" && (
+              <div className="book-actions">
+                <button onClick={() => openSection("setup")}>Zur Einrichtung zurück</button>
+                <span>Dein Schritt bleibt gespeichert.</span>
+              </div>
+            )}
             {globalError && (
               <p className="book-error" role="alert">
                 {globalError}
@@ -126,6 +150,17 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
               <section>
                 <span className="eyebrow">DEIN HAUS IM ÜBERBLICK</span>
                 <h3>{project.name}</h3>
+                <div className="book-actions">
+                  <button
+                    onClick={() => {
+                      setFromSetup(true);
+                      openSection("setup");
+                    }}
+                  >
+                    {project.metadata.setupGuide ? "Einrichtung fortsetzen" : "Mit Einrichtung beginnen"}
+                  </button>
+                  <button onClick={() => openSection("search")}>Wo finde ich …?</button>
+                </div>
                 <p>
                   Grundriss erfassen, Technik dokumentieren und Pläne ausgeben. Alle Angaben bleiben im
                   Projekt und werden mit dem JSON-Export gesichert.
@@ -314,14 +349,52 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 </ul>
               </section>
             )}
-            {section === "network" && <InternetPanel />}
-            {section === "shutoff" && <HomeItemsPanel key="shutoff" kinds={["shutoff"]} onClose={onClose} />}
-            {section === "smoke" && <HomeItemsPanel key="smoke" kinds={["smoke"]} onClose={onClose} />}
-            {section === "garden" && (
-              <HomeItemsPanel key="garden" kinds={["garden", "outdoorLight"]} onClose={onClose} />
+            {section === "setup" && (
+              <SetupPanel onOpen={openSection} onClose={onClose} onPhoto={(wallId) => setPhoto({ wallId })} />
             )}
-            {section === "usage" && <UsagePanel onClose={onClose} />}
-            {section === "maintenance" && <MaintenancePanel onClose={onClose} />}
+            {section === "search" && (
+              <SearchPanel
+                onOpen={openSection}
+                onClose={onClose}
+                onAsset={setRecord}
+                onPhoto={(wallId, photoId) => setPhoto({ wallId, photoId })}
+              />
+            )}
+            {section === "solar" && (
+              <SolarPanel key={entryId ?? "new"} initialId={entryId} onOpen={openSection} onClose={onClose} />
+            )}
+            {section === "network" && <InternetPanel key={entryId ?? "new"} initialId={entryId} />}
+            {section === "shutoff" && (
+              <HomeItemsPanel
+                key={`shutoff:${entryId}`}
+                initialId={entryId}
+                kinds={["shutoff"]}
+                onClose={onClose}
+              />
+            )}
+            {section === "smoke" && (
+              <HomeItemsPanel
+                key={`smoke:${entryId}`}
+                initialId={entryId}
+                initialLocation={fromSetup ? project.rooms[setup(project).roomId ?? ""]?.name : undefined}
+                kinds={["smoke"]}
+                onClose={onClose}
+              />
+            )}
+            {section === "garden" && (
+              <HomeItemsPanel
+                key={`garden:${entryId}`}
+                initialId={entryId}
+                kinds={["garden", "outdoorLight"]}
+                onClose={onClose}
+              />
+            )}
+            {section === "usage" && (
+              <UsagePanel key={entryId ?? "new"} initialId={entryId} onClose={onClose} />
+            )}
+            {section === "maintenance" && (
+              <MaintenancePanel key={entryId ?? "new"} initialId={entryId} onClose={onClose} />
+            )}
             {section === "homeAssistant" && <HomeAssistantPanel />}
             {section === "conductors" && <ConductorPanel onClose={onClose} />}
             {section === "templates" && (
@@ -476,6 +549,13 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
         </div>
       </Modal>
       {record && <AssetDialog target={record} onClose={() => setRecord(null)} />}
+      {photo && (
+        <WallPhotoDialog
+          wallId={photo.wallId}
+          initialPhotoId={photo.photoId}
+          onClose={() => setPhoto(null)}
+        />
+      )}
     </>
   );
 }

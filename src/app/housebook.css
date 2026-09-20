@@ -304,3 +304,45 @@
   height: 100%;
   background: #21705f;
 }
+
+.setup-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.setup-steps button,
+.setup-wall {
+  min-height: 44px;
+}
+.setup-steps [aria-current="step"] {
+  background: #e5f2ec;
+  color: #154b3b;
+  border-color: #21705f;
+  font-weight: 700;
+}
+.setup-wall {
+  margin: 4px;
+}
+.setup-footer {
+  border-top: 1px solid #bdccc8;
+  padding-top: 16px;
+  margin-top: 24px;
+}
+.book-content fieldset {
+  min-width: 0;
+  border: 1px solid #bdccc8;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+}
+.book-content progress {
+  width: 100%;
+  accent-color: #21705f;
+}
+.search-result > strong {
+  flex-basis: 100%;
+}
+.search-result details p {
+  white-space: pre-wrap;
+}

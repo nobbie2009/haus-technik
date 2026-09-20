@@ -4,8 +4,24 @@ import { assetSchema, bookSchema } from "./model";
 import { consumerLibrarySchema, consumerShapeSchema } from "../electrical/consumerLibrary";
 import { wallPhotosSchema } from "./wallPhotos";
 import { homeIssues } from "./home";
+import { setupSchema } from "./setup";
+import { solarSchema } from "./solar";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [...homeIssues(project)];
+  for (const [key, schema] of [
+    ["setupGuide", setupSchema],
+    ["solarPlants", solarSchema],
+  ] as const) {
+    if (project.metadata[key] === undefined) continue;
+    const result = schema.safeParse(project.metadata[key]);
+    if (!result.success)
+      issues.push(
+        ...result.error.issues.map((i) => ({
+          path: `metadata.${key}.${i.path.join(".")}`,
+          message: i.message,
+        })),
+      );
+  }
   let hasWallPhotos = false;
   for (const wall of Object.values(project.walls)) {
     if (wall.metadata.wallPhotos === undefined) continue;
@@ -104,7 +120,11 @@ export function housebookIssues(project: Project): { path: string; message: stri
       }
     }
   if (
-    (project.metadata.housebook || project.metadata.homeOverview || hasAssets || hasWallPhotos) &&
+    (project.metadata.housebook ||
+      project.metadata.homeOverview ||
+      project.metadata.solarPlants ||
+      hasAssets ||
+      hasWallPhotos) &&
     JSON.stringify(project).length > 18_000_000
   )
     issues.push({

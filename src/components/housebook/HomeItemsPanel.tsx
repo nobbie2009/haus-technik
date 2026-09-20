@@ -15,10 +15,26 @@ import { readPlanImage } from "../../housebook/images";
 import { focusObject } from "../../housebook/navigation";
 import { Field } from "./shared";
 import { TargetField, updateHome } from "./HomeShared";
-export function HomeItemsPanel({ kinds, onClose }: { kinds: HomeKind[]; onClose: () => void }) {
+export function HomeItemsPanel({
+  kinds,
+  onClose,
+  initialId,
+  initialLocation,
+}: {
+  kinds: HomeKind[];
+  onClose: () => void;
+  initialId?: string | undefined;
+  initialLocation?: string | undefined;
+}) {
   const p = useProjectStore((s) => s.project),
     b = homeBook(p);
-  const [draft, setDraft] = useState<HomeItem>(() => newHomeItem(kinds[0]!)),
+  const [draft, setDraft] = useState<HomeItem>(
+      () =>
+        b.items.find((i) => i.id === initialId && kinds.includes(i.kind)) ?? {
+          ...newHomeItem(kinds[0]!),
+          location: initialLocation ?? "",
+        },
+    ),
     [filter, setFilter] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);

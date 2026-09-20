@@ -6,12 +6,12 @@ import { NetworkPanel } from "./NetworkPanel";
 import { Field, updateBook } from "./shared";
 import { updateHome } from "./HomeShared";
 const empty = () => ({ ssid: "", band: "", ip: "", mac: "", location: "", notes: "" });
-export function InternetPanel() {
+export function InternetPanel({ initialId }: { initialId?: string | undefined } = {}) {
   const p = useProjectStore((s) => s.project),
     nodes = housebook(p).networkNodes;
   const [internet, setInternet] = useState(() => homeBook(p).internet),
-    [id, setId] = useState(""),
-    [details, setDetails] = useState(empty);
+    [id, setId] = useState(initialId ?? ""),
+    [details, setDetails] = useState(() => nodes.find((n) => n.id === initialId)?.details ?? empty());
   return (
     <section>
       <h3>Internet & WLAN</h3>

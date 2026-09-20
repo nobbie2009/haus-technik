@@ -18,10 +18,10 @@ const freshMeter = (): Meter => ({
 });
 const freshReading = (): Reading => ({ id: newId(), date: localDate(), value: 0, reset: false, note: "" });
 const fmt = (n: number) => n.toLocaleString("de-DE", { maximumFractionDigits: 3 });
-export function UsagePanel({ onClose }: { onClose: () => void }) {
+export function UsagePanel({ onClose, initialId }: { onClose: () => void; initialId?: string | undefined }) {
   const p = useProjectStore((s) => s.project),
     b = homeBook(p);
-  const [selected, setSelected] = useState(b.meters[0]?.id ?? ""),
+  const [selected, setSelected] = useState(initialId ?? b.meters[0]?.id ?? ""),
     [draft, setDraft] = useState<Meter>(freshMeter),
     [reading, setReading] = useState<Reading>(freshReading),
     [from, setFrom] = useState(""),

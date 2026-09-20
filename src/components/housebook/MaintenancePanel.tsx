@@ -15,11 +15,17 @@ const fresh = (): MaintenanceTask => ({
   intervalMonths: 0,
   history: [],
 });
-export function MaintenancePanel({ onClose }: { onClose: () => void }) {
+export function MaintenancePanel({
+  onClose,
+  initialId,
+}: {
+  onClose: () => void;
+  initialId?: string | undefined;
+}) {
   const p = useProjectStore((s) => s.project),
     b = homeBook(p),
     rows = dueOverview(p);
-  const [draft, setDraft] = useState(fresh),
+  const [draft, setDraft] = useState(() => b.tasks.find((t) => t.id === initialId) ?? fresh()),
     [done, setDone] = useState(""),
     [date, setDate] = useState(localDate),
     [note, setNote] = useState("");

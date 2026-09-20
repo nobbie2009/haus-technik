@@ -3,7 +3,13 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.18.0: Private Hausübersicht
+## Neu in 0.19.0: Einrichtungsassistent, Suche und Solarakte
+
+Unterbrechbarer Rundgang durch Haus und Technik, zentrale Suche nach Geräten und Unterlagen sowie
+Balkonkraftwerke mit Modulen, Wechselrichter, optionalem Speicher und Ertragszähler.
+[Anleitung](docs/setup-search-solar.md).
+
+## Seit 0.18.0: Private Hausübersicht
 
 Internet/WLAN, Absperrstellen, Rauchmelder, eigene Zähler- und Verbrauchsansicht, Wartungsverläufe sowie
 Garten und Außenbeleuchtung. Mit Fotos, Planverknüpfungen, Terminen und CSV-Ausgabe.

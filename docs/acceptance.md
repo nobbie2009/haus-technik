@@ -272,3 +272,21 @@ Die vollständige iPad-Prüfung lief gegen Version 0.18.0 im Produktionsbuild ü
 TypeScript, Build und Formatprüfung erfolgreich. Desktop-Verbrauchsansicht und iPad-Wartungsmaske
 anhand der erzeugten Screenshots visuell geprüft. Fotos im Test sind synthetisch; ein physisches iPad,
 echte Zählerablesungen und automatische Geräteabfragen waren nicht Bestandteil dieser Prüfung.
+
+## Einrichtungsassistent, Suche und Solarakte (0.19.0)
+
+- Haus benennen und einen Rechteckraum zweimal übernehmen: bestehender Raum wird wiederverwendet.
+- Themen auswählen, Schritte bestätigen/überspringen, pausieren und nach Neuladen am gleichen Schritt fortsetzen.
+- Raum durchsehen, Rauchmelder mit übernommenem Standort erfassen und zur Einrichtung zurückkehren.
+- Ersten Rundgang mit weiterhin offenen Schritten abschließen und Fortschritt im JSON prüfen.
+- Solaranlage mit Modulgruppen, Wechselrichter und Speicher anlegen; bekannte Wp summieren, unbekannte Werte offenlassen.
+- Vorhandenen Ertragszähler weiterverwenden beziehungsweise einmalig anlegen und ohne erfundene Ablesung starten.
+- Ertragsablesungen erfassen und in der Solarakte ausschließlich tatsächlich gemessene Intervalle auswerten.
+- Seriennummer und Standort gemeinsam suchen und den konkreten Datensatz öffnen.
+- Ungültige Metadaten ablehnen, alte Projekte unverändert lesen und Solarakte/Zähler atomar mit Undo/Redo wiederherstellen.
+- iPad-WebKit: Einrichtung fortsetzen, Solarakte mit Touch bedienen, Seriennummer suchen sowie Hoch-/Querformat ohne horizontalen Inhaltsüberlauf prüfen.
+
+Validiert am 20.09.2026: 302 Modultests, 39 Desktop-Browsertests und zehn iPad-WebKit-Tests erfolgreich.
+Die vollständige iPad-Prüfung lief gegen den Produktionsbuild 0.19.0 über die HTTP-WLAN-Adresse.
+TypeScript, Build und Formatprüfung erfolgreich. Assistentenabschluss und iPad-Suchansicht visuell geprüft.
+Kein physisches iPad, keine reale Solaranlage und keine automatische Ertragsabfrage wurden getestet.

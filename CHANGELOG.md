@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.19.0 · 20.09.2026
+
+- Einrichtungsassistent mit sechs Schritten, Themenauswahl, raumweisem Rundgang und Abschlussübersicht.
+- Fortschritt, übersprungene Schritte und durchgesehene Räume im Projekt gespeichert; vorhandene Räume und Geräte werden weiterverwendet.
+- Direkte Eingaben für Hausname, Geschosse und rechteckige Räume sowie Übergänge zu Planvorlagen, Objektakten und Wandfotos.
+- Zentrale Suche nach Namen, Standorten, Seriennummern, WLAN-Angaben, Unterlagen und Notizen; direkte Navigation zu Akten, Zählern, Fotos und Planpositionen.
+- Balkonkraftwerk-Akte mit Modulgruppen, Wechselrichter, optionalem Speicher, Anschlusszuordnung, Foto und Unterlagen.
+- Vorhandenen Solarertragszähler verknüpfen oder einmalig anlegen; tatsächliche Ableseintervalle auswerten.
+- Projektvalidierung, JSON-Sicherung und Undo/Redo erweitert; zusätzliche Modell-, Desktop- und iPad-WebKit-Prüfungen.
+
 ## 0.18.0 · 20.09.2026
 
 - Internetanschluss und WLAN-Gerätedaten mit SSID, Frequenzbändern, IP/MAC und Standort; zusätzliche Repeater und Clients.

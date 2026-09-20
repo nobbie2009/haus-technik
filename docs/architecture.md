@@ -406,6 +406,33 @@ auch bei gesperrten Leitungen. Die Importprüfung validiert Datenformen vor dem 
 Numerische Betriebsdaten und Ventilstellungen sind reine Dokumentation; es gibt keinen Strömungslöser.
 Bedienung und genaue Längenannahmen: [Wasser, Heizung und Gas](utilities.md).
 
+## Einrichtung, Suche und Solarakte (App 0.19.0)
+
+Der optionale Schlüssel `metadata.setupGuide` speichert ein Zod-validiertes Schema Version 1 mit
+aktuellem Schritt, gewählten Themen, bestätigten/übersprungenen Schritten und durchgesehenen Raum-IDs.
+Raumverweise sind weich; entfernte Räume werden in der Oberfläche nicht mehr gezählt. Die Geometrie
+neuer rechteckiger Räume entsteht über den vorhandenen `createRoom`-Pfad. Der Assistent erkennt einen
+gleichen Raumnamen auf demselben Geschoss vor der Erzeugung. Er verwendet vorhandene Fachdialoge und
+speichert ausschließlich ausdrückliche Fortschrittsbestätigungen, keine vermutete Vollständigkeit.
+
+`metadata.solarPlants` ist eine optionale validierte Liste eigener Anlagen. Modulgruppen, Wechselrichter
+und Speicher verwenden das bestehende Asset-Schema. Anlagenreferenzen auf Steckdose und Ertragszähler
+sind weich. `ensureSolarMeter` verwendet einen gültigen vorhandenen Solar-/kWh-Zähler oder erzeugt
+gemeinsam mit dessen Zuordnung einen leeren Zähler im vorhandenen Hausübersichtsmodell. Die gemeinsame
+Projekttransaktion ist atomar und per Undo/Redo rückgängig zu machen. Es entsteht keine Einspeisung im
+elektrischen Netzmodell. `modulePower` gibt bei fehlenden Leistungsangaben ausdrücklich null zurück.
+
+Die zentrale Suche baut ihre Einträge aus den bestehenden Modellen auf; es gibt keine zweite persistente
+Suchdatenbank. Sie berücksichtigt ausgewählte Textfelder, keine Base64-Bilddaten, und normalisiert
+Groß-/Kleinschreibung sowie diakritische Zeichen. Alle Suchbegriffe müssen vorkommen. Treffer tragen
+konkrete Objekt-, Abschnitts- oder Fotoziele. Die Zielpanels unterstützen eine initiale Datensatz-ID;
+Schlüsselwechsel laden die jeweilige Akte neu. Pro Seite werden zunächst höchstens 50 Treffer gerendert.
+
+Beide Metadaten-Erweiterungen werden bei jedem Import und Commit geprüft. Das Projekt bleibt bei
+Schemaversion 10; ältere Projekte ohne diese optionalen Felder bleiben unverändert lesbar. Die bestehende
+18-MB-Grenze berücksichtigt auch Solar-Fotos. Assistent und Suche bleiben Teil der verzögert geladenen
+Hausakte und benötigen weder Backend noch externen KI-Dienst.
+
 ## Private Hausübersicht (App 0.18.0)
 
 `metadata.homeOverview` enthält ein separat validiertes Schema Version 1 für private Hausobjekte,
