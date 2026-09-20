@@ -1,3 +1,5 @@
+import { utilities, ensureUtilities, utilityLayer } from "../utilities/model";
+import { pointInPolygon } from "../geometry/dimensions";
 import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { Selection } from "../editor/types";
@@ -34,10 +36,17 @@ export function insertRoomTemplate(
   for (const kind of electricalPlacementKinds)
     for (const item of Object.values(source.electrical[kind]))
       if (item.roomId === room.id) selection.push({ kind, id: item.id });
+  const polygon = room.polygon.pointIds.map((id) => source.points[id]!.position);
+  for (const node of Object.values(utilities(source).nodes))
+    if (node.floorId === room.floorId && pointInPolygon(node.position, polygon))
+      selection.push({ kind: "utilityNodes", id: node.id });
   const selectedIds = new Set(selection.map((s) => s.id));
   for (const cable of Object.values(source.electrical.cables))
     if (selectedIds.has(cable.startNodeId) && selectedIds.has(cable.endNodeId))
       selection.push({ kind: "cables", id: cable.id });
+  for (const pipe of Object.values(utilities(source).pipes))
+    if (selectedIds.has(pipe.from) && selectedIds.has(pipe.to))
+      selection.push({ kind: "utilityPipes", id: pipe.id });
   const original = new Set([
     ...Object.values(source.points).map((p) => p.id),
     ...Object.values(elementTables(source)).flatMap((t) => Object.keys(t)),
@@ -113,6 +122,10 @@ export function insertRoomTemplate(
       if (created.has(item.id)) {
         item.floorId = floorId;
         const layerKind = source.layers[item.layerId]!.kind;
+        if (kind === "utilityNodes" || kind === "utilityPipes") {
+          ensureUtilities(project);
+          utilityLayer(project, "medium" in item ? item.medium : "media" in item ? item.media[0]! : "cold");
+        }
         const layer = Object.values(project.layers).find((l) => l.kind === layerKind);
         if (!layer) throw new Error("Zielebene fehlt.");
         item.layerId = layer.id;

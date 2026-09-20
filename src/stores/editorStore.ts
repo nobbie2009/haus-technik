@@ -1,3 +1,4 @@
+import type { Medium, UtilityKind } from "../utilities/model";
 import { create } from "zustand";
 import { categoryForTool } from "../editor/categories";
 import type { EditorCategory } from "../editor/categories";
@@ -17,6 +18,8 @@ interface EditorState {
   furnitureType: string;
   electricalKind: import("../electrical/models").ElectricalKind;
   consumerEntryId: string | null;
+  utilityMedium: Medium;
+  utilityKind: UtilityKind;
   viewport: Viewport;
   size: { width: number; height: number };
   selection: Selection[];
@@ -48,7 +51,14 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       category,
       consumerEntryId: null,
       selection: [],
-      tool: category === "building" ? "select" : category === "furniture" ? "furniture" : "electrical",
+      tool:
+        category === "building"
+          ? "select"
+          : category === "furniture"
+            ? "furniture"
+            : category === "utilities"
+              ? "select"
+              : "electrical",
       draft: emptyDraft(),
       cableStartId: null,
       connectionRequest: null,
@@ -60,6 +70,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   tool: "select",
   connectionRequest: null,
   cableStartId: null,
+  utilityMedium: "cold",
+  utilityKind: "source",
   furnitureType: "sofa",
   electricalKind: "outlets",
   consumerEntryId: null,

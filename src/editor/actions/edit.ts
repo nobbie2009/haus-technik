@@ -1,3 +1,4 @@
+import { utilities, pipeFloorPath } from "../../utilities/model";
 import { newId } from "../../utils/uuid";
 import { cablePath } from "../../electrical/cables";
 import { elementTables } from "../../core/elementTables";
@@ -43,6 +44,26 @@ export function moveSelection(project: Project, selection: Selection[], delta: V
     ) {
       const path = cablePath(project, cable);
       cable.path = [add(multiply(add(path[0]!, path.at(-1)!), 0.5), delta)];
+    }
+  }
+  const net = utilities(project);
+  for (const selected of selection) {
+    if (selected.kind === "utilityPipes") {
+      const pipe = net.pipes[selected.id]!;
+      if (pipe.riser) pipe.riser = add(pipe.riser, delta);
+      if (
+        !pipe.path.length &&
+        !pipe.riser &&
+        !(selection.some((s) => s.id === pipe.from) && selection.some((s) => s.id === pipe.to))
+      ) {
+        const ps = pipeFloorPath(project, pipe, pipe.floorId);
+        pipe.path = [multiply(add(ps[0]!, ps.at(-1)!), 0.5)];
+      }
+      pipe.path = pipe.path.map((p) => add(p, delta));
+    }
+    if (selected.kind === "utilityNodes") {
+      const node = net.nodes[selected.id]!;
+      node.position = add(node.position, delta);
     }
   }
   const points = selectedPointIds(project, selection);
@@ -148,6 +169,9 @@ export function deleteSelection(project: Project, selection: Selection[]): void 
   for (const id of wallIds) delete project.walls[id];
   for (const id of roomIds) delete project.rooms[id];
   for (const selectionItem of selection) delete elementTables(project)[selectionItem.kind][selectionItem.id];
+  const net = utilities(project);
+  for (const pipe of Object.values(net.pipes))
+    if (!net.nodes[pipe.from] || !net.nodes[pipe.to]) delete net.pipes[pipe.id];
   detachDeletedElectricalReferences(project);
   for (const table of [project.doors, project.windows])
     for (const opening of Object.values(table)) {
@@ -179,6 +203,36 @@ export function duplicateSelection(
   const pointMap = new Map<UUID, UUID>();
   const wallMap = new Map<UUID, UUID>();
   const output: Selection[] = [];
+  const net = utilities(project),
+    utilityCopies = new Map<string, string>();
+  for (const selected of selection.filter((s) => s.kind === "utilityNodes")) {
+    const original = net.nodes[selected.id]!,
+      id = newId();
+    net.nodes[id] = {
+      ...structuredClone(original),
+      id,
+      name: `${original.name} – Kopie`,
+      position: add(original.position, delta),
+    };
+    utilityCopies.set(original.id, id);
+    output.push({ kind: "utilityNodes", id });
+  }
+  for (const selected of selection.filter((s) => s.kind === "utilityPipes")) {
+    const original = net.pipes[selected.id]!;
+    if (!utilityCopies.has(original.from) || !utilityCopies.has(original.to))
+      throw new Error("Zum Duplizieren einer Rohrleitung beide Anschlussobjekte mit auswählen.");
+    const id = newId();
+    net.pipes[id] = {
+      ...structuredClone(original),
+      id,
+      name: `${original.name} – Kopie`,
+      from: utilityCopies.get(original.from)!,
+      to: utilityCopies.get(original.to)!,
+      path: original.path.map((p) => add(p, delta)),
+      riser: original.riser ? add(original.riser, delta) : null,
+    };
+    output.push({ kind: "utilityPipes", id });
+  }
   for (const wallId of wallIds) {
     const wall = project.walls[wallId]!;
     for (const pointId of [wall.startPointId, wall.endPointId])

@@ -2,6 +2,8 @@ import type { elementKinds } from "../core/elementTables";
 import type { UUID, Vec2 } from "../models/common";
 
 export type Tool =
+  | "utilityNode"
+  | "utilityPipe"
   | "select"
   | "pan"
   | "wall"
@@ -26,6 +28,8 @@ export interface DrawingDraft {
 }
 export type ProjectMutation = (project: import("../models/project").Project) => void;
 export const toolLabels: Record<Tool, string> = {
+  utilityNode: "Komponente",
+  utilityPipe: "Rohrleitung",
   connect: "Anschließen",
   furniture: "M\u00f6bel",
   electrical: "Elektrik",

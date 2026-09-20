@@ -1,3 +1,5 @@
+import { addUtilityNode } from "../../utilities/model";
+import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
 import { addElectrical } from "../../electrical/actions";
@@ -88,6 +90,21 @@ export function useCanvasInteraction() {
       return;
     }
     if (event.button !== 0) return;
+    if (editor.tool === "utilityPipe") {
+      confirmPipe(updateCursor(world, event.shiftKey));
+      return;
+    }
+    if (editor.tool === "utilityNode") {
+      let id = "";
+      const position = updateCursor(world, false);
+      if (
+        useProjectStore.getState().commit("Rohrnetz-Komponente platzieren", (p) => {
+          id = addUtilityNode(p, editor.floorId, position, editor.utilityKind, editor.utilityMedium);
+        })
+      )
+        useEditorStore.setState({ selection: [{ kind: "utilityNodes", id }] });
+      return;
+    }
     if (editor.tool === "connect") {
       const hadStart = useEditorStore.getState().cableStartId;
       confirmConnection(world);

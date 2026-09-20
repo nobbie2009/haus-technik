@@ -1,8 +1,11 @@
+import { utilities } from "../utilities/model";
 import type { Project } from "../models/project";
 
 /** Gemeinsamer Editorzugriff; Fachmodelle bleiben in ihren eigenen Modulen. */
 export function elementTables(project: Project) {
   return {
+    utilityNodes: utilities(project).nodes,
+    utilityPipes: utilities(project).pipes,
     walls: project.walls,
     rooms: project.rooms,
     doors: project.doors,
@@ -22,6 +25,8 @@ export function elementTables(project: Project) {
   };
 }
 export const elementKinds = [
+  "utilityNodes",
+  "utilityPipes",
   "walls",
   "rooms",
   "doors",

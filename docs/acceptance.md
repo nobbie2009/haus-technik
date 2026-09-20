@@ -219,3 +219,22 @@ GitHub Actions wurden noch nicht auf GitHub ausgeführt: Es ist bislang kein Rem
 Validiert am 20.09.2026: 266 Modultests, 33 Desktop-Browsertests und sechs iPad-WebKit-Tests.
 TypeScript und Produktionsbuild erfolgreich; Desktop-Dialog und iPad-Plan anhand der Testbilder geprüft.
 Physisches iPad, Apple Pencil und native Bildschirmtastatur sind weiterhin nicht am echten Gerät geprüft.
+
+## Wasser, Heizung und Gas (0.16.0)
+
+- Wasseranschluss und Entnahmestelle platzieren, Wegpunkte zeichnen, DN und Material bearbeiten und nach Neuladen vergleichen.
+- Gasheizung mit separatem Gasanschluss sowie Vor- und Rücklauf zum Heizkörper verbinden.
+- Etagenleitung über die Anschlussauswahl erstellen, Steigpunkt bearbeiten und auf der Zieletage auswählen.
+- Rohrlängen einschließlich Wegpunkten, Anschlusshöhen, Etagenhöhen und Zuschlägen prüfen.
+- Medienkonflikte, doppelte Verbindungen, fehlende Referenzen und ungültige Maße atomar ablehnen.
+- Auswahl, Sichtbarkeit, indirekte Ebenensperren, Verschieben, abhängiges Löschen und Undo/Redo prüfen.
+- Vollständige Rohrnetze duplizieren und interne Leitungen mit Raumvorlagen übernehmen.
+- Rohrgeometrie im Gesamtplan und Angaben in Materiallisten prüfen.
+- Fingerplatzierung, Rohrzeichnung und Materialbearbeitung im WebKit-iPad-Profil über die WLAN-Adresse ausführen.
+
+Validiert am 20.09.2026: 277 Modultests und sieben iPad-WebKit-Tests erfolgreich. Im vollständigen
+Desktop-Durchlauf bestanden 33 von 35 Tests unmittelbar; zwei Tests wurden an den zusätzlichen
+Planungstab beziehungsweise den tatsächlichen zugänglichen Etagen-Buttonnamen angepasst und
+bestanden beim gezielten Nachlauf. Die beiden Rohrnetz-Tests und der iPad-Rohrnetz-Test wurden nach
+der abschließenden Beschriftungsanpassung erneut erfolgreich ausgeführt. TypeScript, Produktionsbuild
+und Formatprüfung erfolgreich. Desktop- und iPad-Testbilder visuell geprüft; kein physisches iPad getestet.

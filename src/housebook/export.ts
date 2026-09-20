@@ -1,3 +1,4 @@
+import { utilities, media, pipeFloorPath, pipeLength, pipeCaptionPoint, nodeKinds } from "../utilities/model";
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import { furnitureCorners } from "../geometry/furniture";
@@ -164,6 +165,42 @@ export function planPrimitives(
       if (a?.floorId === floorId && b?.floorId === floorId) line([a.position, b.position], "#7556a2", 15);
     }
   }
+  if (mode === "all") {
+    const net = utilities(project);
+    for (const pipe of Object.values(net.pipes))
+      if (project.layers[pipe.layerId]?.visible) {
+        const path = pipeFloorPath(project, pipe, floorId),
+          color = media[pipe.medium].color;
+        if (path.length) {
+          line(path, color, 25);
+          const caption = pipeCaptionPoint(path);
+          text(
+            { x: caption.x + 80, y: caption.y + 180 },
+            `${pipe.name} · ${media[pipe.medium].short}`,
+            color,
+            110,
+          );
+        }
+        if (path.length && pipe.riser)
+          text(
+            pipe.riser,
+            `Steigleitung ${project.floors[net.nodes[pipe.from]!.floorId]?.name} / ${project.floors[net.nodes[pipe.to]!.floorId]?.name}`,
+            color,
+            100,
+          );
+      }
+    for (const node of Object.values(net.nodes).filter(visible)) {
+      const corners = furnitureCorners(node),
+        color = media[node.media[0]!].color;
+      line([...corners, corners[0]!], color);
+      text(
+        node.position,
+        `${node.name} · ${node.media.map((m) => media[m].short).join("/")}${node.closed ? " · geschlossen" : ""}`,
+        color,
+        110,
+      );
+    }
+  }
   return result;
 }
 export function planBounds(primitives: Primitive[]) {
@@ -291,6 +328,29 @@ export function materialRows(project: Project): string[][] {
       `${a.name}:${link.fromPort} → ${b.name}:${link.toPort} · Luftlinie/Etagenhöhe/Zuschlag`,
     ]);
   }
+  const net = utilities(project);
+  for (const node of Object.values(net.nodes))
+    rows.push([
+      "Rohrnetz-Komponente",
+      "",
+      node.name,
+      project.floors[node.floorId]!.name,
+      statusLabels[asset(node).status],
+      "1",
+      "Stück",
+      `${nodeKinds[node.kind]}; ${node.media.map((m) => media[m].short).join("/")}; ${node.width} × ${node.depth} × ${node.height} mm; Heizleistung ${node.heatOutputW ?? "?"} W`,
+    ]);
+  for (const pipe of Object.values(net.pipes))
+    rows.push([
+      "Rohrleitung",
+      pipe.name,
+      media[pipe.medium].label,
+      project.floors[pipe.floorId]!.name,
+      statusLabels[asset(pipe).status],
+      (pipeLength(project, pipe) / 1000).toFixed(2),
+      "m",
+      `${pipe.material || "Material unbekannt"}; DN ${pipe.nominalDiameter ?? "?"}; Dämmung ${pipe.insulation} mm; inkl. Höhenunterschied/Zuschlag`,
+    ]);
   return rows;
 }
 export function csv(rows: string[][]) {

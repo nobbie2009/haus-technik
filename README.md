@@ -3,7 +3,13 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.15.0: Verbraucherdatenbank
+## Neu in 0.16.0: Wasser, Heizung und Gas
+
+Technische Rohrnetze mit maßstäblichen Komponenten, getrennten Medien, Leitungsverläufen und
+Etagenverbindungen dokumentieren. Rohrmaterial, DN, Dämmung, Heizleistung und Objektakten bearbeiten;
+Ausgabe im Gesamtplan und in der Materialliste. [Anleitung und Modellgrenzen](docs/utilities.md).
+
+## Seit 0.15.0: Verbraucherdatenbank
 
 Eigene Geräte mit Hersteller, Modell, Seriennummer, Volt, Watt und kWh/Jahr speichern,
 maßstäblich platzieren, drehen und an die Elektrik anschließen. Bibliotheken lassen sich

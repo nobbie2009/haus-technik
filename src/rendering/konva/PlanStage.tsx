@@ -1,3 +1,4 @@
+import { UtilityRenderer } from "./UtilityRenderer";
 import { CableRenderer } from "./CableRenderer";
 import { TouchDrawingControls } from "../../components/TouchDrawingControls";
 import { BackgroundImage, HousebookOverlay } from "./HousebookOverlay";
@@ -14,6 +15,8 @@ import { SimulationOverlay } from "./SimulationOverlay";
 import { SimulationPlanControls } from "../SimulationPlanControls";
 
 const hints = {
+  utilityNode: "Komponente platzieren · Maße und Anschlüsse rechts bearbeiten",
+  utilityPipe: "Startanschluss, Wegpunkte, Zielanschluss · Escape: abbrechen",
   connect: "Von einem Elektroobjekt zum anderen ziehen oder beide nacheinander anklicken. Escape: abbrechen.",
   cable: "Startobjekt, Wegpunkte, Endobjekt anklicken. Backspace: Punkt entfernen. Escape: abbrechen.",
   electrical: "Objekt links w\u00e4hlen und platzieren. V oder Escape: Auswahl. Anschluss rechts zuordnen.",
@@ -97,6 +100,7 @@ export function PlanStage() {
             selection={editor.selection}
           />
           <ElectricalPreview />
+          <UtilityRenderer project={preview} />
           <SimulationOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
           <InteractionOverlay />
           <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />

@@ -50,7 +50,7 @@
   z-index: 2;
   background: #fafbf8;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2px;
   margin: -8px -5px 18px;
   border-bottom: 1px solid var(--border);
@@ -783,4 +783,23 @@
   font-size: 12px;
   line-height: 1.6;
   overflow-wrap: anywhere;
+}
+
+.utility-actions {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.layer-dot.water {
+  background: #176fba;
+}
+.layer-dot.heating {
+  background: #b45319;
+}
+.layer-dot.gas {
+  background: #856600;
+}
+.cursor-utilityNode,
+.cursor-utilityPipe {
+  cursor: crosshair;
 }

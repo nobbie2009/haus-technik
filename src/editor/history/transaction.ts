@@ -1,3 +1,4 @@
+import { utilities } from "../../utilities/model";
 import { syncMountings } from "../../housebook/mounting";
 import { electricalNodes } from "../../electrical/cables";
 import { detachConnectionAssignment } from "../../electrical/contacts";
@@ -28,6 +29,18 @@ function geometrySignature(project: Project, entity: FloorElement): string {
     dependencies = [String(entity.startNodeId), String(entity.endNodeId)].map((id) => {
       const node = nodes[id];
       return [node?.position, node?.floorId, node ? project.floors[node.floorId]?.elevation : null];
+    });
+  }
+  if ("from" in entity && "to" in entity && "medium" in entity) {
+    const net = utilities(project);
+    dependencies = [String(entity.from), String(entity.to)].map((id) => {
+      const node = net.nodes[id];
+      return [
+        node?.position,
+        node?.elevation,
+        node?.floorId,
+        node ? project.floors[node.floorId]?.elevation : null,
+      ];
     });
   }
   return JSON.stringify([entity, dependencies, project.floors[entity.floorId]?.elevation]);

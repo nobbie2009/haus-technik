@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.15.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.16.0.
 
 ## Bereits vorhanden
 
@@ -12,6 +12,7 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Verdrahtete Stromstoßrelais, explizite Fehlerwiderstände und idealisierte FI-Reaktionen in der Leiterprüfung.
 - GitHub-Vorbereitung mit CI, Dependabot und Beitragsvorlagen.
 - Verbraucherdatenbank mit Seriennummern, elektrischen Werten, maßstäblicher Platzierung und Bibliotheksimport/-export.
+- Wasser-, Heizungs- und Gasdokumentation mit Komponenten, Rohrverläufen, Etagenverbindungen und Materiallisten.
 
 ## Nächste Schritte
 
@@ -22,8 +23,9 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
    auf ausdrücklich angegebene Fehlerwiderstände und ideale FI-Schwellwerte begrenzt.
 3. **Home Assistant mit der echten Installation prüfen:** Erreichbarkeit, CORS und Zuordnung realer Entitäten.
 4. **3D-Ansicht aus dem Planmodell:** Geschoss-, Wand-, Tür- und Fensterhöhen nutzen; zunächst Gebäudeansicht.
-5. **Weitere technische Netze:** Wasser, Gas und Zigbee. Netzwerkdokumentation ist bereits vorhanden;
-   ein Betriebs- oder Funkmodell ist eine eigene Erweiterung.
+5. **Rohrnetze vertiefen:** Warmwasserzirkulation, Abwasser, Durchfluss, Druckverlust und hydraulischer Abgleich.
+   Wasser, Heizung und Gas sind zunächst als Dokumentationsmodell umgesetzt.
+6. **Zigbee:** Gerätezuordnung und später ein Funkmodell ergänzen. Netzwerkdokumentation ist bereits vorhanden.
 
 Backend, Benutzerverwaltung und geräteübergreifende Synchronisierung sind bisher nicht umgesetzt.
 Die bestehende Anwendung speichert lokal; Offline-Installation und Synchronisierung sind eigene Arbeitspakete.

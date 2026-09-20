@@ -391,3 +391,17 @@ Bibliothek und Abmessungen werden bei Projektimport und Transaktionen validiert.
 ohne diese Metadaten bleiben unverändert lesbar. Bibliotheksimporte vergeben neue IDs.
 Plananzeige, Auswahl, Ansichtsgrenzen und Vektorexport berücksichtigen die gedrehte Grundfläche.
 Bedienung und Datenumfang: [Verbraucherdatenbank](consumer-library.md).
+
+## Rohrnetze (App 0.16.0)
+
+`metadata.utilities` enthält versionierte Tabellen `nodes` und `pipes`. Der gemeinsame Editorzugriff
+stellt sie als `utilityNodes` und `utilityPipes` bereit, sodass Historie, Objektakten und Ebenensperren
+auch für Rohrnetze gelten. Die optionale Erweiterung lässt ältere Projekte ohne Rohrnetze unverändert.
+Die neue Ebenenart `heating` ergänzt die bestehenden Arten `water` und `gas`.
+
+Komponenten definieren zulässige Anschlussmedien. Rohrleitungen referenzieren zwei Komponenten,
+ein Medium, Wegpunkte und bei einem Etagenwechsel einen Steigpunkt. Endpunkte und Höhenstrecken
+werden aus den Anschlussobjekten abgeleitet. Die Transaktionsprüfung berücksichtigt diese Abhängigkeiten
+auch bei gesperrten Leitungen. Die Importprüfung validiert Datenformen vor dem Zugriff auf die Tabellen.
+Numerische Betriebsdaten und Ventilstellungen sind reine Dokumentation; es gibt keinen Strömungslöser.
+Bedienung und genaue Längenannahmen: [Wasser, Heizung und Gas](utilities.md).

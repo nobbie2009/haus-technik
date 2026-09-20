@@ -1,3 +1,4 @@
+import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
 import { useEffect } from "react";
@@ -43,7 +44,11 @@ export function useKeyboard(): void {
         if (!editor.draft.points.length) editor.setTool("select");
         return;
       }
-      if (editor.tool === "cable" && event.key === "Backspace" && editor.cableStartId) {
+      if (
+        (editor.tool === "cable" || editor.tool === "utilityPipe") &&
+        event.key === "Backspace" &&
+        editor.cableStartId
+      ) {
         event.preventDefault();
         if (editor.draft.points.length > 1)
           useEditorStore.setState({ draft: { ...editor.draft, points: editor.draft.points.slice(0, -1) } });
@@ -51,6 +56,11 @@ export function useKeyboard(): void {
         return;
       }
       if (event.key === "Enter" && editor.draft.points.length) {
+        if (editor.tool === "utilityPipe") {
+          event.preventDefault();
+          confirmPipe(editor.draft.cursor ?? editor.cursor);
+          return;
+        }
         if (editor.tool === "connect") {
           event.preventDefault();
           confirmConnection(editor.draft.cursor ?? editor.cursor);

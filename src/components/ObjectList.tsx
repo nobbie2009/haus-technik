@@ -1,3 +1,4 @@
+import { utilities, pipeOnFloor } from "../utilities/model";
 import { elementKinds, elementTables } from "../core/elementTables";
 import { categoryForObject } from "../editor/categories";
 import { useEditorStore } from "../stores/editorStore";
@@ -10,6 +11,8 @@ import { deviceAppearance } from "../rendering/deviceAppearance";
 import { cableOnFloor } from "../electrical/cables";
 
 const labels: Record<ObjectKind, string> = {
+  utilityNodes: "Rohrnetz-Komponente",
+  utilityPipes: "Rohrleitung",
   furniture: "M\u00f6bel",
   rooms: "Raum",
   junctions: "Verbindungspunkt",
@@ -41,7 +44,9 @@ export function ObjectList() {
           (entity) =>
             (kind === "cables"
               ? cableOnFloor(project, project.electrical.cables[entity.id]!, floorId)
-              : entity.floorId === floorId) && project.layers[entity.layerId]?.visible,
+              : kind === "utilityPipes"
+                ? pipeOnFloor(project, utilities(project).pipes[entity.id]!, floorId)
+                : entity.floorId === floorId) && project.layers[entity.layerId]?.visible,
         )
         .map((entity, i) => ({
           kind,

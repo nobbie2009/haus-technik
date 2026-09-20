@@ -1,3 +1,4 @@
+import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath } from "../../electrical/cables";
 import { housebook } from "../../housebook/model";
 import { furnitureCorners } from "../../geometry/furniture";
@@ -41,6 +42,13 @@ export function fitView(): void {
     if (shape && device.floorId === editor.floorId)
       positions.push(...furnitureCorners({ ...shape, position: device.position }));
   }
+  const net = utilities(project);
+  positions.push(
+    ...Object.values(net.nodes)
+      .filter((n) => n.floorId === editor.floorId)
+      .flatMap(furnitureCorners),
+    ...Object.values(net.pipes).flatMap((p) => pipeFloorPath(project, p, editor.floorId)),
+  );
   const book = housebook(project),
     background = book.backgrounds[editor.floorId];
   if (background?.visible)

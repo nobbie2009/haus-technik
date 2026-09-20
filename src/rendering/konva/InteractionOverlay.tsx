@@ -20,7 +20,7 @@ export function InteractionOverlay() {
     ? `${draft.input} ${/[mc]/i.test(draft.input) ? "" : "mm"} ↵`
     : anchor && cursor
       ? formatLength(
-          tool === "cable"
+          tool === "cable" || tool === "utilityPipe"
             ? vertices.slice(1).reduce((sum, p, i) => sum + distance(vertices[i]!, p), 0)
             : distance(anchor, cursor),
           unit,
@@ -28,7 +28,7 @@ export function InteractionOverlay() {
       : "";
   return (
     <>
-      {vertices.length > 1 && (
+      {vertices.length > 1 && tool !== "utilityPipe" && (
         <Line
           points={vertices.flatMap((v) => {
             const value = screen(v);

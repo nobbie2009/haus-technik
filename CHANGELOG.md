@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.16.0 · 20.09.2026
+
+- Neuer Planungsbereich für Kalt-/Warmwasser, Heizungsvor-/rücklauf und Gas mit getrennten Ebenen.
+- Maßstäbliche Komponenten: Anschlüsse, Zähler, Ventile, Abzweige, Verteiler, Entnahmestellen, Speicher, Heizkörper, Fußbodenheizkreise und Wärmeerzeuger.
+- Rohrleitungen mit Wegpunkten, Medienprüfung, Etagenverbindungen und bearbeitbaren Steigpunkten.
+- Dokumentation von Rohrmaterial, DN, Dämmung, Höhen, Längenzuschlag, Heizleistung, Druck und Temperatur.
+- Integration in Auswahl, Verschieben, Löschen, Duplizieren, Ebenensperren, Undo/Redo, Objektakten und Raumvorlagen.
+- Rohrnetze im PDF-/SVG-Gesamtplan sowie Komponenten und Rohrlängen in Materiallisten.
+- Automatisierte Modell-, Desktop- und iPad-Prüfungen; Dokumentation der Grenzen gegenüber einer hydraulischen oder gastechnischen Berechnung.
+
 ## 0.15.0 · 20.09.2026
 
 - Verbraucherdatenbank mit Suche, Bearbeitung, Kopien sowie separatem JSON-Import/-Export.

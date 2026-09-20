@@ -4,6 +4,7 @@ import { categoryForObject } from "../editor/categories";
 import { useProjectStore } from "../stores/projectStore";
 import { useEditorStore } from "../stores/editorStore";
 import { focusElectrical } from "../editor/interaction/focusElectrical";
+import { utilities } from "../utilities/model";
 export function focusObject(target: Selection): boolean {
   const project = useProjectStore.getState().project,
     item = elementTables(project)[target.kind][target.id];
@@ -13,13 +14,15 @@ export function focusObject(target: Selection): boolean {
   const position =
     "position" in item && typeof item.position === "object"
       ? item.position
-      : target.kind === "rooms"
-        ? project.points[project.rooms[item.id]!.polygon.pointIds[0]!]!.position
-        : target.kind === "walls"
-          ? project.points[project.walls[item.id]!.startPointId]!.position
-          : "wallId" in item && item.wallId
-            ? project.points[project.walls[item.wallId]!.startPointId]!.position
-            : null;
+      : target.kind === "utilityPipes"
+        ? utilities(project).nodes[utilities(project).pipes[target.id]!.from]!.position
+        : target.kind === "rooms"
+          ? project.points[project.rooms[item.id]!.polygon.pointIds[0]!]!.position
+          : target.kind === "walls"
+            ? project.points[project.walls[item.id]!.startPointId]!.position
+            : "wallId" in item && item.wallId
+              ? project.points[project.walls[item.wallId]!.startPointId]!.position
+              : null;
   const editor = useEditorStore.getState();
   editor.setCategory(categoryForObject(target.kind));
   editor.setFloor(item.floorId);

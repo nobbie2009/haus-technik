@@ -74,6 +74,12 @@ test("Tabs begrenzen Auswahl und Bearbeitung auch bei überlappenden Objekten", 
   await expect(page.getByLabel("Raumname", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Haus / Raum", exact: true }).focus();
   await page.keyboard.press("ArrowLeft");
+  await expect(page.getByRole("tab", { name: "Wasser / Wärme / Gas", exact: true })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "Wasser / Wärme / Gas", exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await page.keyboard.press("ArrowLeft");
   await expect(page.getByRole("tab", { name: "Elektrik", exact: true })).toBeFocused();
   await expect(page.getByRole("tab", { name: "Elektrik", exact: true })).toHaveAttribute(
     "aria-selected",

@@ -3,6 +3,7 @@ import type { Page } from "@playwright/test";
 import type { Project } from "../../src/models/project";
 import { createDemoProject } from "../../src/editor/demoProject";
 import { conductorFixture } from "../simulation/conductorFixture";
+import { utilities } from "../../src/utilities/model";
 
 async function exportProject(page: Page): Promise<Project> {
   const event = page.waitForEvent("download");
@@ -25,6 +26,35 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(crypto, "randomUUID", { value: undefined }));
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Neu", exact: true })).toBeEnabled();
+});
+
+test("Rohrnetz auf dem iPad per Finger platzieren und verbinden", async ({ page }) => {
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("tab", { name: "Wasser / Wärme / Gas", exact: true }).tap();
+  await page.getByLabel("Komponentenart", { exact: true }).selectOption("source");
+  await page.getByRole("button", { name: "Komponente platzieren", exact: true }).tap();
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  const box = (await page.getByTestId("drawing-surface").boundingBox())!;
+  await page.touchscreen.tap(box.x + 250, box.y + 250);
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByLabel("Komponentenart", { exact: true }).selectOption("tap");
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.touchscreen.tap(box.x + 520, box.y + 400);
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Rohrleitung zeichnen", exact: true }).tap();
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.touchscreen.tap(box.x + 250, box.y + 250);
+  await page.touchscreen.tap(box.x + 250, box.y + 400);
+  await page.touchscreen.tap(box.x + 520, box.y + 400);
+  await page.getByRole("button", { name: "Eigenschaften", exact: true }).tap();
+  await expect(page.getByLabel("Rohrmaterial", { exact: true })).toBeVisible();
+  await page.getByLabel("Rohrmaterial", { exact: true }).fill("Kupfer");
+  await page.getByLabel("Nennweite (DN)", { exact: true }).tap();
+  const net = utilities(await exportProject(page));
+  expect(Object.values(net.nodes)).toHaveLength(2);
+  expect(Object.values(net.pipes)).toHaveLength(1);
+  expect(Object.values(net.pipes)[0]).toMatchObject({ medium: "cold", material: "Kupfer" });
+  await page.screenshot({ path: "test-results/utilities-ipad.png" });
 });
 
 test("Verbraucherbibliothek auf dem iPad anlegen und per Finger platzieren", async ({ page }) => {

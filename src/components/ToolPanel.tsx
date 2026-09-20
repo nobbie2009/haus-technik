@@ -1,3 +1,4 @@
+import { UtilityLibrary } from "./utilities/UtilityLibrary";
 import {
   Armchair,
   PlugZap,
@@ -74,6 +75,7 @@ export function ToolPanel() {
               </button>
             ))}
         </nav>
+        {category === "utilities" && <UtilityLibrary />}
         {category === "furniture" && <FurnitureLibrary />}
         {category === "electrical" && <ElectricalLibrary />}
       </div>

@@ -1,3 +1,4 @@
+import { utilities } from "../../utilities/model";
 import { nearestElectricalNode } from "../../electrical/cables";
 import type { Vec2 } from "../../models/common";
 import { useEditorStore } from "../../stores/editorStore";
@@ -76,6 +77,17 @@ export function updateCursor(raw: Vec2, shift = false): Vec2 {
         target: { kind: "point", pointId: node.id },
       };
     }
+  }
+  if (editor.tool === "utilityPipe") {
+    const node = Object.values(utilities(project).nodes)
+      .reverse()
+      .find(
+        (n) =>
+          n.floorId === editor.floorId &&
+          project.layers[n.layerId]?.visible &&
+          distance(raw, n.position) * editor.viewport.scale <= 18,
+      );
+    if (node) point = { ...node.position };
   }
   useEditorStore.setState({
     cursor: raw,

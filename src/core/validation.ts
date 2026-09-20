@@ -1,3 +1,4 @@
+import { utilityIssues } from "../utilities/validation";
 import { housebookIssues } from "../housebook/validation";
 import { electricalIssues } from "../electrical/validation";
 import type { Entity, FloorElement, UUID } from "../models/common";
@@ -220,6 +221,8 @@ export function validateProject(input: unknown): ValidationResult {
       success: false,
       issues: parsed.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })),
     };
+  const utilityErrors = utilityIssues(parsed.data);
+  if (utilityErrors.length) return { success: false, issues: utilityErrors };
   const issues = [...relationalIssues(parsed.data), ...housebookIssues(parsed.data)];
   return issues.length ? { success: false, issues } : { success: true, project: parsed.data };
 }

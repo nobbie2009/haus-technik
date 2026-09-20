@@ -1,3 +1,4 @@
+import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath, cableOnFloor } from "../../electrical/cables";
 import { layerInCategory } from "../categories";
 import type { EditorCategory } from "../categories";
@@ -22,6 +23,16 @@ export function hitTest(
     project.layers[item.layerId]?.visible &&
     (!category || layerInCategory(project.layers[item.layerId]!.kind, category));
   if (!onlyWalls) {
+    const net = utilities(project);
+    for (const node of Object.values(net.nodes).reverse())
+      if (visible(node) && (distance(node.position, point) * scale <= 16 || containsFurniture(node, point)))
+        return { kind: "utilityNodes", id: node.id };
+    for (const pipe of Object.values(net.pipes).reverse()) {
+      if (!visible({ ...pipe, floorId })) continue;
+      const path = pipeFloorPath(project, pipe, floorId);
+      if (path.slice(1).some((p, i) => projectToSegment(point, path[i]!, p).distance * scale <= 8))
+        return { kind: "utilityPipes", id: pipe.id };
+    }
     for (const kind of [
       "devices",
       "outlets",
