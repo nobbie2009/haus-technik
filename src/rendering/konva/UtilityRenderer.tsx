@@ -9,6 +9,7 @@ import {
   pipeLength,
   pipeCaptionPoint,
   supportedMedia,
+  nodeMedia,
 } from "../../utilities/model";
 import { useEditorStore } from "../../stores/editorStore";
 export function UtilityRenderer({ project }: { project: Project }) {
@@ -71,7 +72,7 @@ export function UtilityRenderer({ project }: { project: Project }) {
         .filter((n) => n.floorId === editor.floorId && project.layers[n.layerId]?.visible)
         .map((n) => {
           const p = worldToScreen(n.position, viewport),
-            color = media[n.media[0]!].color;
+            color = media[nodeMedia(n)[0]!].color;
           return (
             <Group key={n.id} opacity={project.layers[n.layerId]!.opacity}>
               <Line
@@ -108,7 +109,9 @@ export function UtilityRenderer({ project }: { project: Project }) {
               <Text
                 x={p.x + 17}
                 y={p.y - 7}
-                text={`${n.name} · ${n.media.map((m) => media[m].short).join("/")}${n.closed ? " · geschlossen" : ""}`}
+                text={`${n.name} · ${nodeMedia(n)
+                  .map((m) => media[m].short)
+                  .join("/")}${n.closed ? " · geschlossen" : ""}`}
                 fill={color}
                 fontSize={12}
               />

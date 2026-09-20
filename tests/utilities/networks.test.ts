@@ -50,18 +50,28 @@ describe("Wasser, Heizung und Gas", () => {
     expect(parseProject(copied)).toEqual(copied);
   });
   it("speichert getrennte Medien und mehrere Anschlüsse am selben Wärmeerzeuger", () => {
-    const { p, floor } = fixture();
+    const { p, floor, b } = fixture();
     const boiler = addUtilityNode(p, floor, { x: 6000, y: 0 }, "gasBoiler", "cold");
     const radiator = addUtilityNode(p, floor, { x: 7000, y: 0 }, "radiator", "cold");
     const gas = addUtilityNode(p, floor, { x: 9000, y: 0 }, "source", "gas");
     addUtilityPipe(p, boiler, radiator, "flow");
     addUtilityPipe(p, boiler, radiator, "return");
     addUtilityPipe(p, gas, boiler, "gas");
-    expect(utilities(p).nodes[boiler]!.media).toEqual(["flow", "return", "gas"]);
+    expect(utilities(p).nodes[boiler]!.media).toEqual(["flow", "return", "cold", "hot", "gas"]);
+    addUtilityPipe(p, boiler, b, "cold");
+    addUtilityPipe(p, boiler, b, "hot");
     expect(new Set(Object.values(p.layers).map((l) => l.kind))).toEqual(
       new Set(["floorPlan", "dimensions", "furniture", "electrical", "water", "heating", "gas"]),
     );
     expect(parseProject(JSON.parse(JSON.stringify(p)))).toEqual(p);
+  });
+  it("akzeptiert Kalt- und Warmwasser an einer älteren Gasheizung mit VL/RL/GAS", () => {
+    const { p, floor, b } = fixture();
+    const boiler = addUtilityNode(p, floor, { x: 6000, y: 0 }, "gasBoiler", "flow");
+    utilities(p).nodes[boiler]!.media = ["flow", "return", "gas"];
+    expect(() => addUtilityPipe(p, b, boiler, "cold")).not.toThrow();
+    expect(() => addUtilityPipe(p, b, boiler, "hot")).not.toThrow();
+    expect(parseProject(p)).toEqual(p);
   });
   it("verhindert Selbstverbindungen, doppelte Leitungen und unpassende Medien atomar", () => {
     const { p, floor, a, b } = fixture(),

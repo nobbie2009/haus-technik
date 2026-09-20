@@ -84,9 +84,19 @@ export function ensureUtilities(project: Project): Utilities {
 export function supportedMedia(kind: UtilityKind, selected: Medium): Medium[] {
   if (kind === "tap" || kind === "tank") return ["cold", "hot"];
   if (["radiator", "heatingLoop", "boiler"].includes(kind)) return ["flow", "return"];
-  if (kind === "gasBoiler") return ["flow", "return", "gas"];
+  if (kind === "gasBoiler") return ["flow", "return", "cold", "hot", "gas"];
   if (kind === "gasAppliance") return ["gas"];
   return [selected];
+}
+/** Alte Projekte enthielten bei der Gasheizung nur VL/RL/GAS. Diese Daten bleiben gültig. */
+export function nodeMedia(node: Pick<UtilityNode, "kind" | "media">): Medium[] {
+  return node.kind === "gasBoiler" ? supportedMedia("gasBoiler", "flow") : node.media;
+}
+export function supportsMedium(node: Pick<UtilityNode, "kind" | "media">, selected: Medium): boolean {
+  return (
+    node.media.includes(selected) ||
+    (node.kind === "gasBoiler" && (selected === "cold" || selected === "hot"))
+  );
 }
 export function utilityLayer(project: Project, selected: Medium): string {
   const kind = media[selected].layer;
@@ -150,7 +160,7 @@ export function addUtilityPipe(
     a = net.nodes[from],
     b = net.nodes[to];
   if (!a || !b || a.id === b.id) throw new Error("Zwei verschiedene Anschlussobjekte wählen.");
-  if (!a.media.includes(selected) || !b.media.includes(selected))
+  if (!supportsMedium(a, selected) || !supportsMedium(b, selected))
     throw new Error("Das Medium passt nicht zu beiden Anschlüssen.");
   if ([a, b].some((v) => project.layers[v.layerId]?.locked))
     throw new Error("Ein Anschlussobjekt liegt auf einer gesperrten Ebene.");

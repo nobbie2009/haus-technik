@@ -6,6 +6,7 @@ import {
   nodeKinds,
   utilities,
   addUtilityPipe,
+  supportsMedium,
   type Medium,
   type UtilityKind,
 } from "../../utilities/model";
@@ -15,7 +16,9 @@ export function UtilityLibrary() {
     project = useProjectStore((s) => s.project);
   const [from, setFrom] = useState(""),
     [to, setTo] = useState("");
-  const nodes = Object.values(utilities(project).nodes).filter((n) => n.media.includes(editor.utilityMedium));
+  const nodes = Object.values(utilities(project).nodes).filter((n) =>
+    supportsMedium(n, editor.utilityMedium),
+  );
   return (
     <section aria-label="Rohrnetz-Werkzeuge">
       <SelectField

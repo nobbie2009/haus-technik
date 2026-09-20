@@ -1,5 +1,5 @@
 import type { Project } from "../models/project";
-import { utilitiesSchema, media, supportedMedia } from "./model";
+import { utilitiesSchema, media, supportedMedia, supportsMedium } from "./model";
 
 export function utilityIssues(project: Project): { path: string; message: string }[] {
   if (project.metadata.utilities === undefined) return [];
@@ -38,7 +38,12 @@ export function utilityIssues(project: Project): { path: string; message: string
       report("Rohrnetzobjekt liegt auf einer unpassenden Ebene.");
   }
   for (const node of Object.values(nodes)) {
-    if (JSON.stringify(node.media) !== JSON.stringify(supportedMedia(node.kind, node.media[0]!)))
+    const legacyGasBoiler =
+      node.kind === "gasBoiler" && JSON.stringify(node.media) === JSON.stringify(["flow", "return", "gas"]);
+    if (
+      !legacyGasBoiler &&
+      JSON.stringify(node.media) !== JSON.stringify(supportedMedia(node.kind, node.media[0]!))
+    )
       report("Anschlussmedien passen nicht zur Komponentenart.");
     if (node.closed && node.kind !== "valve") report("Nur Absperrventile können geschlossen sein.");
   }
@@ -50,7 +55,7 @@ export function utilityIssues(project: Project): { path: string; message: string
       report("Rohrleitung benötigt zwei vorhandene, verschiedene Anschlussobjekte.");
       continue;
     }
-    if (!a.media.includes(pipe.medium) || !b.media.includes(pipe.medium))
+    if (!supportsMedium(a, pipe.medium) || !supportsMedium(b, pipe.medium))
       report("Unverträgliche Medien an der Rohrleitung.");
     if (pipe.floorId !== a.floorId || Boolean(pipe.riser) !== (a.floorId !== b.floorId))
       report("Etagenverbindung benötigt einen passenden Steigpunkt.");

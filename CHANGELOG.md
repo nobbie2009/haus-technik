@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.26.0 · 20.09.2026
+
+- Kombitherme/Gasheizung unterstützt jetzt getrennte Anschlüsse für Kaltwasser, Warmwasser, Heizungs-Vorlauf, Heizungs-Rücklauf und Gas.
+- Bereits vorhandene Gasheizungen mit VL/RL/GAS bleiben kompatibel und können ohne Neuanlage um KW/WW-Leitungen ergänzt werden.
+- Medienauswahl, Rohrprüfung und Bauteilbeschriftung verwenden die zusätzlichen Kombitherme-Anschlüsse.
+
 ## 0.25.0 · 20.09.2026
 
 - Neues Anschlussplan-Schema für die Elektrik: belegte Leitungen zeigen Bauteile, Pole und Schaltkontakte mit farbigen Verbindungslinien.

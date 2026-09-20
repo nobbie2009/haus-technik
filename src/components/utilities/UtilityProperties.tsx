@@ -1,5 +1,6 @@
 import {
   utilities,
+  nodeMedia,
   media,
   nodeKinds,
   pipeLength,
@@ -35,7 +36,10 @@ export function UtilityProperties({ id, kind }: { id: string; kind: "utilityNode
       {node && (
         <>
           <p>
-            {nodeKinds[node.kind]} · {node.media.map((m) => media[m].label).join(" / ")}
+            {nodeKinds[node.kind]} ·{" "}
+            {nodeMedia(node)
+              .map((m) => media[m].label)
+              .join(" / ")}
           </p>
           {lengthField("Position X", node.position.x, (p, x) => {
             utilities(p).nodes[id]!.position.x = x;
@@ -89,7 +93,7 @@ export function UtilityProperties({ id, kind }: { id: string; kind: "utilityNode
             </SelectField>
           )}
           <h3>Anschlüsse</h3>
-          {node.media.map((m) => {
+          {nodeMedia(node).map((m) => {
             const pipes = Object.values(net.pipes).filter(
               (p) => p.medium === m && (p.from === id || p.to === id),
             );
@@ -104,7 +108,7 @@ export function UtilityProperties({ id, kind }: { id: string; kind: "utilityNode
               const editor = useEditorStore.getState();
               editor.setTool("utilityPipe");
               useEditorStore.setState({
-                utilityMedium: node.media[0]!,
+                utilityMedium: nodeMedia(node)[0]!,
                 cableStartId: id,
                 draft: { points: [node.position], cursor: node.position, input: "" },
               });

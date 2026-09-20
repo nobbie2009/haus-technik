@@ -1,7 +1,7 @@
 import type { Vec2 } from "../models/common";
 import { useEditorStore } from "../stores/editorStore";
 import { useProjectStore } from "../stores/projectStore";
-import { utilities, addUtilityPipe } from "./model";
+import { utilities, addUtilityPipe, supportsMedium } from "./model";
 export function confirmPipe(point: Vec2) {
   const editor = useEditorStore.getState(),
     project = useProjectStore.getState().project;
@@ -14,7 +14,7 @@ export function confirmPipe(point: Vec2) {
         Math.hypot(n.position.x - point.x, n.position.y - point.y) * editor.viewport.scale <= 18,
     );
   if (!editor.cableStartId) {
-    if (!node || !node.media.includes(editor.utilityMedium)) {
+    if (!node || !supportsMedium(node, editor.utilityMedium)) {
       useProjectStore.setState({ error: "Rohrleitung an einem passenden Anschlussobjekt beginnen." });
       return;
     }
