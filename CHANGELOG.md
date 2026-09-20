@@ -1,5 +1,12 @@
 # Änderungen
 
+## 20.09.2026 · Deployment-Skill (App weiterhin 0.21.0)
+
+- Wiederverwendbarer Codex-Skill für Home-Technik auf einem unprivilegierten Proxmox-LXC.
+- Nginx-Vorlage, getrennte Build-/Host-/Container-Schritte und Releasewechsel mit Rollback.
+- Browserdaten-Übertragung, dauerhafte WLAN-Adresse und QR-Aufkleber beim Serverumzug berücksichtigt.
+- Kein automatisches Deployment und keine Änderungen am App-Datenmodell.
+
 ## 0.21.0 · 20.09.2026
 
 - Haus-Startseite mit Wartungsterminen, letzten Zählerständen, fehlenden Angaben und Schnellaktionen.

@@ -3,6 +3,15 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
+## Auf Proxmox bereitstellen
+
+Der Codex-Skill [home-technik-proxmox-lxc](.agents/skills/home-technik-proxmox-lxc/SKILL.md)
+beschreibt die Einrichtung eines LXC mit Nginx, geprüfte Builds, Updates und Rollback im Heimnetz.
+Er enthält eine Nginx-Vorlage und getrennte Schritte für Build-Rechner, Proxmox-Host und Container.
+Im Repository liegt er unter `.agents/skills/`; zur persönlichen Verwendung den gleichnamigen Ordner
+nach `~/.codex/skills/` kopieren. Aufruf: `$home-technik-proxmox-lxc`.
+Die Erstellung des Skills führt noch kein Deployment auf einem Server aus.
+
 ## Neu in 0.21.0: Hausalltag und Gerätewechsel
 
 Startseite mit Terminen, Ablesungen und Sicherungshinweisen, Hauschronik mit Fotos und Belegen,

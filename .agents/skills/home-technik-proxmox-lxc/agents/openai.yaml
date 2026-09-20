@@ -1,0 +1,3 @@
+interface:
+  display_name: "Home-Technik auf Proxmox"
+  short_description: "LXC-Deployment, Updates und Rollback im Heimnetz"
