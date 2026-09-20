@@ -19,7 +19,11 @@ import { ScenariosPanel } from "./ScenariosPanel";
 import { SchematicPanel } from "./SchematicPanel";
 import { ConductorPanel } from "./ConductorPanel";
 import { HomeAssistantPanel } from "./HomeAssistantPanel";
-import { NetworkPanel } from "./NetworkPanel";
+import { InternetPanel } from "./InternetPanel";
+import { HomeItemsPanel } from "./HomeItemsPanel";
+import { UsagePanel } from "./UsagePanel";
+import { MaintenancePanel } from "./MaintenancePanel";
+import { dueOverview } from "../../housebook/home";
 import { AssetDialog } from "./AssetDialog";
 import { Field, updateBook } from "./shared";
 import type { Selection } from "../../editor/types";
@@ -36,7 +40,12 @@ const sections = {
   schematic: "Versorgungsschema",
   conductors: "Leiterprüfung",
   assets: "Objektakten",
-  network: "Netzwerk",
+  network: "Internet & WLAN",
+  shutoff: "Absperrstellen",
+  smoke: "Rauchmelder",
+  usage: "Zähler & Verbrauch",
+  maintenance: "Wartungen",
+  garden: "Garten & Außenlicht",
   templates: "Raumvorlagen",
   history: "Wiederherstellung",
   homeAssistant: "Home Assistant",
@@ -138,6 +147,16 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 <div className="book-cards">
                   {(
                     [
+                      [
+                        "usage",
+                        "Zähler & Verbrauch",
+                        "Ablesungen erfassen und tatsächliche Verbräuche vergleichen.",
+                      ],
+                      [
+                        "maintenance",
+                        "Wartungen",
+                        `${dueOverview(project).filter((r) => r.overdue || r.today).length} Termine überfällig oder heute fällig.`,
+                      ],
                       [
                         "background",
                         "1 · Haus erfassen",
@@ -295,7 +314,14 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 </ul>
               </section>
             )}
-            {section === "network" && <NetworkPanel />}
+            {section === "network" && <InternetPanel />}
+            {section === "shutoff" && <HomeItemsPanel key="shutoff" kinds={["shutoff"]} onClose={onClose} />}
+            {section === "smoke" && <HomeItemsPanel key="smoke" kinds={["smoke"]} onClose={onClose} />}
+            {section === "garden" && (
+              <HomeItemsPanel key="garden" kinds={["garden", "outdoorLight"]} onClose={onClose} />
+            )}
+            {section === "usage" && <UsagePanel onClose={onClose} />}
+            {section === "maintenance" && <MaintenancePanel onClose={onClose} />}
             {section === "homeAssistant" && <HomeAssistantPanel />}
             {section === "conductors" && <ConductorPanel onClose={onClose} />}
             {section === "templates" && (

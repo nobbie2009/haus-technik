@@ -406,6 +406,29 @@ auch bei gesperrten Leitungen. Die Importprüfung validiert Datenformen vor dem 
 Numerische Betriebsdaten und Ventilstellungen sind reine Dokumentation; es gibt keinen Strömungslöser.
 Bedienung und genaue Längenannahmen: [Wasser, Heizung und Gas](utilities.md).
 
+## Private Hausübersicht (App 0.18.0)
+
+`metadata.homeOverview` enthält ein separat validiertes Schema Version 1 für private Hausobjekte,
+Zähler mit Ablesungen, Wartungsaufgaben mit Verlauf und Internetanschlussdaten. Die Projekt-Schemaversion
+bleibt 10; Projekte ohne diesen optionalen Schlüssel bleiben unverändert lesbar. Netzwerkgeräte nutzen
+weiterhin die vorhandenen `housebook.networkNodes`, ergänzt um optionale WLAN-Details.
+
+Hausobjekte können eine Geschoss-/Positionsmarkierung und eine weiche Referenz auf ein Planobjekt
+enthalten. Das Löschen des Planobjekts entfernt keine persönliche Dokumentation. Planmarkierungen
+fließen in Ansicht, Zoom auf alle Objekte und Gesamtplanexport ein. Die Erzeugung einer Außenleuchte
+legt elektrischen Verbraucher und persönliche Verknüpfung in einer gemeinsamen Transaktion an.
+
+Ablesungen besitzen kalendarische Datumswerte und kumulierte, nichtnegative Messwerte. Validiert werden
+eindeutige Tage/IDs und monotone Werte innerhalb eines Zählerabschnitts. `consumption` wertet chronologisch
+sortierte, vollständig im Filter enthaltene Intervalle aus; ein Neustart unterbricht das Intervall.
+UTC-Tagesdifferenzen vermeiden Sommerzeitabweichungen. Tarife sind ein aktueller manueller Rechenpreis,
+keine Abrechnungsperioden. Wiederholte Wartungstermine verwenden monatsweise Addition mit Monatsendkürzung.
+
+Alle Änderungen laufen über den Projektstore und dessen Validierung, Historie und IndexedDB-Sicherung.
+Fotos verwenden die vorhandene Bildverkleinerung; die Gesamtgrenze von 18 MB gilt auch für diese Metadaten.
+Die Hausakte wird weiterhin verzögert geladen. Es gibt keine Netzwerkabfrage, Hintergrundüberwachung oder
+gemeinsame serverseitige Speicherung für diese neuen Bereiche.
+
 ## Wandfotos (App 0.17.0)
 
 Wände speichern unter `metadata.wallPhotos` eine validierte Liste eingebetteter Bilder mit Beschreibungen,

@@ -1,5 +1,17 @@
 # Änderungen
 
+## 0.18.0 · 20.09.2026
+
+- Internetanschluss und WLAN-Gerätedaten mit SSID, Frequenzbändern, IP/MAC und Standort; zusätzliche Repeater und Clients.
+- Persönliche Einträge für Absperrstellen, Rauchmelder, Garten und Außenbeleuchtung mit Fotos, Seriennummern und Terminen.
+- Vorhandene Absperrventile automatisch in der Übersicht; Planmarkierungen und Verknüpfungen zu bestehenden Objekten.
+- Außenleuchten direkt als elektrische Verbraucher anlegen, mit dokumentierter Leistung und anschließbarer Elektrik.
+- Eigene Zähler- und Verbrauchsansicht mit Ablesekorrektur, Zeitraumfilter, Tagesmitteln, Kostenabschätzung und CSV-Ausgabe.
+- Validierung von Ablesefolgen und Zählerwechseln; unbekannte Intervalle bleiben ausdrücklich offen.
+- Gemeinsame Wartungsübersicht, wiederkehrende Aufgaben und Erledigungshistorien.
+- Projektvalidierung, lokale Sicherung, JSON, Undo/Redo, Planausgabe und Bestandslisten integriert.
+- Zusätzliche Modell-, Desktop- und iPad-WebKit-Prüfungen.
+
 ## 0.17.0 · 20.09.2026
 
 - Mehrere Fotos direkt an einer Wand, mit Titel, Wandseite und Notizen.

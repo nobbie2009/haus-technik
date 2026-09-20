@@ -3,8 +3,9 @@ import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
 import { consumerLibrarySchema, consumerShapeSchema } from "../electrical/consumerLibrary";
 import { wallPhotosSchema } from "./wallPhotos";
+import { homeIssues } from "./home";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
-  const issues: { path: string; message: string }[] = [];
+  const issues: { path: string; message: string }[] = [...homeIssues(project)];
   let hasWallPhotos = false;
   for (const wall of Object.values(project.walls)) {
     if (wall.metadata.wallPhotos === undefined) continue;
@@ -103,7 +104,7 @@ export function housebookIssues(project: Project): { path: string; message: stri
       }
     }
   if (
-    (project.metadata.housebook || hasAssets || hasWallPhotos) &&
+    (project.metadata.housebook || project.metadata.homeOverview || hasAssets || hasWallPhotos) &&
     JSON.stringify(project).length > 18_000_000
   )
     issues.push({

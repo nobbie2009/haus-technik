@@ -3,7 +3,13 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.17.0: Wandfotos und Leitungsverläufe
+## Neu in 0.18.0: Private Hausübersicht
+
+Internet/WLAN, Absperrstellen, Rauchmelder, eigene Zähler- und Verbrauchsansicht, Wartungsverläufe sowie
+Garten und Außenbeleuchtung. Mit Fotos, Planverknüpfungen, Terminen und CSV-Ausgabe.
+[Anleitung](docs/private-overview.md).
+
+## Seit 0.17.0: Wandfotos und Leitungsverläufe
 
 Fotos direkt an Wänden sammeln, Wandseiten beschreiben und Leitungsverläufe auf den Bildern markieren.
 Mit Fingerbedienung, Zoom, optionaler Referenzstrecke und SVG-Ausgabe. [Anleitung](docs/wall-photos.md).

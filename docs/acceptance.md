@@ -254,3 +254,21 @@ Validiert am 20.09.2026: 283 Modultests, 36 Desktop-Browsertests und acht iPad-W
 Die iPad-Prüfung lief gegen den Produktionsbuild über die HTTP-WLAN-Adresse. TypeScript, Build und
 Formatprüfung erfolgreich. Desktop-, iPad- und gerenderte SVG-Ausgabe anhand eines ausdrücklich
 synthetischen Wandbilds geprüft. Ein physisches iPad und echte Wandaufnahmen waren nicht Teil der Prüfung.
+
+## Private Hausübersicht (0.18.0)
+
+- WLAN-Angaben an vorhandenen Netzwerkgeräten und Internetanschlussdaten speichern.
+- Absperrstellen, Rauchmelder, Fotos und Außenleuchten erfassen und im JSON-Rundlauf erhalten.
+- Eine Außenleuchte atomar als elektrischen Verbraucher mit dokumentierter Leistung anlegen.
+- Verbrauch, Tagesmittel und Kostenschätzung aus echten Ableseintervallen berechnen; Rückläufe ablehnen und Zählerwechsel als unbekanntes Intervall anzeigen.
+- Gefilterte Verbrauchs-CSV einschließlich Dateiname und tatsächlichem Inhalt prüfen.
+- Wiederkehrende Wartung erledigen und Monatsende sowie Erledigungshistorie prüfen.
+- Planmarkierungen im SVG und persönliche Datensätze in der Bestandsliste prüfen.
+- Undo/Redo, alte Projekte ohne neue Metadaten und ungültige Importdaten prüfen.
+- iPad-WebKit: Foto hochladen, Wasserzählerstand erfassen, Wartung anlegen und Hoch-/Querformat ohne horizontalen Inhaltsüberlauf bedienen.
+
+Validiert am 20.09.2026: 291 Modultests, 37 Desktop-Browsertests und neun iPad-WebKit-Tests erfolgreich.
+Die vollständige iPad-Prüfung lief gegen Version 0.18.0 im Produktionsbuild über die HTTP-WLAN-Adresse.
+TypeScript, Build und Formatprüfung erfolgreich. Desktop-Verbrauchsansicht und iPad-Wartungsmaske
+anhand der erzeugten Screenshots visuell geprüft. Fotos im Test sind synthetisch; ein physisches iPad,
+echte Zählerablesungen und automatische Geräteabfragen waren nicht Bestandteil dieser Prüfung.

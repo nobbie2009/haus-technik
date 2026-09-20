@@ -1,6 +1,7 @@
 import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath } from "../../electrical/cables";
 import { housebook } from "../../housebook/model";
+import { homeBook } from "../../housebook/home";
 import { furnitureCorners } from "../../geometry/furniture";
 import { consumerShape } from "../../electrical/consumerLibrary";
 import { useProjectStore } from "../../stores/projectStore";
@@ -57,6 +58,11 @@ export function fitView(): void {
       y: background.position.y - (background.width * background.pixelHeight) / background.pixelWidth,
     });
   positions.push(...book.networkNodes.filter((n) => n.floorId === editor.floorId).map((n) => n.position));
+  positions.push(
+    ...homeBook(project)
+      .items.filter((i) => i.floorId === editor.floorId && i.position)
+      .map((i) => i.position!),
+  );
   positions.push(
     ...Object.values(project.furniture)
       .filter((item) => item.floorId === editor.floorId)

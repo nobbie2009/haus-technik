@@ -9,6 +9,7 @@ import { getRoomMeasurements } from "../core/selectors";
 import { dimensionGeometry } from "../geometry/dimensions";
 import { asset, housebook, statusLabels, networkLabels } from "./model";
 import { circuitMembers } from "../electrical/selectors";
+import { homeBook, homeKinds } from "./home";
 
 export type Primitive =
   | { kind: "line"; points: Vec2[]; color: string; width: number }
@@ -166,6 +167,8 @@ export function planPrimitives(
     }
   }
   if (mode === "all") {
+    for (const item of homeBook(project).items.filter((i) => i.floorId === floorId && i.position))
+      text(item.position!, `${homeKinds[item.kind]}: ${item.name}`, "#21705f", 120);
     const net = utilities(project);
     for (const pipe of Object.values(net.pipes))
       if (project.layers[pipe.layerId]?.visible) {
@@ -308,7 +311,18 @@ export function materialRows(project: Project): string[][] {
       "Dokumentiert",
       "1",
       "Stück",
-      `${networkLabels[item.kind]} · ${item.ports} Ports`,
+      `${networkLabels[item.kind]} · ${item.ports} Ports · ${item.details?.ssid ?? ""} · ${item.details?.location ?? ""}`,
+    ]);
+  for (const item of homeBook(project).items)
+    rows.push([
+      homeKinds[item.kind],
+      item.asset.serial,
+      item.name,
+      item.location,
+      statusLabels[item.asset.status],
+      "1",
+      "Eintrag",
+      item.details,
     ]);
   for (const link of book.networkLinks) {
     const a = book.networkNodes.find((n) => n.id === link.from)!,

@@ -4,6 +4,7 @@ import type { Project } from "../../models/project";
 import type { Viewport } from "../../geometry/coordinates";
 import { housebook, asset } from "../../housebook/model";
 import { elementTables } from "../../core/elementTables";
+import { homeBook, homeKinds } from "../../housebook/home";
 export function BackgroundImage({
   project,
   floorId,
@@ -67,6 +68,19 @@ export function HousebookOverlay({
           />
         ) : null;
       })}
+      {homeBook(project)
+        .items.filter((i) => i.floorId === floorId && i.position)
+        .map((i) => (
+          <Text
+            key={i.id}
+            x={x(i.position!.x)}
+            y={y(i.position!.y)}
+            text={`${homeKinds[i.kind]}: ${i.name}`}
+            fontSize={12}
+            fill="#21705f"
+            listening={false}
+          />
+        ))}
       {book.networkNodes
         .filter((n) => n.floorId === floorId)
         .map((n) => (

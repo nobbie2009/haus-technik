@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.17.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.18.0.
 
 ## Bereits vorhanden
 
@@ -14,12 +14,15 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Verbraucherdatenbank mit Seriennummern, elektrischen Werten, maßstäblicher Platzierung und Bibliotheksimport/-export.
 - Wasser-, Heizungs- und Gasdokumentation mit Komponenten, Rohrverläufen, Etagenverbindungen und Materiallisten.
 - Wandfotos mit benannten Wandseiten, eingezeichneten Leitungsverläufen, Fotoreferenz und SVG-Ausgabe.
+- Private Hausübersicht für Internet/WLAN, Absperrstellen, Rauchmelder, Garten und Außenlicht.
+- Eigene Zähler-/Verbrauchsansicht einschließlich Solarertrag sowie gemeinsame Wartungstermine und Aufgabenverläufe.
 
 ## Nächste Schritte
 
-Für die private Hausübersicht außerdem vorgeschlagen, bisher nicht umgesetzt: Balkonkraftwerk mit
-Modulen, Wechselrichter, optionalem Speicher und Ertragsdaten; eine gemeinsame Übersicht für
-Unterlagen, Zählerstände und anstehende Wartungen.
+Für die private Hausübersicht außerdem vorgeschlagen, bisher nicht umgesetzt: ein eigenständiges
+Balkonkraftwerk-Modell mit Modulen, Wechselrichter und optionalem Speicher. Ertragsablesungen sind
+bereits in der Zähleransicht möglich. Eine zentrale Unterlagenbibliothek wäre eine weitere Ergänzung;
+Fotos und Unterlagen-Links gibt es bereits an Objekten.
 
 1. **iPad-Praxistest:** Safari, Apple Pencil, Bildschirmtastatur und Dateien-Import/-Export am echten Gerät.
    Für den Einsatz unterwegs anschließend Offline-Start und eine Geräteabgleich-Strategie festlegen.

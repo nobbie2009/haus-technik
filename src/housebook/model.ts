@@ -71,7 +71,10 @@ export const bookSchema = z.strictObject({
         name,
         floorId: id,
         position: point,
-        kind: z.enum(["socket", "patchPanel", "switch", "router", "accessPoint"]),
+        kind: z.enum(["socket", "patchPanel", "switch", "router", "accessPoint", "repeater", "client"]),
+        details: z
+          .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
+          .optional(),
         ports: z.number().int().min(1).max(256),
       }),
     )
@@ -107,6 +110,8 @@ export const networkLabels = {
   switch: "Switch",
   router: "Router",
   accessPoint: "Access Point",
+  repeater: "WLAN-Repeater",
+  client: "Netzwerkgerät / Client",
 };
 export function housebook(project: Project): Housebook {
   return project.metadata.housebook

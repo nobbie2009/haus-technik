@@ -108,7 +108,7 @@ test("Szenariovergleich, Objektakte und Versorgungsschema", async ({ page }) => 
 });
 test("Netzwerk anlegen, Ports prüfen und Raumvorlage einfügen", async ({ page }) => {
   await load(page);
-  await page.getByRole("button", { name: "Netzwerk", exact: true }).click();
+  await page.getByRole("button", { name: "Internet & WLAN", exact: true }).click();
   await page.getByLabel("Netzwerkname").fill("Dose Büro");
   await page.getByRole("button", { name: "Netzwerkgerät hinzufügen" }).click();
   await page.getByLabel("Netzwerkname").fill("Patchpanel");
