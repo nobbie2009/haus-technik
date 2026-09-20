@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.20.0 · 20.09.2026
+
+- Eigener Sicherungskasten-Aushang in der Hausakte und aus dem Ausgabebereich erreichbar.
+- Einzelnen Verteiler oder alle Sicherungskästen als A4-Querformat-PDF ausgeben.
+- Sicherungskennzeichnung, Stromkreis, zugeordnete Räume/Geräte, Phase und FI-Zuordnung einschließlich vorgeschalteter Verteilungen.
+- Fehlende Zuordnungen und unzugeordnete Schutzgeräte ausdrücklich sichtbar; keine erfundenen Reserveplätze.
+- Eigene Hinweise, wiederholte Tabellenköpfe, Datenstand und Seitennummern; lange Einträge mit lesbaren Fortsetzungen.
+- Modell-, Desktop- und iPad-Prüfungen sowie gerenderte PDF-Probe mit umfangreichen Testdaten.
+
 ## 0.19.0 · 20.09.2026
 
 - Einrichtungsassistent mit sechs Schritten, Themenauswahl, raumweisem Rundgang und Abschlussübersicht.

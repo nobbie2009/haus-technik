@@ -406,6 +406,20 @@ auch bei gesperrten Leitungen. Die Importprüfung validiert Datenformen vor dem 
 Numerische Betriebsdaten und Ventilstellungen sind reine Dokumentation; es gibt keinen Strömungslöser.
 Bedienung und genaue Längenannahmen: [Wasser, Heizung und Gas](utilities.md).
 
+## Sicherungskasten-Aushang (App 0.20.0)
+
+`boardSchedule` erzeugt eine lesende Sicht auf Verteiler, Stromkreise, Schutzgeräte und vorhandene
+Raum-/Gerätezuordnungen. Die FI-Spalte kombiniert die expliziten Schutzgeräteketten des aktuellen
+Stromkreises und seiner Verteilerzuleitungen. Schutzgeräte anderer Verteiler tragen deren Kennzeichnung.
+Unzugeordnete Schutzgeräte bleiben als eigene offene Einträge sichtbar; es werden keine Reserveplätze
+oder räumlichen Zuordnungen hergeleitet. Die Plan-Ebenensichtbarkeit begrenzt diesen Bestandsauszug nicht.
+
+`createBoardSchedulePdf` nutzt jsPDF und dieselbe eingebettete Noto-Sans-Schrift wie die bisherigen Exporte.
+Das A4-Querformatlayout bricht Zellen nach ihrer tatsächlichen Textbreite um, wiederholt Köpfe und teilt
+überlange Zeilen auf. Fortsetzungen wiederholen verfügbare Identifikationsspalten. Jeder Verteiler startet
+auf einer eigenen Seite; die Ausgabe verändert weder Metadaten noch Projektversion. Eigene Hinweise sind
+auf den aktuellen Export begrenzt. Es ist keine Änderung am Projektschema erforderlich.
+
 ## Einrichtung, Suche und Solarakte (App 0.19.0)
 
 Der optionale Schlüssel `metadata.setupGuide` speichert ein Zod-validiertes Schema Version 1 mit

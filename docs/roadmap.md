@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.19.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.20.0.
 
 ## Bereits vorhanden
 
@@ -18,6 +18,7 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Eigene Zähler-/Verbrauchsansicht einschließlich Solarertrag sowie gemeinsame Wartungstermine und Aufgabenverläufe.
 - Unterbrechbarer Einrichtungsassistent und zentrale Suche mit Navigation zu vorhandenen Datensätzen.
 - Balkonkraftwerk-Akte mit Modulen, Wechselrichter, optionalem Speicher und verknüpftem Ertragszähler.
+- Druckbarer Sicherungskasten-Aushang mit Stromkreisen, Räumen/Geräten und FI-Zuordnung.
 
 ## Nächste Schritte
 

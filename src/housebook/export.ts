@@ -380,7 +380,7 @@ export function csv(rows: string[][]) {
   );
 }
 let fontData: Promise<string> | undefined;
-async function embedFont(doc: import("jspdf").jsPDF) {
+export async function embedFont(doc: import("jspdf").jsPDF) {
   fontData ??= fetch(`${import.meta.env.BASE_URL}fonts/NotoSans-Regular.ttf`)
     .then(async (response) => {
       if (!response.ok) throw new Error("PDF-Schrift konnte nicht geladen werden.");

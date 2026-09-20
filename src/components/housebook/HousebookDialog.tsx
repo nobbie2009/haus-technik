@@ -29,6 +29,7 @@ import { SetupPanel } from "./SetupPanel";
 import { SearchPanel } from "./SearchPanel";
 import { SolarPanel } from "./SolarPanel";
 import { WallPhotoDialog } from "./WallPhotoDialog";
+import { BoardSchedulePanel } from "./BoardSchedulePanel";
 import { AssetDialog } from "./AssetDialog";
 import { Field, updateBook } from "./shared";
 import type { Selection } from "../../editor/types";
@@ -44,6 +45,7 @@ const sections = {
   background: "Grundrissvorlage",
   check: "Projektprüfung",
   export: "Ausgabe",
+  boardSchedule: "Sicherungskasten-Aushang",
   scenarios: "Szenarien",
   schematic: "Versorgungsschema",
   conductors: "Leiterprüfung",
@@ -272,6 +274,9 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                   </Field>
                 </div>
                 <div className="book-actions">
+                  <button onClick={() => setSection("boardSchedule")}>
+                    Sicherungskasten-Aushang vorbereiten
+                  </button>
                   <button
                     disabled={busy}
                     onClick={() => void run(() => exportPlanPdf(project, floorId, scale, mode))}
@@ -303,6 +308,7 @@ export function HousebookDialog({ onClose }: { onClose: () => void }) {
                 </p>
               </section>
             )}
+            {section === "boardSchedule" && <BoardSchedulePanel />}
             {section === "scenarios" && <ScenariosPanel onClose={onClose} />}
             {section === "schematic" && <SchematicPanel onClose={onClose} />}
             {section === "assets" && (

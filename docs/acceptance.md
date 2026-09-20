@@ -290,3 +290,20 @@ Validiert am 20.09.2026: 302 Modultests, 39 Desktop-Browsertests und zehn iPad-W
 Die vollständige iPad-Prüfung lief gegen den Produktionsbuild 0.19.0 über die HTTP-WLAN-Adresse.
 TypeScript, Build und Formatprüfung erfolgreich. Assistentenabschluss und iPad-Suchansicht visuell geprüft.
 Kein physisches iPad, keine reale Solaranlage und keine automatische Ertragsabfrage wurden getestet.
+
+## Sicherungskasten-Aushang (0.20.0)
+
+- Einzelnen Verteiler oder alle Sicherungskästen auswählen und ein A4-Querformat-PDF herunterladen.
+- Direkt angeschlossene und über Steckdosen zugeordnete Geräte erfassen; vorhandene Raumzuordnungen übernehmen.
+- FI-/FI-LS-Ketten einschließlich vorgeschalteter Verteilungen mit Herkunft anzeigen.
+- Unbekannte Werte, fehlende Stromkreiszuordnung, ausgeblendete Ebenen und leere Verteiler prüfen.
+- Mehrseitige Tabelle mit umfangreichen Gerätetexten und 18 zusätzlichen Stromkreisen erzeugen.
+- Seitenköpfe und Identifikationsspalten bei Fortsetzungen wiederholen; Hinweise und Legende mitdrucken.
+- iPad-WebKit: Verteiler auswählen, Hinweis eingeben und PDF herunterladen.
+
+Validiert am 20.09.2026: 306 Modultests, 40 Desktop-Browsertests und elf iPad-WebKit-Tests erfolgreich.
+Die vollständige iPad-Prüfung lief gegen den Produktionsbuild 0.20.0 über die HTTP-WLAN-Adresse.
+TypeScript, Produktionsbuild und Formatprüfung erfolgreich. Die achtseitige PDF-Druckprobe mit
+synthetischen Daten wurde mit Poppler gerendert und visuell geprüft. PDF-Textprüfung bestätigt
+Seitenbegrenzungen, wiederholte Köpfe, Fortsetzungskennzeichnungen und vollständige Testgeräte/-stromkreise.
+Kein physischer Ausdruck oder echtes iPad getestet; die Probe enthält keine tatsächlichen Hausdaten.
