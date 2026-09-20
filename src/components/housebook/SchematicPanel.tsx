@@ -4,10 +4,26 @@ import { useEditorStore } from "../../stores/editorStore";
 import { buildSupplyGraph } from "../../simulation/graph";
 import { elementKinds, elementTables } from "../../core/elementTables";
 import { focusObject } from "../../housebook/navigation";
+import { contactsFor } from "../../electrical/contacts";
+import type { Contact } from "../../electrical/contacts";
+
+type SchematicView = "supply" | "connections";
+
+const contactColor: Record<Contact["role"], string> = {
+  line: "#b66a22",
+  neutral: "#3573a8",
+  protective: "#2f855a",
+  secondary: "#7650a6",
+};
+
+function contactY(index: number) {
+  return 66 + index * 25;
+}
 export function SchematicPanel({ onClose }: { onClose: () => void }) {
   const project = useProjectStore((s) => s.project),
     selection = useEditorStore((s) => s.selection),
-    [search, setSearch] = useState("");
+    [search, setSearch] = useState(""),
+    [view, setView] = useState<SchematicView>("supply");
   const graph = useMemo(() => buildSupplyGraph(project), [project]);
   const all = {
     ...Object.assign({}, ...Object.values(elementTables(project))),
@@ -45,19 +61,191 @@ export function SchematicPanel({ onClose }: { onClose: () => void }) {
     control: "Schaltgruppe",
     transformer: "Transformator",
   };
+  const electricalNames = (id: string) => name(id);
+  const connectionCables = Object.values(project.electrical.cables).filter(
+    (cable) => cable.conductorConnections.length > 0,
+  );
+  const connectionRows = connectionCables.map((cable) => {
+    const startContacts = contactsFor(project, cable.startNodeId),
+      endContacts = contactsFor(project, cable.endNodeId);
+    return { cable, startContacts, endContacts };
+  });
+  const openNode = (id: string) => {
+    const kind = elementKinds.find((k) => elementTables(project)[k][id]);
+    if (kind && focusObject({ kind, id })) onClose();
+  };
   return (
     <section>
       <h3>Versorgungsschema</h3>
       <p>
-        Automatisch aus den ausdrücklich zugeordneten Versorgungswegen. Dies ist eine schematische Übersicht;
-        einzelne Leiter und Klemmen werden hier nicht dargestellt. Objekt anklicken, um es im Grundriss zu
-        öffnen.
+        Automatisch aus den ausdrücklich zugeordneten Versorgungswegen. Objekt anklicken, um es im Grundriss
+        zu öffnen. Im Anschlussplan werden Pole und Schaltkontakte getrennt vom Grundriss als
+        Verbindungsschema dargestellt.
       </p>
+      <div className="schematic-tabs" role="tablist" aria-label="Schematische Ansichten">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "supply"}
+          className={view === "supply" ? "active" : ""}
+          onClick={() => setView("supply")}
+        >
+          Versorgungskette
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "connections"}
+          className={view === "connections" ? "active" : ""}
+          onClick={() => setView("connections")}
+        >
+          Anschlussplan
+        </button>
+      </div>
       <label className="book-field">
         Objekt suchen
         <input value={search} onChange={(e) => setSearch(e.target.value)} />
       </label>
-      {!nodes.length ? (
+      {view === "connections" ? (
+        !connectionRows.length ? (
+          <p>
+            Noch keine belegten Pol- oder Kontaktverbindungen vorhanden. Eine Leitung im Grundriss zeichnen
+            und danach ihre Kontakte zuordnen.
+          </p>
+        ) : (
+          <div className="schematic-scroll connection-schematic">
+            <svg
+              role="img"
+              aria-label="Schematischer Anschlussplan mit Polen und Schaltkontakten"
+              width="940"
+              height={Math.max(180, connectionRows.length * 190 + 20)}
+            >
+              {connectionRows.map(({ cable, startContacts, endContacts }, rowIndex) => {
+                const top = rowIndex * 190 + 12,
+                  leftX = 20,
+                  rightX = 650,
+                  maxRows = Math.max(startContacts.length, endContacts.length, 1),
+                  height = Math.max(96, maxRows * 25 + 38),
+                  startById = new Map(startContacts.map((contact, index) => [contact.id, index])),
+                  endById = new Map(endContacts.map((contact, index) => [contact.id, index]));
+                return (
+                  <g key={cable.id}>
+                    <text x="20" y={top + 12} fontSize="11" fill="#657572">
+                      {cable.label} · {cable.name}
+                    </text>
+                    <rect
+                      x={leftX}
+                      y={top + 20}
+                      width="270"
+                      height={height}
+                      rx="8"
+                      fill="#fff"
+                      stroke="#b4c7bd"
+                    />
+                    <rect
+                      x={rightX}
+                      y={top + 20}
+                      width="270"
+                      height={height}
+                      rx="8"
+                      fill="#fff"
+                      stroke="#b4c7bd"
+                    />
+                    <text
+                      x={leftX + 12}
+                      y={top + 42}
+                      fontSize="13"
+                      fontWeight="600"
+                      fill="#23383b"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openNode(cable.startNodeId)}
+                    >
+                      {electricalNames(cable.startNodeId)}
+                    </text>
+                    <text
+                      x={rightX + 12}
+                      y={top + 42}
+                      fontSize="13"
+                      fontWeight="600"
+                      fill="#23383b"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openNode(cable.endNodeId)}
+                    >
+                      {electricalNames(cable.endNodeId)}
+                    </text>
+                    {startContacts.map((contact, index) => (
+                      <g key={`start-${contact.id}`}>
+                        <circle
+                          cx={leftX + 10}
+                          cy={top + contactY(index)}
+                          r="5"
+                          fill={contactColor[contact.role]}
+                        />
+                        <text x={leftX + 22} y={top + contactY(index) + 4} fontSize="11" fill="#23383b">
+                          {contact.label}
+                        </text>
+                      </g>
+                    ))}
+                    {endContacts.map((contact, index) => (
+                      <g key={`end-${contact.id}`}>
+                        <circle
+                          cx={rightX + 260}
+                          cy={top + contactY(index)}
+                          r="5"
+                          fill={contactColor[contact.role]}
+                        />
+                        <text
+                          x={rightX + 248}
+                          y={top + contactY(index) + 4}
+                          textAnchor="end"
+                          fontSize="11"
+                          fill="#23383b"
+                        >
+                          {contact.label}
+                        </text>
+                      </g>
+                    ))}
+                    {cable.conductorConnections.map((connection, index) => {
+                      const startIndex = startById.get(connection.startContactId),
+                        endIndex = endById.get(connection.endContactId);
+                      if (startIndex === undefined || endIndex === undefined) return null;
+                      const start = startContacts[startIndex]!,
+                        y1 = top + contactY(startIndex),
+                        y2 = top + contactY(endIndex);
+                      return (
+                        <path
+                          key={`${connection.startContactId}-${connection.endContactId}-${index}`}
+                          d={`M ${leftX + 10} ${y1} C 380 ${y1}, 560 ${y2}, ${rightX + 260} ${y2}`}
+                          fill="none"
+                          stroke={contactColor[start.role]}
+                          strokeWidth="2"
+                          opacity="0.85"
+                        />
+                      );
+                    })}
+                  </g>
+                );
+              })}
+            </svg>
+            <p className="schematic-legend">
+              <span>
+                <i className="legend-dot legend-line" /> Außenleiter / Schaltkontakt
+              </span>
+              <span>
+                <i className="legend-dot legend-neutral" /> Neutralleiter
+              </span>
+              <span>
+                <i className="legend-dot legend-protective" /> Schutzleiter
+              </span>
+              <span>
+                <i className="legend-dot legend-secondary" /> Kleinspannung
+              </span>
+            </p>
+          </div>
+        )
+      ) : !nodes.length ? (
         <p>Noch keine Elektroobjekte vorhanden.</p>
       ) : (
         <div className="schematic-scroll">

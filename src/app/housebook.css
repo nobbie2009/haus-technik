@@ -245,6 +245,59 @@
   stroke: #167863;
   stroke-width: 3px;
 }
+.schematic-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  border-bottom: 1px solid #d7e2dd;
+}
+.schematic-tabs button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #45605b;
+  cursor: pointer;
+}
+.schematic-tabs button.active {
+  border-bottom-color: #167863;
+  color: #123f38;
+  font-weight: 600;
+}
+.connection-schematic {
+  background: #f7faf8;
+  border: 1px solid #d7e2dd;
+  border-radius: 8px;
+  padding: 8px;
+}
+.schematic-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 4px 8px 8px;
+  color: #526864;
+  font-size: 12px;
+}
+.legend-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 4px;
+  border-radius: 50%;
+}
+.legend-line {
+  background: #b66a22;
+}
+.legend-neutral {
+  background: #3573a8;
+}
+.legend-protective {
+  background: #2f855a;
+}
+.legend-secondary {
+  background: #7650a6;
+}
 @media (max-width: 1100px) {
   .book-shell {
     grid-template-columns: 150px minmax(0, 1fr);

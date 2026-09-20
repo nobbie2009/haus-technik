@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.25.0 · 20.09.2026
+
+- Neues Anschlussplan-Schema für die Elektrik: belegte Leitungen zeigen Bauteile, Pole und Schaltkontakte mit farbigen Verbindungslinien.
+- 3-/5-polige Anschlüsse, Neutralleiter, Schutzleiter, Außenleiter und Kleinspannung werden getrennt kenntlich gemacht.
+- Versorgungskette und Anschlussplan sind als getrennte Ansichten in der Hausakte verfügbar.
+
 ## 0.24.0 · 20.09.2026
 
 - Einfacherer Proxmox-Installer: nummerierte Auswahl für Disk-Speicher, Template-Speicher, Debian-Template und Netzwerk-Bridge.
