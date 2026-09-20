@@ -3,6 +3,7 @@ import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import type { Cable } from "./models";
 import { distance } from "../geometry/distance";
+import { floorReference } from "../models/floor";
 
 export function electricalNodes(project: Project) {
   return {
@@ -64,7 +65,15 @@ export function cableFloorPath(project: Project, cable: Cable, floorId: string):
   if (!a || !b) return [];
   if (!cable.riser) return floorId === cable.floorId ? cablePath(project, cable) : [];
   if (floorId === a.floorId) return [a.position, ...cable.path, cable.riser];
-  if (floorId === b.floorId) return [cable.riser, ...cable.endPath, b.position];
+  if (floorId === b.floorId) {
+    const from = floorReference(project.floors[a.floorId]!),
+      to = floorReference(project.floors[b.floorId]!);
+    return [
+      { x: cable.riser.x + from.x - to.x, y: cable.riser.y + from.y - to.y },
+      ...cable.endPath,
+      b.position,
+    ];
+  }
   return [];
 }
 export function nearestElectricalNode(project: Project, floorId: string, position: Vec2, scale: number) {

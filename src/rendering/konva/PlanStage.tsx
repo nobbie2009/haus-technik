@@ -13,6 +13,8 @@ import { FloorRenderer } from "./FloorRenderer";
 import { InteractionOverlay } from "./InteractionOverlay";
 import { SimulationOverlay } from "./SimulationOverlay";
 import { SimulationPlanControls } from "../SimulationPlanControls";
+import { floorReference, orderedFloorIds } from "../../models/floor";
+import { Group } from "react-konva";
 
 const hints = {
   utilityNode: "Komponente platzieren · Maße und Anschlüsse rechts bearbeiten",
@@ -33,6 +35,7 @@ const hints = {
 
 export function PlanStage() {
   const { host, project, editor, preview, down, move, up, cancel, zoom } = useCanvasInteraction();
+  const floorIds = orderedFloorIds(project);
   return (
     <main
       className={`drawing-host cursor-${editor.spacePressed ? "pan" : editor.tool}`}
@@ -48,7 +51,7 @@ export function PlanStage() {
     >
       <div className="canvas-title">
         <span className="eyebrow">
-          GRUNDRISS / {String(project.floorOrder.indexOf(editor.floorId) + 1).padStart(2, "0")}
+          GRUNDRISS / {String(floorIds.indexOf(editor.floorId) + 1).padStart(2, "0")}
         </span>
         <strong>{project.floors[editor.floorId]?.name}</strong>
         <span className="canvas-subtitle">
@@ -77,6 +80,27 @@ export function PlanStage() {
             width={editor.size.width}
             height={editor.size.height}
           />
+          {editor.showFloorReferences &&
+            floorIds
+              .filter((id) => id !== editor.floorId)
+              .map((id) => {
+                const active = floorReference(project.floors[editor.floorId]!);
+                const other = floorReference(project.floors[id]!);
+                return (
+                  <Group key={`floor-reference-${id}`} opacity={0.2} listening={false}>
+                    <FloorRenderer
+                      project={preview}
+                      floorId={id}
+                      viewport={editor.viewport}
+                      selection={[]}
+                      measurements={false}
+                      width={editor.size.width}
+                      height={editor.size.height}
+                      offset={{ x: other.x - active.x, y: other.y - active.y }}
+                    />
+                  </Group>
+                );
+              })}
         </Layer>
         <Layer listening={false}>
           <FurnitureRenderer

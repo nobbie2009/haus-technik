@@ -21,6 +21,7 @@ export const FloorRenderer = memo(function FloorRenderer({
   measurements,
   width,
   height,
+  offset = { x: 0, y: 0 },
 }: {
   project: Project;
   floorId: string;
@@ -29,8 +30,9 @@ export const FloorRenderer = memo(function FloorRenderer({
   measurements: boolean;
   width: number;
   height: number;
+  offset?: Vec2;
 }) {
-  const screen = (p: Vec2) => worldToScreen(p, viewport);
+  const screen = (p: Vec2) => worldToScreen({ x: p.x + offset.x, y: p.y + offset.y }, viewport);
   const flatten = (points: Vec2[]) =>
     points.flatMap((p) => {
       const v = screen(p);

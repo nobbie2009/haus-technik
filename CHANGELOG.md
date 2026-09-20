@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.27.0 · 20.09.2026
+
+- Geschossliste nach Höhenlage und anschließendem Namen sortiert.
+- Geschosse erhalten X/Y-Referenzpunkte für die gemeinsame Gebäudelage.
+- Optionale transparente Etagenreferenzen zeigen Keller, Erdgeschoss und Obergeschoss übereinander.
+- Geschossübergreifende Rohr- und Elektroleitungen berücksichtigen die Referenzverschiebung.
+
 ## 0.26.0 · 20.09.2026
 
 - Kombitherme/Gasheizung unterstützt jetzt getrennte Anschlüsse für Kaltwasser, Warmwasser, Heizungs-Vorlauf, Heizungs-Rücklauf und Gas.

@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import { newId } from "../utils/uuid";
+import { floorReference } from "../models/floor";
 
 export const media = {
   cold: { label: "Kaltwasser", short: "KW", color: "#176fba", layer: "water" },
@@ -182,7 +183,7 @@ export function addUtilityPipe(
     from,
     to,
     path: structuredClone(path),
-    riser: a.floorId === b.floorId ? null : { ...b.position },
+    riser: a.floorId === b.floorId ? null : { ...a.position },
     material: "",
     nominalDiameter: null,
     insulation: 0,
@@ -201,7 +202,10 @@ export function pipeFloorPath(project: Project, pipe: UtilityPipe, floorId: stri
   if (!a || !b) return [];
   if (!pipe.riser) return a.floorId === floorId ? [a.position, ...pipe.path, b.position] : [];
   if (a.floorId === floorId) return [a.position, ...pipe.path, pipe.riser];
-  return b.floorId === floorId ? [pipe.riser, b.position] : [];
+  if (b.floorId !== floorId) return [];
+  const from = floorReference(project.floors[a.floorId]!),
+    to = floorReference(project.floors[b.floorId]!);
+  return [{ x: pipe.riser.x + from.x - to.x, y: pipe.riser.y + from.y - to.y }, b.position];
 }
 export function pipeLength(project: Project, pipe: UtilityPipe): number {
   const net = utilities(project),

@@ -32,6 +32,7 @@ interface EditorState {
   snapPoints: boolean;
   snapWalls: boolean;
   showMeasurements: boolean;
+  showFloorReferences: boolean;
   spacePressed: boolean;
   orthogonal: boolean;
   multiSelect: boolean;
@@ -87,6 +88,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   snapPoints: true,
   snapWalls: true,
   showMeasurements: true,
+  showFloorReferences: false,
   spacePressed: false,
   orthogonal: false,
   multiSelect: false,

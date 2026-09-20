@@ -276,6 +276,19 @@
 .floor-item .floor-tag {
   display: none;
 }
+.floor-reference-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 4px 12px;
+  color: #536a61;
+  font-size: 12px;
+  cursor: pointer;
+}
+.floor-reference-toggle input {
+  width: 16px;
+  height: 16px;
+}
 .layer-row {
   display: flex;
   align-items: center;

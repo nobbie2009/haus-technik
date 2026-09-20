@@ -30,6 +30,7 @@ import { useProjectStore } from "../stores/projectStore";
 import type { Tool } from "../editor/types";
 import { fitView } from "../editor/interaction/commands";
 import { FloorDialog } from "./dialogs/FloorDialog";
+import { orderedFloorIds } from "../models/floor";
 
 const tools = [
   { id: "select", label: "Auswahl", key: "V", Icon: MousePointer2 },
@@ -53,6 +54,8 @@ export function ToolPanel() {
   const floorId = useEditorStore((s) => s.floorId);
   const [floorDialog, setFloorDialog] = useState<"new" | string | null>(null);
   const commit = useProjectStore((s) => s.commit);
+  const orderedFloors = orderedFloorIds(project);
+  const showFloorReferences = useEditorStore((s) => s.showFloorReferences);
   return (
     <aside className="left-panel" aria-label="Werkzeuge und Ebenen">
       <CategoryTabs />
@@ -90,7 +93,7 @@ export function ToolPanel() {
         </button>
       </div>
       <div className="floor-list">
-        {project.floorOrder.map((id, index) => (
+        {orderedFloors.map((id, index) => (
           <div key={id} className="floor-row">
             <button
               className={`floor-item ${floorId === id ? "active" : ""}`}
@@ -114,6 +117,14 @@ export function ToolPanel() {
           </div>
         ))}
       </div>
+      <label className="floor-reference-toggle">
+        <input
+          type="checkbox"
+          checked={showFloorReferences}
+          onChange={(event) => useEditorStore.setState({ showFloorReferences: event.target.checked })}
+        />
+        Etagenreferenzen anzeigen
+      </label>
       <div className="panel-heading section-line">EBENEN</div>
       <div className="layer-list">
         {project.layerOrder.map((id) => {

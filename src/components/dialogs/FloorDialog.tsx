@@ -5,6 +5,7 @@ import { useEditorStore } from "../../stores/editorStore";
 import { parseLength, formatLength } from "../../utils/units";
 import { Modal } from "./Modal";
 import { fitView } from "../../editor/interaction/commands";
+import { floorReference } from "../../models/floor";
 
 export function FloorDialog({ floorId, onClose }: { floorId: string | null; onClose: () => void }) {
   const project = useProjectStore((s) => s.project);
@@ -18,6 +19,9 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
     formatLength(existing?.elevation ?? project.floorOrder.length * 2800, "m"),
   );
   const [height, setHeight] = useState(formatLength(existing?.defaultRoomHeight ?? 2500, "m"));
+  const reference = existing ? floorReference(existing) : { x: 0, y: 0 };
+  const [referenceX, setReferenceX] = useState(formatLength(reference.x, "m"));
+  const [referenceY, setReferenceY] = useState(formatLength(reference.y, "m"));
   const [error, setError] = useState("");
   return (
     <Modal title={floorId ? "Etage bearbeiten" : "Etage erstellen"} onClose={onClose}>
@@ -28,6 +32,8 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
             const id = floorId ?? newId();
             const floorElevation = parseLength(elevation, "m");
             const roomHeight = parseLength(height, "m");
+            const x = parseLength(referenceX, "m");
+            const y = parseLength(referenceY, "m");
             const ok = useProjectStore
               .getState()
               .commit(floorId ? "Etage bearbeiten" : "Etage erstellen", (draft) => {
@@ -36,7 +42,7 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
                   name: name.trim(),
                   elevation: floorElevation,
                   defaultRoomHeight: roomHeight,
-                  metadata: existing?.metadata ?? {},
+                  metadata: { ...(existing?.metadata ?? {}), floorReferenceX: x, floorReferenceY: y },
                 };
                 if (!floorId) draft.floorOrder.push(id);
               });
@@ -66,9 +72,19 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
             <input value={height} onChange={(event) => setHeight(event.target.value)} />
           </label>
         </div>
+        <div className="field-row">
+          <label className="field">
+            Referenz X (m)
+            <input value={referenceX} onChange={(event) => setReferenceX(event.target.value)} />
+          </label>
+          <label className="field">
+            Referenz Y (m)
+            <input value={referenceY} onChange={(event) => setReferenceY(event.target.value)} />
+          </label>
+        </div>
         <p className="field-hint">
           Die Etagenhöhe ist die Z-Position, z. B. −2,80 m für den Keller. Die Standard-Raumhöhe gilt für neue
-          Räume und Wände.
+          Räume und Wände. X/Y legen die Lage der unteren linken Referenzecke im gemeinsamen Gebäudeplan fest.
         </p>
         {error && (
           <p className="inline-error" role="alert">
