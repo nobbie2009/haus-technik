@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.28.0 · 20.09.2026
+
+- Etagenübergangsmarker folgen bei verschobenen Referenzpunkten jetzt auf beiden Geschossen der korrekten gemeinsamen Position.
+
 ## 0.27.0 · 20.09.2026
 
 - Geschossliste nach Höhenlage und anschließendem Namen sortiert.

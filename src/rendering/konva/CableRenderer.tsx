@@ -37,7 +37,9 @@ export function CableRenderer({
             <Group key={cable.id} opacity={project.layers[cable.layerId]!.opacity}>
               {cable.riser &&
                 (() => {
-                  const p = worldToScreen(cable.riser, viewport);
+                  const points = cableFloorPath(project, cable, floorId);
+                  const riserPoint = floorId === cable.floorId ? points.at(-1)! : points[0]!;
+                  const p = worldToScreen(riserPoint, viewport);
                   const other =
                     floorId === cable.floorId
                       ? electricalNode(project, cable.endNodeId)!.floorId

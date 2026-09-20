@@ -30,6 +30,7 @@ export function UtilityRenderer({ project }: { project: Project }) {
         if (!layer?.visible) return null;
         const path = pipeFloorPath(project, pipe, editor.floorId);
         if (!path.length) return null;
+        const riserPoint = editor.floorId === net.nodes[pipe.from]!.floorId ? path.at(-1)! : path[0]!;
         const p = worldToScreen(pipeCaptionPoint(path), viewport),
           m = media[pipe.medium];
         return (
@@ -50,15 +51,15 @@ export function UtilityRenderer({ project }: { project: Project }) {
             {pipe.riser && (
               <>
                 <Circle
-                  x={worldToScreen(pipe.riser, viewport).x}
-                  y={worldToScreen(pipe.riser, viewport).y}
+                  x={worldToScreen(riserPoint, viewport).x}
+                  y={worldToScreen(riserPoint, viewport).y}
                   radius={7}
                   stroke={m.color}
                   fill="white"
                 />
                 <Text
-                  x={worldToScreen(pipe.riser, viewport).x + 10}
-                  y={worldToScreen(pipe.riser, viewport).y - 16}
+                  x={worldToScreen(riserPoint, viewport).x + 10}
+                  y={worldToScreen(riserPoint, viewport).y - 16}
                   text={`↕ ${project.floors[net.nodes[pipe.from]!.floorId]?.name} / ${project.floors[net.nodes[pipe.to]!.floorId]?.name}`}
                   fontSize={11}
                   fill={m.color}
