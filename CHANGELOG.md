@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.15.0 · 20.09.2026
+
+- Verbraucherdatenbank mit Suche, Bearbeitung, Kopien sowie separatem JSON-Import/-Export.
+- Gerätedaten mit Hersteller, Modell, Seriennummer, Nennspannung, Nennleistung und getrenntem Jahresverbrauch.
+- Maßstäbliche Platzierung als eigenständiges Elektrogerät mit Breite, Tiefe, Höhe und Drehung.
+- Auswahl über den Grundriss sowie Bearbeitung, Anschlüsse, Leitungsnachführung und Undo/Redo über bestehende Editorfunktionen.
+- Geräteumrisse in PDF/SVG und erweiterte Daten in Materiallisten.
+- Streng validierte Bibliotheks-/Instanzdaten und Prüfungen für Speicherung, Anschlüsse und iPad-Bedienung.
+
 ## 0.14.0 · 20.09.2026
 
 - Stromstoßrelais reagieren in der Leiterprüfung auf vollständig verdrahtete Tasterimpulse an A1/A2.

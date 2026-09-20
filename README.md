@@ -3,7 +3,13 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
-## Neu in 0.14.0: verdrahtete Relais und Fehlerstrom-Szenarien
+## Neu in 0.15.0: Verbraucherdatenbank
+
+Eigene Geräte mit Hersteller, Modell, Seriennummer, Volt, Watt und kWh/Jahr speichern,
+maßstäblich platzieren, drehen und an die Elektrik anschließen. Bibliotheken lassen sich
+zwischen Projekten austauschen. [Anleitung](docs/consumer-library.md).
+
+## Seit 0.14.0: verdrahtete Relais und Fehlerstrom-Szenarien
 
 Die Leiterprüfung wertet Tasterimpulse an tatsächlich verbundenen Relaisspulen aus. L–PE-/L–N-Fehler
 mit angegebenem Gesamtwiderstand zeigen Fehlerstrom und idealisierte FI-Reaktionen.

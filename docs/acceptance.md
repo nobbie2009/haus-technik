@@ -205,3 +205,17 @@ Validiert: 261 Modultests, 32 Desktop-Browsertests, fünf iPad-WebKit-Tests sowi
 Produktionsbuild und Formatprüfung. CI-Workflow mit Actionlint geprüft. Suchlauf nach gängigen
 Zugangsdatenmustern im vorgesehenen Git-Inhalt ohne Treffer; dies ist kein umfassendes Sicherheitsaudit.
 GitHub Actions wurden noch nicht auf GitHub ausgeführt: Es ist bislang kein Remote eingerichtet.
+
+## Verbraucherdatenbank (0.15.0)
+
+- Kühlschrank mit Hersteller, Modell, Seriennummer, Maßen, Spannung, Leistung und Jahresverbrauch erfassen.
+- Maßstäblich platzieren, drehen, an eine Steckdose anschließen und nach Neuladen wieder öffnen.
+- Auswahl und Vektorexport berücksichtigen gedrehte Grundflächen; Materialliste enthält Gerätedaten.
+- Die Simulation verwendet die Nennleistung in Watt, unabhängig vom Jahresverbrauch in kWh.
+- Vorlagen löschen erhält platzierte Geräte; Bibliotheksimport vergibt neue IDs.
+- Ungültige Maße und Spannungen sowie Änderungen an gesperrten Elektroobjekten werden abgelehnt.
+- Fingerplatzierung und Gerätedaten im WebKit-iPad-Profil gegen den Produktionsbuild im WLAN prüfen.
+
+Validiert am 20.09.2026: 266 Modultests, 33 Desktop-Browsertests und sechs iPad-WebKit-Tests.
+TypeScript und Produktionsbuild erfolgreich; Desktop-Dialog und iPad-Plan anhand der Testbilder geprüft.
+Physisches iPad, Apple Pencil und native Bildschirmtastatur sind weiterhin nicht am echten Gerät geprüft.

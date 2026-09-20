@@ -1,7 +1,7 @@
 import type { Furniture } from "../models/furniture";
 import type { Vec2 } from "../models/common";
 
-export function furnitureCorners(item: Furniture): Vec2[] {
+export function furnitureCorners(item: Pick<Furniture, "position" | "rotation" | "width" | "depth">): Vec2[] {
   const c = Math.cos(item.rotation),
     s = Math.sin(item.rotation);
   return [
@@ -15,7 +15,10 @@ export function furnitureCorners(item: Furniture): Vec2[] {
     return { x: item.position.x + a * c - b * s, y: item.position.y + a * s + b * c };
   });
 }
-export function containsFurniture(item: Furniture, point: Vec2): boolean {
+export function containsFurniture(
+  item: Pick<Furniture, "position" | "rotation" | "width" | "depth">,
+  point: Vec2,
+): boolean {
   const x = point.x - item.position.x,
     y = point.y - item.position.y;
   const c = Math.cos(item.rotation),

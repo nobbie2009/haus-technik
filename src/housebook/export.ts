@@ -1,6 +1,7 @@
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import { furnitureCorners } from "../geometry/furniture";
+import { consumerShape } from "../electrical/consumerLibrary";
 import { cableFloorPath, cableLengths } from "../electrical/cables";
 import { electricalPlacementKinds } from "../electrical/models";
 import { getRoomMeasurements } from "../core/selectors";
@@ -132,6 +133,11 @@ export function planPrimitives(
     };
     for (const kind of electricalPlacementKinds)
       for (const item of Object.values(project.electrical[kind]).filter(visible)) {
+        const shape = kind === "devices" ? consumerShape(item) : null;
+        if (shape) {
+          const corners = furnitureCorners({ ...shape, position: item.position });
+          line([...corners, corners[0]!], colors[asset(item).status]);
+        }
         const p = item.position,
           c = colors[asset(item).status],
           r = 85;
@@ -204,7 +210,9 @@ export function materialRows(project: Project): string[][] {
     ["Kategorie", "Kennzeichnung", "Name / Typ", "Etage", "Status", "Menge", "Einheit", "Details"],
   ];
   for (const kind of electricalPlacementKinds)
-    for (const item of Object.values(project.electrical[kind]))
+    for (const item of Object.values(project.electrical[kind])) {
+      const shape = kind === "devices" ? consumerShape(item) : null;
+      const device = kind === "devices" ? project.electrical.devices[item.id] : null;
       rows.push([
         kind,
         item.label,
@@ -213,8 +221,11 @@ export function materialRows(project: Project): string[][] {
         statusLabels[asset(item).status],
         "1",
         "Stück",
-        "",
+        shape && device
+          ? `${shape.width} × ${shape.depth} × ${shape.height} mm; ${device.ratedVoltage ?? "?"} V; ${device.ratedPower ?? "?"} W; ${shape.annualEnergyKWh ?? "?"} kWh/Jahr; SN: ${asset(item).serial}`
+          : "",
       ]);
+    }
   for (const cable of Object.values(project.electrical.cables))
     rows.push([
       "Leitung",

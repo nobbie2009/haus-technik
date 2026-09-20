@@ -378,3 +378,16 @@ Ein Tasterimpuls vergleicht den Leitergraphen vor und während eines temporären
 Nur neu versorgte Relaisspulen verändern den bistabilen Szenariozustand. Das Dokument bleibt unverändert.
 Optionale `conductorFaults` in gespeicherten Szenarien sind streng validiert, ältere Szenarien bleiben lesbar.
 Details und Grenzen: [Verdrahtete Simulation](conductor-simulation.md).
+
+## Verbraucherdatenbank (App 0.15.0)
+
+Die projektlokale Bibliothek liegt in `project.metadata.consumerLibrary`. Eine Platzierung erzeugt
+ein eigenständiges Elektrogerät mit einer Momentaufnahme der Vorlagendaten. Maße, Rotation und
+Jahresverbrauch liegen in `metadata.consumerShape`; Hersteller, Modell und Seriennummer in der
+bestehenden Objektakte. Nennspannung und Nennleistung verwenden die bisherigen Gerätefelder.
+Damit greifen Anschluss, Simulation, Verschieben, Löschen und Undo auf dasselbe Objekt zu.
+
+Bibliothek und Abmessungen werden bei Projektimport und Transaktionen validiert. Ältere Projekte
+ohne diese Metadaten bleiben unverändert lesbar. Bibliotheksimporte vergeben neue IDs.
+Plananzeige, Auswahl, Ansichtsgrenzen und Vektorexport berücksichtigen die gedrehte Grundfläche.
+Bedienung und Datenumfang: [Verbraucherdatenbank](consumer-library.md).

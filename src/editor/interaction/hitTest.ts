@@ -2,6 +2,7 @@ import { cableFloorPath, cableOnFloor } from "../../electrical/cables";
 import { layerInCategory } from "../categories";
 import type { EditorCategory } from "../categories";
 import { containsFurniture } from "../../geometry/furniture";
+import { consumerShape } from "../../electrical/consumerLibrary";
 import type { Project } from "../../models/project";
 import type { UUID, Vec2 } from "../../models/common";
 import type { Selection } from "../types";
@@ -33,7 +34,14 @@ export function hitTest(
       "transformers",
     ] as const)
       for (const item of Object.values(project.electrical[kind]).reverse())
-        if (visible(item) && distance(item.position, point) * scale <= 14) return { kind, id: item.id };
+        if (visible(item)) {
+          const shape = kind === "devices" ? consumerShape(item) : null;
+          if (
+            distance(item.position, point) * scale <= 14 ||
+            (shape && containsFurniture({ ...shape, position: item.position }, point))
+          )
+            return { kind, id: item.id };
+        }
     for (const cable of Object.values(project.electrical.cables).reverse()) {
       if (!cableOnFloor(project, cable, floorId) || !visible({ ...cable, floorId })) continue;
       const path = cableFloorPath(project, cable, floorId);

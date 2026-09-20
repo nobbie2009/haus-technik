@@ -1,8 +1,27 @@
 import type { Project } from "../models/project";
 import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
+import { consumerLibrarySchema, consumerShapeSchema } from "../electrical/consumerLibrary";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [];
+  if (project.metadata.consumerLibrary !== undefined) {
+    const result = consumerLibrarySchema.safeParse(project.metadata.consumerLibrary);
+    if (!result.success)
+      issues.push({
+        path: "metadata.consumerLibrary",
+        message: result.error.issues.map((i) => i.message).join(" "),
+      });
+  }
+  for (const device of Object.values(project.electrical.devices)) {
+    if (
+      device.metadata.consumerShape !== undefined &&
+      !consumerShapeSchema.safeParse(device.metadata.consumerShape).success
+    )
+      issues.push({
+        path: `${device.id}.consumerShape`,
+        message: "Ungültige Verbrauchermaße oder Verbrauchsdaten.",
+      });
+  }
   let hasAssets = false;
   if (project.metadata.housebook !== undefined) {
     const result = bookSchema.safeParse(project.metadata.housebook);

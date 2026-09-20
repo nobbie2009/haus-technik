@@ -16,6 +16,7 @@ interface EditorState {
   connectionRequest: { startNodeId: string; endNodeId: string; cableId: string | null } | null;
   furnitureType: string;
   electricalKind: import("../electrical/models").ElectricalKind;
+  consumerEntryId: string | null;
   viewport: Viewport;
   size: { width: number; height: number };
   selection: Selection[];
@@ -45,6 +46,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   setCategory(category) {
     set({
       category,
+      consumerEntryId: null,
       selection: [],
       tool: category === "building" ? "select" : category === "furniture" ? "furniture" : "electrical",
       draft: emptyDraft(),
@@ -60,6 +62,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   cableStartId: null,
   furnitureType: "sofa",
   electricalKind: "outlets",
+  consumerEntryId: null,
   viewport: { scale: 0.07, originPx: { x: 120, y: 480 } },
   size: { width: 800, height: 600 },
   selection: [],
@@ -82,6 +85,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const category = categoryForTool(tool, get().category);
     set({
       tool,
+      consumerEntryId: null,
       category,
       selection: category === get().category ? get().selection : [],
       draft: emptyDraft(),

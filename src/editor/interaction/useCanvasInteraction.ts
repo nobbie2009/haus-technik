@@ -1,6 +1,7 @@
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
 import { addElectrical } from "../../electrical/actions";
+import { placeConsumer } from "../../electrical/placeConsumer";
 import { addFurniture } from "../../furniture/actions";
 import { useEffect, useMemo, useRef } from "react";
 import type { PointerEvent } from "react";
@@ -105,7 +106,9 @@ export function useCanvasInteraction() {
       const position = updateCursor(world, false);
       if (
         useProjectStore.getState().commit("Elektroobjekt platzieren", (draft) => {
-          id = addElectrical(draft, editor.floorId, position, editor.electricalKind);
+          id = editor.consumerEntryId
+            ? placeConsumer(draft, editor.floorId, position, editor.consumerEntryId)
+            : addElectrical(draft, editor.floorId, position, editor.electricalKind);
         })
       )
         useEditorStore.setState({ selection: [{ kind: editor.electricalKind, id }] });

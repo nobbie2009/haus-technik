@@ -1,6 +1,7 @@
 import { cableFloorPath } from "../../electrical/cables";
 import { housebook } from "../../housebook/model";
 import { furnitureCorners } from "../../geometry/furniture";
+import { consumerShape } from "../../electrical/consumerLibrary";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
 import { deleteSelection, duplicateSelection } from "../actions/edit";
@@ -35,6 +36,11 @@ export function fitView(): void {
   const positions = Object.values(project.points)
     .filter((p) => p.floorId === editor.floorId)
     .map((p) => p.position);
+  for (const device of Object.values(project.electrical.devices)) {
+    const shape = consumerShape(device);
+    if (shape && device.floorId === editor.floorId)
+      positions.push(...furnitureCorners({ ...shape, position: device.position }));
+  }
   const book = housebook(project),
     background = book.backgrounds[editor.floorId];
   if (background?.visible)

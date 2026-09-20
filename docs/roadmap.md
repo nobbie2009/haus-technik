@@ -1,6 +1,6 @@
 # Roadmap und offener Umfang
 
-Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.14.0.
+Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den Erweiterungen bis 0.15.0.
 
 ## Bereits vorhanden
 
@@ -11,6 +11,7 @@ Stand: 20.09.2026. Zusammenfassung aus der bisherigen Architekturplanung und den
 - Tablet-Oberfläche und Touch-Bedienung; WLAN-Start und WebKit-Prüfungen.
 - Verdrahtete Stromstoßrelais, explizite Fehlerwiderstände und idealisierte FI-Reaktionen in der Leiterprüfung.
 - GitHub-Vorbereitung mit CI, Dependabot und Beitragsvorlagen.
+- Verbraucherdatenbank mit Seriennummern, elektrischen Werten, maßstäblicher Platzierung und Bibliotheksimport/-export.
 
 ## Nächste Schritte
 

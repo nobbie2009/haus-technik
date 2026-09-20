@@ -27,6 +27,23 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByRole("button", { name: "Neu", exact: true })).toBeEnabled();
 });
 
+test("Verbraucherbibliothek auf dem iPad anlegen und per Finger platzieren", async ({ page }) => {
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("tab", { name: "Elektrik", exact: true }).tap();
+  await page.getByRole("button", { name: "Verbraucherdatenbank", exact: true }).tap();
+  const dialog = page.getByRole("dialog", { name: "Verbraucherdatenbank", exact: true });
+  await dialog.getByLabel("Gerätename", { exact: true }).fill("iPad-Kühlschrank");
+  await dialog.getByLabel("Seriennummer", { exact: true }).fill("IPAD-TEST");
+  await dialog.getByRole("button", { name: "Verbraucher speichern", exact: true }).tap();
+  await dialog.getByRole("button", { name: "iPad-Kühlschrank platzieren", exact: true }).tap();
+  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  const surface = (await page.getByTestId("drawing-surface").boundingBox())!;
+  await page.touchscreen.tap(surface.x + 350, surface.y + 240);
+  await page.getByRole("button", { name: "Eigenschaften", exact: true }).tap();
+  await expect(page.getByLabel("Seriennummer", { exact: true })).toHaveValue("IPAD-TEST");
+  await page.screenshot({ path: "test-results/consumer-ipad.png" });
+});
+
 test("Fehlerstrom-Szenario lässt sich auf dem iPad bedienen", async ({ page }) => {
   const { project } = conductorFixture();
   await page.getByLabel("Projektdatei importieren").setInputFiles({

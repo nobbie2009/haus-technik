@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ConsumerLibraryDialog } from "./ConsumerLibraryDialog";
 import { ElectricalSettingsDialog } from "./ElectricalSettingsDialog";
 import { useEditorStore } from "../../stores/editorStore";
 import type { ElectricalKind } from "../../electrical/models";
@@ -8,6 +9,7 @@ import { SimulationDialog } from "../simulation/SimulationDialog";
 import { useSimulationStore } from "../../stores/simulationStore";
 
 export function ElectricalLibrary() {
+  const [consumers, setConsumers] = useState(false);
   const [settings, setSettings] = useState(false);
   const kind = useEditorStore((s) => s.electricalKind);
   const tool = useEditorStore((s) => s.tool);
@@ -15,6 +17,10 @@ export function ElectricalLibrary() {
   const [simulation, setSimulation] = useState(false);
   return (
     <div className="furniture-library electrical-library">
+      <button className="electrical-manage" onClick={() => setConsumers(true)}>
+        Verbraucherdatenbank
+      </button>
+      {consumers && <ConsumerLibraryDialog onClose={() => setConsumers(false)} />}
       <SelectField
         label="Elektroobjekt"
         value={kind}

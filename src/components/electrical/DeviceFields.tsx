@@ -6,6 +6,7 @@ import { circuitOptionLabel } from "../../electrical/supply";
 import { switchChain } from "../../electrical/switchTopology";
 import { switchControl } from "../../electrical/switchingControls";
 import { DeviceControlFields } from "./DeviceControlFields";
+import { ConsumerFields } from "./ConsumerFields";
 
 export function DeviceFields({ id }: { id: string }) {
   const { project, locked, change } = usePropertyFields({ kind: "devices", id });
@@ -13,6 +14,7 @@ export function DeviceFields({ id }: { id: string }) {
   const circuitId = deviceCircuitId(project, device);
   return (
     <>
+      <ConsumerFields id={id} />
       <TextField
         label="Gerätetyp"
         value={device.type}

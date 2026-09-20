@@ -12,6 +12,7 @@ playwright-report/
 *.pem
 *.key
 *.homeplan.json
+*.consumer-library.json
 exports/
 backups/
 personal-data/

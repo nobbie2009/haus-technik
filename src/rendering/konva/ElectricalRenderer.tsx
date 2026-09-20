@@ -9,6 +9,8 @@ import { useEditorStore } from "../../stores/editorStore";
 import { useSimulationStore } from "../../stores/simulationStore";
 import { deviceAppearance } from "../deviceAppearance";
 import { DeviceSymbol } from "./DeviceSymbol";
+import { consumerShape, consumerLibrary } from "../../electrical/consumerLibrary";
+import { useProjectStore } from "../../stores/projectStore";
 
 function ElectricalSymbol({ kind, selected }: { kind: ElectricalKind; selected: boolean }) {
   const color = selected ? "#087e68" : "#9b4b18";
@@ -97,8 +99,21 @@ export function ElectricalRenderer({
           .filter((item) => item.floorId === floorId && project.layers[item.layerId]?.visible)
           .map((item) => {
             const p = worldToScreen(item.position, viewport);
+            const shape = kind === "devices" ? consumerShape(item) : null;
             return (
               <Group key={item.id} x={p.x} y={p.y} opacity={project.layers[item.layerId]!.opacity}>
+                {shape && (
+                  <Group rotation={(-shape.rotation * 180) / Math.PI}>
+                    <Rect
+                      x={(-shape.width * viewport.scale) / 2}
+                      y={(-shape.depth * viewport.scale) / 2}
+                      width={shape.width * viewport.scale}
+                      height={shape.depth * viewport.scale}
+                      fill="#fff7ee"
+                      stroke={selection.some((s) => s.id === item.id) ? "#087e68" : "#9b4b18"}
+                    />
+                  </Group>
+                )}
                 {kind === "devices" ? (
                   <>
                     <DeviceSymbol
@@ -124,10 +139,26 @@ export function ElectricalRenderer({
 }
 export function ElectricalPreview() {
   const editor = useEditorStore();
+  const project = useProjectStore((s) => s.project);
+  const entry = editor.consumerEntryId
+    ? consumerLibrary(project).find((e) => e.id === editor.consumerEntryId)
+    : null;
   if (editor.tool !== "electrical" || !editor.draft.cursor) return null;
   const p = worldToScreen(editor.draft.cursor, editor.viewport);
   return (
     <Group x={p.x} y={p.y} opacity={0.5}>
+      {entry && (
+        <Group rotation={(-entry.rotation * 180) / Math.PI}>
+          <Rect
+            x={(-entry.width * editor.viewport.scale) / 2}
+            y={(-entry.depth * editor.viewport.scale) / 2}
+            width={entry.width * editor.viewport.scale}
+            height={entry.depth * editor.viewport.scale}
+            fill="#fff7ee"
+            stroke="#9b4b18"
+          />
+        </Group>
+      )}
       <ElectricalSymbol kind={editor.electricalKind} selected={false} />
     </Group>
   );
