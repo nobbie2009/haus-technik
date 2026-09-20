@@ -8,14 +8,30 @@ Den vollständigen Repository-Checkout auf dem Proxmox-Host bereitstellen. Als r
 bash .agents/skills/home-technik-proxmox-lxc/scripts/install.sh
 ```
 
-Alle Zielwerte werden im Terminal abgefragt: freie CT-ID, Hostname, Rootfs-/Template-Storage,
-vorhandenes Debian-Template, Bridge, VLAN, DHCP oder IPv4/CIDR mit Gateway, DNS, CPU, RAM, Disk und
-Browseradresse. Anschließend Update-Passwort eingeben oder leer lassen, um eines sicher zu erzeugen.
-Das Passwort am Ende sicher aufbewahren. Leere optionale Antworten sind erlaubt. Das Skript zeigt die ermittelten Werte und
-wartet auf `ja`, bevor es den Container erstellt. Der Aufruf erfolgt direkt auf dem Proxmox-Host;
-deshalb werden weder Hostpasswort noch SSH-Schlüssel benötigt. Bestehende CT-IDs werden abgelehnt.
-Es werden keine Templates oder IP-Adressen erfunden. Ein fehlendes Template vorher mit
-Proxmox herunterladen. DNS/Paketquellen und GitHub müssen aus dem neuen Container erreichbar sein.
+Ab 0.24.0 führt der Installer mit nummerierten Auswahllisten durch die Einrichtung:
+
+- Freie Container-ID wird von Proxmox vorgeschlagen; Enter übernimmt sie.
+- Für die Container-Disk werden nur aktive Speicher mit Rootfs-Unterstützung angezeigt,
+  für Templates nur aktive Template-Speicher, jeweils mit Typ und freiem Platz in GiB.
+  Es werden vorhandene Proxmox-Speicher verwendet, keine physischen Festplatten formatiert.
+- Vorhandene Debian-Standard-Templates auswählen oder **Debian-Template herunterladen** wählen.
+  Dabei wird der Proxmox-Katalog aktualisiert; der eigentliche Download erfolgt erst nach der
+  abschließenden Bestätigung. Die Katalogliste zeigt neuere Versionen zuerst; die gewählte
+  Debian-Version muss vom installierten Proxmox unterstützt werden.
+- Netzwerk-Bridge aus vorhandenen Linux-Bridges auswählen. In den Listen übernimmt Enter
+  den ersten Eintrag, `q` bricht ab; falsche Nummern werden erneut abgefragt.
+- Hostname, VLAN, DHCP oder feste IPv4/CIDR mit Gateway, DNS, CPU, RAM, Diskgröße und
+  Browseradresse abfragen. Vorgaben: DHCP, 1 CPU, 512 MB RAM und 4 GB Disk.
+- Update-Passwort eingeben oder leer lassen, um eines sicher zu erzeugen. Am Ende sicher aufbewahren.
+
+Vor der Container-Erstellung werden alle Einstellungen zusammengefasst und mit `ja` bestätigt.
+Der Aufruf erfolgt direkt auf dem Proxmox-Host; Hostpasswort und SSH-Schlüssel sind deshalb nicht nötig.
+Belegte IDs werden auch gegen den Proxmox-Cluster geprüft. Fehlende Speicher oder Bridges sowie
+Downloadfehler beenden die Installation vor der Container-Erstellung. DNS/Paketquellen und GitHub
+müssen aus dem neuen Container erreichbar sein.
+
+Befehlsgrundlagen: [Proxmox Storage Manager](https://pve.proxmox.com/pve-docs/pvesm.1.html)
+und [Proxmox Template Manager](https://pve.proxmox.com/pve-docs/pveam.1.html).
 
 Der Installer lädt das neueste vollständige GitHub-Release, das erst nach erfolgreichen CI-Prüfungen
 veröffentlicht wird. Er richtet Nginx und den Symlink `/usr/local/bin/Update` auf

@@ -13,26 +13,62 @@ ask() {
 }
 valid_name() { [[ $1 =~ ^[a-zA-Z0-9][a-zA-Z0-9_.-]*$ ]]; }
 number() { [[ $1 =~ ^[0-9]+$ ]] && (( 10#$1 >= $2 && 10#$1 <= $3 )); }
+# Numbered menus keep actual Proxmox identifiers out of manual input.
+choose() {
+  local target=$1 title=$2 answer index
+  shift 2
+  local entries=("$@")
+  ((${#entries[@]})) || { echo "Keine Auswahl verfügbar: $title" >&2; exit 1; }
+  printf '\n%s\n' "$title"
+  for index in "${!entries[@]}"; do printf '  %s) %s\n' "$((index + 1))" "${entries[index]}"; done
+  while true; do
+    ask answer 'Nummer (Enter = 1, q = abbrechen)' '1'
+    [[ $answer != q ]] || { echo 'Abgebrochen.'; exit 0; }
+    if [[ ${#answer} -le 9 ]] && number "$answer" 1 "${#entries[@]}"; then
+      printf -v "$target" '%s' "${entries[10#$answer - 1]}"
+      return
+    fi
+    echo 'Bitte eine Nummer aus der Liste eingeben.'
+  done
+}
+choose_storage() {
+  local target=$1 content=$2 title=$3 listing selected
+  local entries=()
+  listing=$(pvesm status --content "$content")
+  mapfile -t entries < <(printf '%s\n' "$listing" | awk 'NR>1 && $3=="active" {printf "%s (%s, %.1f GiB frei)\n", $1, $2, $6/1048576}')
+  choose selected "$title" "${entries[@]}"
+  printf -v "$target" '%s' "${selected%% *}"
+}
 echo 'Home-Technik: neuen dedizierten, unprivilegierten LXC einrichten.'
-echo 'App-Daten bleiben im Browser. Das Skript fragt vor dem Anlegen alle Einstellungen ab.'
-pct list
-pvesm status
-ip -brief link
-ask ctid 'Freie Container-ID'
+echo 'Enter übernimmt Vorschläge. App-Daten bleiben im Browser.'
+next_id=$(pvesh get /cluster/nextid)
+ask ctid 'Freie Container-ID' "$next_id"
 number "$ctid" 100 999999999 || { echo 'Ungültige CT-ID'; exit 1; }
+# Checks VM and CT IDs throughout the cluster, not just containers on this node.
+pvesh get /cluster/nextid --vmid "$ctid" >/dev/null || { echo 'CT-ID bereits belegt oder nicht verfügbar.'; exit 1; }
 if pct status "$ctid" >/dev/null 2>&1; then echo 'CT-ID bereits belegt. Bestehender Container bleibt unverändert.'; exit 1; fi
 ask hostname 'Container-Hostname' 'home-technik'
 valid_name "$hostname" || exit 1
-ask storage 'Storage für Container-Rootfs'
-valid_name "$storage" || exit 1
-ask template_storage 'Storage für Templates'
-valid_name "$template_storage" || exit 1
-pveam list "$template_storage"
-echo 'Falls kein Debian-Template vorhanden ist: abbrechen, pveam update/available/download verwenden, dann erneut starten.'
-ask template 'Vollständige Volume-ID eines vorhandenen Debian-Templates (aus obiger Liste)'
+echo 'Container-Disk: vorhandenen Proxmox-Speicher wählen; keine physische Festplatte wird formatiert.'
+choose_storage storage rootdir 'Speicher für die Container-Disk'
+choose_storage template_storage vztmpl 'Speicher für Debian-Templates'
+listing=$(pveam list "$template_storage")
+mapfile -t templates < <(printf '%s\n' "$listing" | awk '$1 ~ /:vztmpl\/debian-[0-9]+-standard_.*_amd64\.tar\.(zst|xz|gz)$/ {print $1}' | sort -Vr)
+choose template 'Debian-Template auswählen' "${templates[@]}" 'Debian-Template herunterladen'
+download_template=''
+if [[ $template == 'Debian-Template herunterladen' ]]; then
+  echo 'Aktualisiere den Proxmox-Template-Katalog …'
+  pveam update
+  listing=$(pveam available --section system)
+  mapfile -t templates < <(printf '%s\n' "$listing" | awk '$2 ~ /^debian-[0-9]+-standard_.*_amd64\.tar\.(zst|xz|gz)$/ {print $2}' | sort -Vr)
+  choose download_template 'Verfügbare Debian-Templates (neueste zuerst)' "${templates[@]}"
+  template="$template_storage:vztmpl/$download_template"
+fi
 [[ $template == "$template_storage":vztmpl/debian-* && $template != *'..'* && $template != *','* && $template != *' '* ]] || { echo 'Debian-Template aus gewähltem Storage erforderlich'; exit 1; }
-pvesm path "$template" >/dev/null
-ask bridge 'Netzwerk-Bridge' 'vmbr0'
+if [[ -z $download_template ]]; then pvesm path "$template" >/dev/null; fi
+listing=$(ip -j link show type bridge)
+mapfile -t bridges < <(printf '%s' "$listing" | python3 -c 'import json,sys; print("\n".join(sorted(x["ifname"] for x in json.load(sys.stdin))))')
+choose bridge 'Netzwerk-Bridge auswählen' "${bridges[@]}"
 valid_name "$bridge" && ip link show "$bridge" >/dev/null || exit 1
 ask vlan 'VLAN-ID (leer = ungetaggt)'
 [[ -z $vlan ]] || number "$vlan" 1 4094 || exit 1
@@ -68,9 +104,14 @@ net="name=eth0,bridge=$bridge,ip=$address,firewall=1"
 printf '\nCT %s (%s), %s GB auf %s, %s CPU, %s MB RAM\nTemplate: %s\nNetz: %s\nDNS: %s\nAdresse: %s\n' "$ctid" "$hostname" "$disk" "$storage" "$cores" "$memory" "$template" "$net" "${dns:-Hostvorgabe}" "${public_url:-Container-IP}"
 echo 'Ein vorhandener Reverse Proxy/TLS wird nicht geändert. Proxmox-Firewall muss HTTP aus dem Heimnetz erlauben.'
 ask confirm 'Diesen neuen Container anlegen und neuestes Release installieren? Bitte ja eingeben'
-[[ $confirm == ja ]] || { echo 'Abgebrochen ohne Änderungen.'; exit 0; }
+[[ $confirm == ja ]] || { echo 'Abgebrochen ohne Container-Erstellung.'; exit 0; }
 options=(--hostname "$hostname" --unprivileged 1 --cores "$cores" --memory "$memory" --swap 256 --rootfs "$storage:$disk" --net0 "$net" --onboot 1)
 [[ -z $dns ]] || options+=(--nameserver "$dns")
+# Download only after the installation summary has been confirmed.
+if [[ -n $download_template ]]; then
+  pveam download "$template_storage" "$download_template"
+  pvesm path "$template" >/dev/null
+fi
 pct create "$ctid" "$template" "${options[@]}"
 pct start "$ctid"
 # Bounded network readiness check; no repeated package installation on unknown failures.

@@ -44,7 +44,9 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
 ## Ablauf
 
 Für neue Installationen bevorzugt das interaktive [install.sh](scripts/install.sh) auf dem Proxmox-Host
-ausführen. Es fragt CT-ID, Hostname, Storages, vorhandenes Debian-Template, Netzwerk einschließlich
+ausführen. Es schlägt eine freie CT-ID vor und bietet aktive Storages mit freiem Platz, Debian-Templates
+und Bridges als nummerierte Auswahl an. Fehlende Templates können nach Bestätigung heruntergeladen werden.
+Es fragt außerdem Hostname und Netzwerk einschließlich
 VLAN/DNS, Ressourcen und Zieladresse ab. Es erstellt ausschließlich einen neuen Container und zeigt
 vorher die vollständige Zusammenfassung. Keine weiteren Rückfragen des Assistenten nötig, wenn der Nutzer
 die Daten direkt im Skript eingeben möchte. Den ganzen Skill bereitstellen, nicht nur die Shell-Datei.

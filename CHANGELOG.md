@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.24.0 · 20.09.2026
+
+- Einfacherer Proxmox-Installer: nummerierte Auswahl für Disk-Speicher, Template-Speicher, Debian-Template und Netzwerk-Bridge.
+- Freie Container-ID automatisch vorschlagen, verfügbaren Speicherplatz anzeigen und ungültige Menüeingaben erneut abfragen.
+- Fehlende Debian-Templates direkt auswählen und nach Bestätigung herunterladen.
+
 ## 0.23.0 · 20.09.2026
 
 - Updates direkt aus der App starten, mit Update-Passwort, Fortschritt und kontrolliertem Neuladen.
