@@ -176,12 +176,79 @@ def setup_web():
     print('Direkte Updates sind eingerichtet. In der App die Versionsanzeige öffnen.')
 
 
+def ensure_project_assets(cache):
+    names = ('project_api.py', 'home-technik-projects.service')
+    if all((cache / name).is_file() for name in names):
+        return
+    # Older updaters copy only their known deployment files. Fetch the exact
+    # installed release, without a latest-API lookup, on first-time migration.
+    current = active()
+    if not current:
+        raise ValueError('Zuerst das aktuelle Release mit Update installieren.')
+    number = json.loads((current / 'version.json').read_text())['version']
+    if version(number) < (0, 48, 0):
+        raise ValueError('Der Projektdienst benötigt mindestens Version 0.48.0.')
+    url = f'{REPO}/releases/download/v{number}/home-technik-{number}.tar.gz'
+    with tempfile.TemporaryDirectory(prefix='home-technik-projects-') as tmp:
+        staged = Path(tmp)
+        extract_verified(download(url, 60_000_000), download(url + '.sha256', 1024), staged)
+        if json.loads((staged / 'dist/version.json').read_text()).get('version') != number:
+            raise ValueError('Projektdienst-Paket passt nicht zur installierten Version.')
+        if not all((staged / 'deploy' / name).is_file() for name in names):
+            raise ValueError('Projektdienst-Dateien fehlen im Release.')
+        for name in names:
+            shutil.copyfile(staged / 'deploy' / name, cache / name)
+            (cache / name).chmod(0o644)
+
+
+def setup_projects(reset_key=False):
+    import pwd
+    cache = Path('/opt/home-technik')
+    config = Path('/etc/nginx/sites-available/home-technik')
+    if not config.is_file():
+        raise ValueError('Zuerst das aktuelle Release mit Update installieren.')
+    ensure_project_assets(cache)
+    try:
+        account = pwd.getpwnam('home-technik-projects')
+    except KeyError:
+        run('useradd', '--system', '--user-group', '--no-create-home', '--shell', '/usr/sbin/nologin', 'home-technik-projects')
+        account = pwd.getpwnam('home-technik-projects')
+    data = Path('/var/lib/home-technik-projects')
+    data.mkdir(mode=0o700, exist_ok=True)
+    data.chmod(0o700)
+    os.chown(data, account.pw_uid, account.pw_gid)
+    auth = data / 'auth.json'
+    if not auth.exists() or reset_key:
+        key = secrets.token_urlsafe(32)
+        auth.write_text(json.dumps({'tokenHash': hashlib.sha256(key.encode()).hexdigest()}))
+        auth.chmod(0o600)
+        os.chown(auth, account.pw_uid, account.pw_gid)
+        print('Projektdienst-Zugriffsschlüssel (jetzt sicher aufbewahren): ' + key)
+    backup = config.read_bytes()
+    config.with_name('home-technik.before-projects-' + str(time.time_ns())).write_bytes(backup)
+    try:
+        shutil.copyfile(cache / 'home-technik.conf', config)
+        run('nginx', '-t')
+    except Exception:
+        config.write_bytes(backup)
+        raise
+    shutil.copyfile(cache / 'home-technik-projects.service', '/etc/systemd/system/home-technik-projects.service')
+    run('systemctl', 'daemon-reload')
+    (cache / 'project_api.py').chmod(0o644)
+    run('systemctl', 'enable', 'home-technik-projects.service')
+    run('systemctl', 'restart', 'home-technik-projects.service')
+    run('systemctl', 'reload', 'nginx')
+    print('Projektdienst eingerichtet. Hausakte → Gemeinsame Projekte öffnen. Vorhandene Schlüssel bleiben unverändert.')
+
+
 def main():
     parser = argparse.ArgumentParser(description='Home-Technik im LXC aktualisieren')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--check', action='store_true', help='Nur auf neue Version prüfen')
     group.add_argument('--rollback', action='store_true', help='Vorheriges Release aktivieren')
     group.add_argument('--setup-web', action='store_true', help='Update aus der App einrichten')
+    group.add_argument('--setup-projects', action='store_true', help='Gemeinsamen Projektdienst einrichten')
+    group.add_argument('--reset-project-key', action='store_true', help='Projektschlüssel widerrufen und neuen erzeugen')
     parser.add_argument('--yes', action='store_true', help='Installation ohne Rückfrage')
     args = parser.parse_args()
     if os.geteuid() != 0:
@@ -192,6 +259,9 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.setup_web:
             setup_web()
+            return
+        if args.setup_projects or args.reset_project_key:
+            setup_projects(args.reset_project_key)
             return
         current = active()
         current_version = json.loads((current / 'version.json').read_text())['version'] if current else '0.0.0'
@@ -247,10 +317,14 @@ def main():
                 shutil.copyfile(api_source, api_next)
                 api_next.chmod(0o755)
                 os.replace(api_next, Path('/opt/home-technik/update_api.py'))
-            for name in ('home-technik.conf', 'home-technik-update.service'):
+            for name in ('home-technik.conf', 'home-technik-update.service', 'project_api.py', 'home-technik-projects.service'):
                 source = staged / 'deploy' / name
                 if source.is_file():
                     shutil.copyfile(source, Path('/opt/home-technik') / name)
+                    if name == 'project_api.py':
+                        (Path('/opt/home-technik') / name).chmod(0o644)
+        if Path('/etc/systemd/system/home-technik-projects.service').is_file():
+            run('systemctl', 'try-restart', 'home-technik-projects.service')
         if not os.environ.get('HOME_TECHNIK_WEB_UPDATE') and Path('/etc/systemd/system/home-technik-update.service').is_file():
             run('systemctl', 'try-restart', 'home-technik-update.service')
         print(f'Version {number} installiert. Browser neu laden. Rückweg: Update --rollback')

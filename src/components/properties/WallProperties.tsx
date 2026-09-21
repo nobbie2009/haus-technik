@@ -5,15 +5,19 @@ import { TextField } from "../Fields";
 import { usePropertyFields } from "./usePropertyFields";
 import { WallPhotoDialog } from "../housebook/WallPhotoDialog";
 import { wallPhotos } from "../../housebook/wallPhotos";
+import { WallElevationDialog } from "../housebook/WallElevationDialog";
 
 export function WallProperties({ id }: { id: string }) {
   const { project, locked, change, lengthField } = usePropertyFields({ kind: "walls", id });
   const [fixed, setFixed] = useState<"start" | "end">("start");
   const [photosOpen, setPhotosOpen] = useState(false);
+  const [elevationOpen, setElevationOpen] = useState(false);
   const wall = project.walls[id]!;
   const data = getWallMeasurements(project, id);
   return (
     <>
+      <button onClick={() => setElevationOpen(true)}>Wandansicht öffnen</button>
+      {elevationOpen && <WallElevationDialog wallId={id} onClose={() => setElevationOpen(false)} />}
       <button className="full-width" onClick={() => setPhotosOpen(true)}>
         Wandfotos und Verläufe ({wallPhotos(project, id).length})
       </button>

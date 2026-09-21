@@ -2,6 +2,7 @@ import { projectRepository } from "./indexedDbRepository";
 import { errorMessage, useProjectStore } from "../stores/projectStore";
 import { useEditorStore } from "../stores/editorStore";
 import { fitView } from "../editor/interaction/commands";
+import { startSharedSync } from "./sharedProjects";
 
 let queue: Promise<void> = Promise.resolve();
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -40,6 +41,7 @@ export async function initializePersistence(): Promise<void> {
   }
   useEditorStore.getState().setFloor(useProjectStore.getState().project.floorOrder[0]!);
   useEditorStore.setState({ ready: true });
+  startSharedSync();
   if (
     useProjectStore.getState().project.metadata.housebook ||
     Object.keys(useProjectStore.getState().project.points).length ||

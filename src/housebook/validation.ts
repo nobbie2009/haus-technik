@@ -5,12 +5,22 @@ import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
 import { consumerLibrarySchema, consumerShapeSchema } from "../electrical/consumerLibrary";
 import { wallPhotosSchema } from "./wallPhotos";
+import { site } from "../site/model";
+import { constructionSchema } from "./construction";
 import { homeIssues } from "./home";
 import { setupSchema } from "./setup";
 import { solarSchema } from "./solar";
 import { lifeSchema } from "./life";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [...homeIssues(project)];
+  if (
+    project.metadata.constructionNotes !== undefined &&
+    !constructionSchema.safeParse(project.metadata.constructionNotes).success
+  )
+    issues.push({
+      path: "metadata.constructionNotes",
+      message: "Ungültige Baustellennotizen oder Aufnahmen.",
+    });
   for (const device of Object.values(project.electrical.devices)) {
     if (device.metadata.solarPlacement === undefined) continue;
     if (
@@ -38,7 +48,7 @@ export function housebookIssues(project: Project): { path: string; message: stri
       );
   }
   let hasWallPhotos = false;
-  for (const wall of Object.values(project.walls)) {
+  for (const wall of [...Object.values(project.walls), ...Object.values(site(project).elements)]) {
     if (wall.metadata.wallPhotos === undefined) continue;
     hasWallPhotos = true;
     if (!wallPhotosSchema.safeParse(wall.metadata.wallPhotos).success)
@@ -160,7 +170,8 @@ export function housebookIssues(project: Project): { path: string; message: stri
       }
     }
   if (
-    (project.metadata.housebook ||
+    (project.metadata.constructionNotes ||
+      project.metadata.housebook ||
       project.metadata.homeOverview ||
       project.metadata.solarPlants ||
       project.metadata.houseLife ||

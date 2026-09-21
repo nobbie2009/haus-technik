@@ -7,6 +7,25 @@ React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind un
 
 Auf iPhone und iPad lassen sich Grundstücksgrenzen, Wege, Beete und Referenzpunkte per Standortaufnahme erfassen. Benötigt HTTPS und Standortfreigabe; GPS dient zur Groberfassung. [Anleitung](docs/gps-grundstueck.md).
 
+## Seit 0.48.0: Wandansicht, Baustelle und gemeinsame Projekte
+
+- Eine Wand auswählen und **Wandansicht öffnen**: vorhandene Möbel und Elektroobjekte mit Abstand ab
+  Wandanfang und Höhe über Boden setzen, alternativ in der Frontansicht antippen. Beide Wandseiten,
+  Tür-/Fensteröffnungen und Ebenensperren werden berücksichtigt.
+- In Wandfotos **Bezugspunkt setzen** verwenden. Benannte Bezugspunkte und Beschreibungen bleiben im Foto
+  und SVG erhalten. Bei kalibrierten Fotos wird der Abstand zum Anfang eines ausgewählten Leitungsverlaufs
+  angezeigt. Auch Außenflächen und Grundstücksreferenzen besitzen **Leitungsfotos dieser Außenfläche**.
+- **Elektrik → Verbraucherdatenbank → Projektübergreifende Gerätebibliothek** speichert Vorlagen für
+  alle Projekte dieses Browsers. Maße und technische Daten bleiben erhalten; individuelle Seriennummern
+  werden entfernt. Für andere Geräte Bibliothek exportieren/importieren oder Vorlagen im gemeinsamen Projekt mitführen.
+- **Baustelle** öffnet eine für schmale Bildschirme geeignete Erfassung von Objektbezug, Foto,
+  Notiz, Messwert und Aufgabe. Sprachnotizen sind bei unterstütztem Browser mit Mikrofonfreigabe und
+  sicherer Verbindung (HTTPS oder localhost) möglich. Ungespeicherte Eingaben werden vor Schließen geschützt.
+- **Hausakte → Gemeinsame Projekte** verbindet Geräte mit dem optionalen Projektdienst im eigenen LXC.
+  Nach `Update` einmalig `Update --setup-projects` im LXC ausführen. Lokale Änderungen werden bei geöffnetem
+  sichtbarem Tab abgeglichen, neue Serverstände zur Übernahme angeboten und Konflikte nicht überschrieben.
+  [Einrichtung und Sicherung](.agents/skills/home-technik-proxmox-lxc/references/deployment.md#gemeinsame-projekte-ab-0480).
+
 ## Auf Proxmox bereitstellen
 
 Der Codex-Skill [home-technik-proxmox-lxc](.agents/skills/home-technik-proxmox-lxc/SKILL.md)
@@ -505,5 +524,5 @@ dürfen keine Kreise bilden. Die Bestandsübersicht summiert direkt zugeordnete 
 Unterverteilungen stehen in deren Stromkreisen. Löschen einer Zuleitung löst den Eingang der Unterverteilung,
 erhält aber deren eigene Stromkreise und Objekte. Einphasige Zuleitungen mit widersprüchlicher nachgeschalteter
 Phasenzuordnung werden als Planungskonflikt angezeigt.
-Netzwerkdokumentation und lesender Home-Assistant-Abruf sind seit 0.12.0 in der Hausakte verfügbar. 3D, Backend, Benutzerverwaltung und weitere technische Netze bleiben spätere Phasen.
+Netzwerkdokumentation und lesender Home-Assistant-Abruf sind seit 0.12.0 in der Hausakte verfügbar. Ein optionaler Projektdienst ist seit 0.48.0 verfügbar. 3D und getrennte Benutzerkonten bleiben spätere Phasen.
 Die Erweiterungsgrenzen sind in [docs/architecture.md](docs/architecture.md) festgehalten.

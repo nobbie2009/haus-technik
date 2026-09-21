@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ConnectionsPanel } from "./ConnectionsPanel";
 import { ComparePanel } from "./ComparePanel";
 import { VersionsPanel } from "./VersionsPanel";
+import { SharedProjectsPanel } from "./SharedProjectsPanel";
 import { Modal } from "../dialogs/Modal";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -52,6 +53,7 @@ const sections = {
   connections: "Verbindungen & Abschalten",
   compare: "Bestand / Umbau",
   backup: "Sicherung & Gerätewechsel",
+  shared: "Gemeinsame Projekte",
   chronicle: "Hauschronik",
   quick: "Haus-Schnellübersicht",
   qr: "QR-Aufkleber",
@@ -183,6 +185,7 @@ export function HousebookDialog({
             ))}
           </nav>
           <div className="book-content" aria-busy={busy}>
+            {section === "shared" && <SharedProjectsPanel />}
             {section === "connections" && <ConnectionsPanel onClose={onClose} />}
             {section === "compare" && <ComparePanel />}
             {qrTarget && qrTarget.projectId !== project.id && (

@@ -37,6 +37,25 @@ def archive(name='dist/index.html', link=False):
 
 
 class UpdateTests(unittest.TestCase):
+    def test_first_project_setup_recovers_files_not_copied_by_old_updater(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            current = root / 'current'; current.mkdir()
+            cache = root / 'cache'; cache.mkdir()
+            (current / 'version.json').write_text('{"version":"0.48.0"}')
+            out = io.BytesIO()
+            with tarfile.open(fileobj=out, mode='w:gz') as tar:
+                for name, text in [('dist/version.json', '{"version":"0.48.0"}'), ('deploy/project_api.py', '# test'), ('deploy/home-technik-projects.service', '# test')]:
+                    data = text.encode(); item = tarfile.TarInfo(name); item.size = len(data)
+                    tar.addfile(item, io.BytesIO(data))
+            data = out.getvalue()
+            with patch.object(updater, 'active', return_value=current), patch.object(updater, 'download', side_effect=[data, hashlib.sha256(data).hexdigest().encode()]) as fetch:
+                updater.ensure_project_assets(cache)
+                self.assertIn('/releases/download/v0.48.0/', fetch.call_args_list[0].args[0])
+                self.assertEqual((cache / 'project_api.py').read_text(), '# test')
+                updater.ensure_project_assets(cache)
+                self.assertEqual(fetch.call_count, 2)
+
     def test_versions(self):
         self.assertGreater(updater.version('0.22.0'), updater.version('0.9.9'))
         for value in ['../etc', 'v1.0.0', '01.0.0', '1.0.0-beta']:

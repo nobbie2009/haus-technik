@@ -2,6 +2,36 @@
   width: min(1150px, 96vw);
   max-width: 96vw;
 }
+.construction-dialog {
+  width: min(820px, 96vw);
+}
+.construction-dialog button,
+.construction-dialog input:not([type="checkbox"]),
+.construction-dialog select {
+  min-height: 48px;
+}
+.construction-dialog audio {
+  max-width: 100%;
+}
+.construction-dialog .info-card {
+  margin-top: 16px;
+}
+.shared-project-status {
+  max-width: 210px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .construction-dialog {
+    max-height: 96dvh;
+    padding: 16px;
+  }
+  .shared-project-status {
+    max-width: 120px;
+  }
+}
 .book-shell {
   display: grid;
   grid-template-columns: 185px minmax(0, 1fr);

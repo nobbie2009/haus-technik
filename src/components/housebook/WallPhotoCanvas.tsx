@@ -12,7 +12,7 @@ export function WallPhotoCanvas({
 }: {
   photo: WallPhoto;
   points: PhotoPoint[];
-  mode: "select" | "draw" | "calibrate";
+  mode: "select" | "draw" | "calibrate" | "reference";
   zoom: number;
   selected: string | null;
   onPoint: (point: PhotoPoint) => void;
@@ -64,6 +64,29 @@ export function WallPhotoCanvas({
         }}
       >
         <image href={photo.data} width={photo.pixelWidth} height={photo.pixelHeight} />
+        {(photo.references ?? []).map((r) => (
+          <g key={r.id}>
+            <circle
+              cx={r.point.x * photo.pixelWidth}
+              cy={r.point.y * photo.pixelHeight}
+              r={stroke * 3}
+              fill="white"
+              stroke="#6351aa"
+              strokeWidth={stroke}
+            />
+            <text
+              x={r.point.x * photo.pixelWidth + size}
+              y={r.point.y * photo.pixelHeight}
+              fontSize={size}
+              fill="#6351aa"
+              stroke="white"
+              strokeWidth={2}
+              paintOrder="stroke"
+            >
+              {r.name}
+            </text>
+          </g>
+        ))}
         {photo.traces.map((t) => (
           <g key={t.id} data-trace={t.id}>
             <polyline points={coords(t.points)} fill="none" stroke="white" strokeWidth={stroke + 3} />

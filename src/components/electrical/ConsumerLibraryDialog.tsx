@@ -12,6 +12,7 @@ import {
 } from "../../electrical/consumerLibrary";
 import { download } from "../../housebook/export";
 import { newId } from "../../utils/uuid";
+import { SharedDeviceLibrary } from "./SharedDeviceLibrary";
 
 const empty = (): ConsumerEntry => ({
   id: newId(),
@@ -40,6 +41,7 @@ export function ConsumerLibraryDialog({ onClose }: { onClose: () => void }) {
     setDraft((old) => ({ ...old, [key]: value }));
   return (
     <Modal title="Verbraucherdatenbank" className="housebook-dialog" onClose={onClose}>
+      <SharedDeviceLibrary entries={entries} />
       <p>
         Geräte dieses Projekts speichern, suchen und im Plan platzieren. Eine Platzierung erhält eine eigene
         Kopie der Daten. Änderungen an der Vorlage verändern bereits platzierte Geräte nicht.

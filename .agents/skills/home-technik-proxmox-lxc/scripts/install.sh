@@ -132,5 +132,6 @@ pct exec "$ctid" -- bash -c 'systemctl daemon-reload && systemctl enable --now h
 pct exec "$ctid" -- hostname -I
 printf '\nInstallation abgeschlossen. Browser-Adresse: %s\nUpdate im LXC: Update\nVom Host zuerst: pct enter %s\nNur prüfen: Update --check\nZurücksetzen: Update --rollback\n' "${public_url:-http://CONTAINER-IP/ (siehe oben)}" "$ctid"
 echo 'Bei DHCP jetzt eine feste Reservierung setzen. JSON-Projektdatei an der neuen Browseradresse importieren.'
+echo 'Optionaler gemeinsamer Projektspeicher im LXC: Update --setup-projects; Schlüssel anschließend in Hausakte → Gemeinsame Projekte eingeben.'
 printf 'Update-Passwort für die App (sicher aufbewahren): %s\n' "$update_password"
 unset update_password password_repeat

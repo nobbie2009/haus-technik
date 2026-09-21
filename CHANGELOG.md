@@ -1,5 +1,13 @@
 # Änderungen
 
+## 0.48.0 · 21.09.2026
+
+- Wandansicht mit beiden Seiten, maßstäblichen Öffnungen und Montagepunkten ergänzen. Vorhandene Möbel und Elektroobjekte per Antippen oder genauer Eingabe von Abstand und Höhe setzen; den Grundriss und Ebenensperren berücksichtigen.
+- Benannte Bezugspunkte mit Beschreibung in Leitungsfotos markieren und im SVG ausgeben. Bei kalibrierten Fotos Abstände zum gewählten Verlauf anzeigen. Leitungsfotos auch Grundstücksobjekten und Außenflächen zuordnen.
+- Gerätevorlagen projektübergreifend im Browser speichern und in andere Projekte übernehmen. Maße und technische Daten erhalten, individuelle Seriennummern nicht kopieren.
+- Mobile Baustellenansicht mit Objektbezug, Kamera-/Fotoaufnahme, Messwerten, Notizen, Aufgabenstatus und optionalen Sprachnotizen ergänzen. Entwürfe vor versehentlichem Schließen schützen und lokal im Projekt speichern.
+- Optionalen Projektdienst für PC, iPad und iPhone ergänzen: eigener Zugriffsschlüssel, unprivilegierter Python-Dienst und SQLite-Speicher, Einrichtung über `Update --setup-projects`. Lokale Änderungen verbundener Projekte regelmäßig abgleichen, Serveränderungen zur Übernahme anbieten und gleichzeitige Änderungen mit Revisionsvergleich vor Überschreiben schützen. Vor Übernahmen benannte lokale Versionsstände sichern; Serverhistorie mit 20 vorherigen Ständen führen.
+
 ## 0.47.0 · 21.09.2026
 
 - Verbindungen vom ausgewählten Planobjekt oder aus der Hausakte verfolgen: elektrische Versorgungszuordnungen bis zur Einspeisung, dokumentierte Kabelwege über Abzweigdosen sowie zusammenhängende Rohr-, Netzwerk- und SAT-Netze. Ergebnisse mit Geschoss und Raum auflisten und im Plan hervorheben.

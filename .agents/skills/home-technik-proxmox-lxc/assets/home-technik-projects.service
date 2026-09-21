@@ -1,0 +1,22 @@
+[Unit]
+Description=Home-Technik shared project storage
+After=network.target
+
+[Service]
+Type=simple
+User=home-technik-projects
+Group=home-technik-projects
+ExecStart=/usr/bin/python3 /opt/home-technik/project_api.py
+StateDirectory=home-technik-projects
+StateDirectoryMode=0700
+UMask=0077
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+RestrictAddressFamilies=AF_INET AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

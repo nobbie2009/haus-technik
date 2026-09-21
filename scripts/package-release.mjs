@@ -10,6 +10,11 @@ cpSync("dist", `${stage}/dist`, { recursive: true });
 mkdirSync(`${stage}/deploy`);
 cpSync(".agents/skills/home-technik-proxmox-lxc/scripts/update.py", `${stage}/deploy/update.py`);
 cpSync(".agents/skills/home-technik-proxmox-lxc/scripts/update_api.py", `${stage}/deploy/update_api.py`);
+cpSync(".agents/skills/home-technik-proxmox-lxc/scripts/project_api.py", `${stage}/deploy/project_api.py`);
+cpSync(
+  ".agents/skills/home-technik-proxmox-lxc/assets/home-technik-projects.service",
+  `${stage}/deploy/home-technik-projects.service`,
+);
 cpSync(
   ".agents/skills/home-technik-proxmox-lxc/assets/home-technik-update.service",
   `${stage}/deploy/home-technik-update.service`,

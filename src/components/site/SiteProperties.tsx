@@ -6,7 +6,9 @@ import { TextField, LengthField } from "../Fields";
 import { SelectField } from "../electrical/ElectricalFields";
 import { formatArea, formatLength } from "../../utils/units";
 import { distance } from "../../geometry/distance";
+import { WallPhotoDialog } from "../housebook/WallPhotoDialog";
 export function SiteProperties({ id }: { id: string }) {
+  const [photos, setPhotos] = useState(false);
   const { project, locked, unit, change } = usePropertyFields({ kind: "siteElements", id });
   const item = site(project).elements[id]!,
     [index, setIndex] = useState(0);
@@ -16,6 +18,8 @@ export function SiteProperties({ id }: { id: string }) {
   const survey = gpsSurveySchema.safeParse(item.metadata.gpsSurvey);
   return (
     <>
+      <button onClick={() => setPhotos(true)}>Leitungsfotos dieser Außenfläche</button>
+      {photos && <WallPhotoDialog wallId={id} onClose={() => setPhotos(false)} />}
       <p>{siteKinds[item.kind]}</p>
       {survey.success && (
         <p className="field-hint">

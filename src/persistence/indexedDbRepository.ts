@@ -3,6 +3,11 @@ import { migrateProject } from "./migrations";
 import { parseProject } from "../core/validation";
 import type { Project } from "../models/project";
 import type { ProjectRepository } from "./projectRepository";
+import {
+  consumerLibrarySchema,
+  consumerEntrySchema,
+  type ConsumerEntry,
+} from "../electrical/consumerLibrary";
 
 export class IndexedDbRepository implements ProjectRepository {
   private database: Promise<IDBDatabase> | null = null;
@@ -59,6 +64,30 @@ export class IndexedDbRepository implements ProjectRepository {
         rooms: Object.keys(project.rooms).length,
       }))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+  async deviceLibrary(): Promise<ConsumerEntry[]> {
+    return consumerLibrarySchema.parse((await this.read("settings", "deviceLibrary")) ?? []);
+  }
+  async updateDeviceLibrary(entry: ConsumerEntry, remove = false): Promise<void> {
+    const value = consumerEntrySchema.parse(entry),
+      db = await this.open();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction("settings", "readwrite"),
+        store = tx.objectStore("settings"),
+        request = store.get("deviceLibrary");
+      request.onsuccess = () => {
+        try {
+          const rows = consumerLibrarySchema.parse(request.result ?? []).filter((r) => r.id !== value.id);
+          if (!remove) rows.push({ ...value, serial: "" });
+          store.put(consumerLibrarySchema.parse(rows), "deviceLibrary");
+        } catch {
+          tx.abort();
+        }
+      };
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error ?? new Error("Gerätebibliothek konnte nicht gespeichert werden."));
+    });
   }
   async load(id: string): Promise<Project | null> {
     const raw = await this.read("projects", id);

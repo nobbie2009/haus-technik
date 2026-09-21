@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Project } from "../models/project";
 import { imageData } from "./model";
+import { site } from "../site/model";
 
 export const traceTypes = {
   electrical: { label: "Elektrik", color: "#b45319" },
@@ -30,6 +31,18 @@ export const wallPhotoSchema = z
     pixelWidth: z.number().int().positive().max(2400),
     pixelHeight: z.number().int().positive().max(2400),
     calibration: calibration.nullable(),
+    references: z
+      .array(
+        z.strictObject({
+          id: z.uuid(),
+          name: z.string().trim().min(1).max(150),
+          point,
+          notes: z.string().max(2000),
+        }),
+      )
+      .max(100)
+      .refine((rows) => new Set(rows.map((r) => r.id)).size === rows.length, "Doppelte Bezugspunkt-ID.")
+      .optional(),
     traces: z
       .array(
         z.strictObject({
@@ -57,12 +70,16 @@ export const wallPhotosSchema = z
 export type WallPhoto = z.infer<typeof wallPhotoSchema>;
 export type PhotoPoint = z.infer<typeof point>;
 export type PhotoTrace = WallPhoto["traces"][number];
+export function photoOwner(project: Project, id: string) {
+  return project.walls[id] ?? site(project).elements[id];
+}
 export function wallPhotos(project: Project, wallId: string): WallPhoto[] {
-  return wallPhotosSchema.parse(project.walls[wallId]?.metadata.wallPhotos ?? []);
+  return wallPhotosSchema.parse(photoOwner(project, wallId)?.metadata.wallPhotos ?? []);
 }
 export function setWallPhotos(project: Project, wallId: string, photos: WallPhoto[]): void {
-  if (!project.walls[wallId]) throw new Error("Wand fehlt.");
-  project.walls[wallId]!.metadata.wallPhotos = wallPhotosSchema.parse(photos);
+  const owner = photoOwner(project, wallId);
+  if (!owner) throw new Error("Wand oder Außenobjekt fehlt.");
+  owner.metadata.wallPhotos = JSON.parse(JSON.stringify(wallPhotosSchema.parse(photos)));
 }
 export function editWallPhoto(
   project: Project,
@@ -98,7 +115,7 @@ export function wallPhotoSvg(photo: WallPhoto): string {
     height = photo.pixelHeight,
     size = Math.max(12, width / 65),
     stroke = Math.max(2, width / 400);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height + size * 3}" width="${width}" height="${height + size * 3}"><title>${xml(photo.name)}</title><rect width="100%" height="100%" fill="white"/><image href="${photo.data}" width="${width}" height="${height}"/>${photo.traces
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height + size * 3}" width="${width}" height="${height + size * 3}"><title>${xml(photo.name)}</title><rect width="100%" height="100%" fill="white"/><image href="${photo.data}" width="${width}" height="${height}"/>${(photo.references ?? []).map((r) => `<circle cx="${r.point.x * width}" cy="${r.point.y * height}" r="${stroke * 3}" fill="white" stroke="#6351aa" stroke-width="${stroke}"/><text x="${r.point.x * width + size}" y="${r.point.y * height}" font-size="${size}" fill="#6351aa" stroke="white" stroke-width="2" paint-order="stroke">${xml(r.name)}</text>`).join("")}${photo.traces
     .map((t) => {
       const p = t.points[0]!,
         color = traceTypes[t.type].color;

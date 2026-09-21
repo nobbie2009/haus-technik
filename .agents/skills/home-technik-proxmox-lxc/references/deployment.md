@@ -91,6 +91,43 @@ derselben belegten ID starten. Netzwerk, Paketinstallation und den letzten erfol
 wenn `Update` samt Verwaltungsmarker schon eingerichtet ist, kann dessen Erstinstallation erneut gestartet
 werden. Keine Container oder Releaseverzeichnisse automatisch entfernen.
 
+## Gemeinsame Projekte ab 0.48.0
+
+Nach dem App-Update im LXC als root `Update --setup-projects` ausführen. Der Befehl legt
+einen unprivilegierten Dienstbenutzer an, installiert `home-technik-projects.service` und erzeugt
+einen eigenen zufälligen Zugriffsschlüssel. Diesen einmal angezeigten Schlüssel sicher aufbewahren;
+bei der ersten Einrichtung nach einem älteren Updater werden fehlende Dienstdateien aus dem geprüften
+Paket genau der installierten Version nachgeladen. Dafür muss GitHub erreichbar sein.
+auf dem Server liegt nur dessen SHA-256-Hash. Er ist unabhängig vom Update-Passwort.
+Die verwaltete Nginx-Site wird mit vorheriger Sicherung ersetzt und geprüft. Eigene Anpassungen
+an HTTPS oder Reverse-Proxy vorher mit der Vorlage abgleichen. Keine öffentliche Freigabe einrichten.
+
+Auf jedem Gerät dieselbe App-Adresse öffnen: **Hausakte → Gemeinsame Projekte**. Schlüssel eingeben,
+verbinden und auf dem ersten Gerät **Aktuelles Projekt erstmals bereitstellen** wählen. Auf weiteren
+Geräten **Serverstand prüfen** und **Serverstand übernehmen und verbinden** wählen. Der Schlüssel bleibt
+in der Tab-Sitzung, nicht in der Projektdatei. Nach Schließen des Tabs erneut verbinden.
+Für verschlüsselte Übertragung die vorhandene HTTPS-Adresse benutzen.
+
+Verbundene lokale Änderungen werden bei sichtbarem Tab alle zehn Sekunden hochgeladen. Neue Serverstände
+werden zur bewussten Übernahme angeboten. Bei gleichzeitigen Änderungen bleibt der lokale Entwurf erhalten;
+zunächst als Datei sichern, dann den Serverstand prüfen. Vor der Übernahme wird zusätzlich ein benannter
+lokaler Versionsstand erzeugt. Eine automatische Zusammenführung erfolgt nicht. Ohne Netz kann in der
+bereits geöffneten App weitergearbeitet werden; ein Offline-Neustart der App wird nicht zugesichert.
+
+Der Dienst lauscht auf `127.0.0.1:9088`; Nginx führt `/api/home-technik-projects` dorthin.
+Hausdaten liegen in `/var/lib/home-technik-projects/projects.sqlite3`, der Schlüsselhash in `auth.json`.
+Pro Projekt bleiben die letzten 20 ersetzten Serverstände in der Datenbank; diese Historie hat noch
+keinen Wiederherstellungsdialog. JSON-Exporte und benannte Browserstände bleiben die bedienbaren Sicherungen.
+Für eine Dateisicherung den Dienst vorher stoppen, das gesamte Datenverzeichnis mit erhaltenen
+Eigentümern/Rechten sichern und den Dienst wieder starten. Alternativ die SQLite-Backup-API verwenden;
+nicht nur die laufende Hauptdatei ohne WAL kopieren. Ein App-Rollback verändert die Hausdaten nicht.
+
+Diagnose: `systemctl status home-technik-projects`, `journalctl -u home-technik-projects`.
+`Update --reset-project-key` widerruft den bisherigen Schlüssel und erzeugt einen neuen; alle Geräte
+müssen neu verbunden werden. Der Schlüssel gewährt Zugriff auf alle Projekte dieses Hausservers;
+es gibt keine getrennten Benutzerkonten. Home-Assistant-Zugangsdaten und die lokale übergreifende
+Gerätebibliothek werden nicht als eigene Serverdaten synchronisiert.
+
 ## Manueller Weg für Sonderfälle
 
 Die folgenden Schritte dienen vorhandenen Umgebungen oder separat vorbereiteten Builds.

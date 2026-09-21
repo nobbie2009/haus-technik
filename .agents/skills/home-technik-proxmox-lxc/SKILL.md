@@ -28,12 +28,15 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
 - React/Vite-App: `npm ci`, `npm run check`, `npm run build`; Ausgabe `dist/`.
   Node-Version aus `.nvmrc`/`engines` verwenden (zur Erstellung dieses Skills: 24).
   Node nur auf dem Build-Rechner nötig. Kein Vite-Entwicklungs- oder Preview-Server als Dauerdienst.
-- Kein Hausdaten-Backend, keine serverseitige Hausdatenbank und kein automatischer PC/iPad-Abgleich.
-  Der zusätzliche lokale Dienst ist ausschließlich für App-Updates zuständig.
-  IndexedDB und Sicherungsnachweise liegen im jeweiligen Browser unter der jeweiligen Origin.
+- Ab 0.48.0 optionaler Projektdienst für den gemeinsamen PC/iPad/iPhone-Stand: nach `Update`
+  einmalig `Update --setup-projects` im LXC. Eigener Zugriffsschlüssel, Python/SQLite auf Loopback 9088,
+  Nginx-Weiterleitung und unprivilegierter systemd-Dienst. Der Update-Dienst bleibt getrennt.
+  Einrichtung, Schlüsselwechsel und Sicherung: [Betriebsanleitung](references/deployment.md).
+  IndexedDB und lokale Sicherungsnachweise bleiben unter der jeweiligen Browser-Origin.
 - Vor Wechsel von Host, Port oder HTTP zu HTTPS am alten Ziel JSON exportieren und prüfen.
   Am neuen Ziel unter **Hausakte → Sicherung & Gerätewechsel** importieren.
-  Ein LXC-Backup sichert die App, aber nicht die Hausdaten auf PC und iPad.
+  Ein LXC-Backup sichert auch den eingerichteten Projektdienst, aber keine ausschließlich lokalen
+  beziehungsweise noch nicht abgeglichenen Browserdaten. JSON-Sicherungen weiterhin erstellen.
 - QR-Aufkleber benötigen die dauerhafte neue Adresse und das passende importierte Projekt.
   Alte Aufkleber erst ersetzen, wenn der neue Zugriff funktioniert.
 - Standardumfang ist das Heimnetz. Keine Router-Portfreigaben, öffentliche Domain oder Cloud-Synchronisierung

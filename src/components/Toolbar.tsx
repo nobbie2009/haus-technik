@@ -2,6 +2,9 @@ import { lazy, Suspense, useRef, useState, useEffect } from "react";
 const HousebookDialog = lazy(() =>
   import("./housebook/HousebookDialog").then((m) => ({ default: m.HousebookDialog })),
 );
+const ConstructionDialog = lazy(() =>
+  import("./housebook/ConstructionDialog").then((m) => ({ default: m.ConstructionDialog })),
+);
 import {
   PencilRuler,
   FilePlus2,
@@ -27,8 +30,10 @@ import { createDemoProject } from "../editor/demoProject";
 import type { DisplayUnit } from "../models/common";
 import { readQrLink } from "../housebook/qr";
 import { UpdateStatus } from "./UpdateStatus";
+import { useSharedProjects } from "../persistence/sharedProjects";
 
 export function Toolbar() {
+  const shared = useSharedProjects();
   const project = useProjectStore((s) => s.project);
   const status = useProjectStore((s) => s.saveStatus);
   const past = useProjectStore((s) => s.past);
@@ -36,6 +41,7 @@ export function Toolbar() {
   const [dialog, setDialog] = useState<"new" | "open" | null>(null);
   const [help, setHelp] = useState(false);
   const [book, setBook] = useState(false);
+  const [construction, setConstruction] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const showGrid = useEditorStore((s) => s.showGrid);
@@ -183,6 +189,14 @@ export function Toolbar() {
         <button disabled={!ready || busy} onClick={() => setBook(true)}>
           Hausakte
         </button>
+        <button disabled={!ready || busy} onClick={() => setConstruction(true)}>
+          Baustelle
+        </button>
+        {shared.token && (
+          <span className="shared-project-status" role="status" title={shared.message}>
+            {shared.remoteChanged ? "Serverstand prüfen" : shared.busy ? "Serverabgleich …" : shared.message}
+          </span>
+        )}
         <button
           className="example-button"
           disabled={!ready || busy}
@@ -236,6 +250,11 @@ export function Toolbar() {
         />
       </div>
       {dialog && <ProjectDialog mode={dialog} onClose={() => setDialog(null)} />}
+      {construction && (
+        <Suspense fallback={<p>Baustellenansicht wird geladen …</p>}>
+          <ConstructionDialog onClose={() => setConstruction(false)} />
+        </Suspense>
+      )}
       {book && (
         <Suspense fallback={<span role="status">Hausakte wird geöffnet …</span>}>
           <HousebookDialog

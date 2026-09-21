@@ -15,6 +15,8 @@ import {
   type PhotoPoint,
   type WallPhoto,
   type TraceType,
+  photoOwner,
+  photoDistance,
 } from "../../housebook/wallPhotos";
 import { newId } from "../../utils/uuid";
 import { WallPhotoCanvas } from "./WallPhotoCanvas";
@@ -33,9 +35,9 @@ export function WallPhotoDialog({
   const canUndo = useProjectStore((s) => s.past.length > 0),
     canRedo = useProjectStore((s) => s.future.length > 0);
   const photos = wallPhotos(project, wallId),
-    locked = !project.walls[wallId] || project.layers[project.walls[wallId]!.layerId]!.locked;
+    locked = !photoOwner(project, wallId) || project.layers[photoOwner(project, wallId)!.layerId]!.locked;
   const [photoId, setPhotoId] = useState(initialPhotoId ?? photos[0]?.id ?? ""),
-    [mode, setMode] = useState<"select" | "draw" | "calibrate">("select");
+    [mode, setMode] = useState<"select" | "draw" | "calibrate" | "reference">("select");
   const [points, setPoints] = useState<PhotoPoint[]>([]),
     [selected, setSelected] = useState<string | null>(null);
   const [name, setName] = useState(""),
@@ -65,7 +67,13 @@ export function WallPhotoDialog({
     return ok;
   };
   const addPoint = (point: PhotoPoint) => {
-    if (locked || mode === "select" || (mode === "calibrate" && points.length >= 2)) return;
+    if (
+      locked ||
+      mode === "select" ||
+      (mode === "calibrate" && points.length >= 2) ||
+      (mode === "reference" && points.length >= 1)
+    )
+      return;
     if (![point.x, point.y].every((v) => Number.isFinite(v) && v >= 0 && v <= 1)) {
       setError("Punktkoordinaten müssen zwischen 0 und 100 Prozent liegen.");
       return;
@@ -84,7 +92,7 @@ export function WallPhotoDialog({
   };
   return (
     <Modal
-      title="Wandfotos und Leitungsverläufe"
+      title={project.walls[wallId] ? "Wandfotos und Leitungsverläufe" : "Leitungsfotos und Bezugspunkte"}
       className="wall-photo-dialog"
       onClose={() => {
         if (busy) return;
@@ -93,8 +101,8 @@ export function WallPhotoDialog({
       }}
     >
       <p>
-        Fotos einer Wandseite sammeln und Leitungsverläufe direkt darauf markieren. Angaben bleiben im Projekt
-        gespeichert.
+        Fotos einer Wandseite oder Außenfläche sammeln und Leitungsverläufe direkt darauf markieren. Angaben
+        bleiben im Projekt gespeichert.
       </p>
       {locked && (
         <p className="locked-note">Wandebene gesperrt · Fotos und Verläufe sind schreibgeschützt.</p>
@@ -245,6 +253,17 @@ export function WallPhotoDialog({
           <div className="book-actions wall-photo-tools">
             <button
               disabled={locked || points.length > 0}
+              onClick={() => {
+                setMode("reference");
+                setPoints([]);
+                setName("");
+                setNotes("");
+              }}
+            >
+              Bezugspunkt setzen
+            </button>
+            <button
+              disabled={locked || points.length > 0}
               aria-pressed={mode === "draw"}
               onClick={() => startDraw()}
             >
@@ -272,11 +291,13 @@ export function WallPhotoDialog({
             </Field>
           </div>
           <p role="status">
-            {mode === "draw"
-              ? `Verlauf: ${points.length} Punkte. Eckpunkte antippen, dann Verlauf speichern.`
-              : mode === "calibrate"
-                ? `Referenz: ${points.length} von 2 Punkten. Danach bekannte Strecke eingeben.`
-                : "Einen Verlauf im Foto oder in der Liste auswählen. Vergrößerte Fotos per Finger oder mit den Bildlaufleisten verschieben."}
+            {mode === "reference"
+              ? "Einen festen Bezugspunkt im Foto antippen und benennen."
+              : mode === "draw"
+                ? `Verlauf: ${points.length} Punkte. Eckpunkte antippen, dann Verlauf speichern.`
+                : mode === "calibrate"
+                  ? `Referenz: ${points.length} von 2 Punkten. Danach bekannte Strecke eingeben.`
+                  : "Einen Verlauf im Foto oder in der Liste auswählen. Vergrößerte Fotos per Finger oder mit den Bildlaufleisten verschieben."}
           </p>
           <WallPhotoCanvas
             key={photo.id}
@@ -368,6 +389,28 @@ export function WallPhotoDialog({
                     Verlauf speichern
                   </button>
                 </form>
+              ) : mode === "reference" ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (points.length !== 1) return;
+                    if (
+                      edit("Fotobezugspunkt speichern", (p) => {
+                        p.references ??= [];
+                        p.references.push({ id: newId(), name: name.trim(), point: points[0]!, notes });
+                      })
+                    )
+                      reset();
+                  }}
+                >
+                  <Field label="Bezugspunktname">
+                    <input required maxLength={150} value={name} onChange={(e) => setName(e.target.value)} />
+                  </Field>
+                  <Field label="Beschreibung des Bezugspunkts">
+                    <input maxLength={2000} value={notes} onChange={(e) => setNotes(e.target.value)} />
+                  </Field>
+                  <button disabled={points.length !== 1 || !name.trim()}>Bezugspunkt speichern</button>
+                </form>
               ) : (
                 <form
                   onSubmit={(e) => {
@@ -405,6 +448,32 @@ export function WallPhotoDialog({
               : "Ohne Referenzstrecke werden keine realen Längen angegeben."}{" "}
             Fotoverläufe sind unabhängig von den Leitungen im Grundriss.
           </p>
+          {(photo.references ?? []).map((r) => (
+            <article className="home-row" key={r.id}>
+              <strong>{r.name}</strong>
+              <span>{r.notes}</span>
+              {trace && photo.calibration && (
+                <span>
+                  Abstand zum Verlaufsanfang:{" "}
+                  {Math.round(
+                    (photoDistance(photo, r.point, trace.points[0]!) * photo.calibration.distanceMm) /
+                      photoDistance(photo, ...photo.calibration.points),
+                  )}{" "}
+                  mm (Fotonäherung)
+                </span>
+              )}
+              <button
+                disabled={locked}
+                onClick={() =>
+                  edit("Fotobezugspunkt löschen", (p) => {
+                    p.references = p.references?.filter((v) => v.id !== r.id);
+                  })
+                }
+              >
+                Bezugspunkt löschen: {r.name}
+              </button>
+            </article>
+          ))}
           {photo.calibration && (
             <button
               disabled={locked || points.length > 0}
