@@ -34,7 +34,7 @@ import { useProjectStore } from "../stores/projectStore";
 import type { Tool } from "../editor/types";
 import { fitView } from "../editor/interaction/commands";
 import { FloorDialog } from "./dialogs/FloorDialog";
-import { Modal } from "./dialogs/Modal";
+import { RibbonSection } from "./RibbonSection";
 import { orderedFloorIds } from "../models/floor";
 
 const tools = [
@@ -68,6 +68,8 @@ export function ToolPanel({
   const tool = useEditorStore((s) => s.tool);
   const category = useEditorStore((s) => s.category);
   const contentRef = useRef<HTMLDivElement>(null);
+  const floorsButton = useRef<HTMLButtonElement>(null);
+  const layersButton = useRef<HTMLButtonElement>(null);
   useLayoutEffect(() => {
     contentRef.current?.scrollTo({ left: 0, top: 0 });
   }, [category]);
@@ -92,11 +94,26 @@ export function ToolPanel({
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />} Werkzeuge
         </button>
         <div className="ribbon-view">
-          <button onClick={() => setViewDialog("floors")} title="Geschosse verwalten">
+          <button
+            onClick={() => {
+              setFloorDialog(null);
+              setViewDialog("floors");
+            }}
+            title="Geschosse verwalten"
+            ref={floorsButton}
+            aria-expanded={viewDialog === "floors" || !!floorDialog}
+          >
             <Layers size={16} />
             <span>{project.floors[floorId]?.name}</span>
           </button>
-          <button onClick={() => setViewDialog("layers")}>
+          <button
+            onClick={() => {
+              setFloorDialog(null);
+              setViewDialog("layers");
+            }}
+            aria-expanded={viewDialog === "layers"}
+            ref={layersButton}
+          >
             <Eye size={16} />
             Ebenen
           </button>
@@ -142,7 +159,13 @@ export function ToolPanel({
         </div>
       </div>
       {viewDialog === "floors" && (
-        <Modal title="Geschosse verwalten" onClose={() => setViewDialog(null)}>
+        <RibbonSection
+          title="Geschosse verwalten"
+          onClose={() => {
+            setViewDialog(null);
+            floorsButton.current?.focus();
+          }}
+        >
           <div className="panel-heading section-line">
             GESCHOSSE
             <button
@@ -165,7 +188,6 @@ export function ToolPanel({
                   onClick={() => {
                     useEditorStore.getState().setFloor(id);
                     fitView();
-                    setViewDialog(null);
                   }}
                 >
                   <Layers size={15} />
@@ -193,10 +215,16 @@ export function ToolPanel({
             />
             Etagenreferenzen anzeigen
           </label>
-        </Modal>
+        </RibbonSection>
       )}
       {viewDialog === "layers" && (
-        <Modal title="Ebenen" onClose={() => setViewDialog(null)}>
+        <RibbonSection
+          title="Ebenen"
+          onClose={() => {
+            setViewDialog(null);
+            layersButton.current?.focus();
+          }}
+        >
           <div className="layer-list">
             {project.layerOrder.map((id) => {
               const layer = project.layers[id]!;
@@ -231,12 +259,17 @@ export function ToolPanel({
               );
             })}
           </div>
-        </Modal>
+        </RibbonSection>
       )}
       {floorDialog && (
         <FloorDialog
+          inline
+          key={floorDialog}
           floorId={floorDialog === "new" ? null : floorDialog}
-          onClose={() => setFloorDialog(null)}
+          onClose={() => {
+            setFloorDialog(null);
+            setViewDialog("floors");
+          }}
         />
       )}
     </aside>

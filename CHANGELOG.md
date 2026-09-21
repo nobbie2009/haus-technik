@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.43.0 · 21.09.2026
+
+- Geschossverwaltung und Ebenensteuerung als aufklappbare Bereiche direkt im Menüband anzeigen. Geschosse wechseln sowie Ebenen einblenden, ausblenden und sperren, ohne den Plan durch ein Popup zu blockieren.
+- Geschosse aus dem Menüband heraus inline anlegen und bearbeiten. Bereiche mit eigener Schaltfläche oder Escape einklappen; auf schmalen Geräten die Geschoss- und Ebenenlisten horizontal verschieben.
+
 ## 0.42.0 · 21.09.2026
 
 - Angezeigte Wandachsmaße bestehender Räume im Auswahlmodus anklicken oder antippen und die genaue Länge direkt eingeben. Dezimalkomma und Einheiten mm, cm und m unterstützen; Anfangs- oder Endpunkt ausdrücklich festhalten und nur den anderen Punkt entlang der Wand verschieben.

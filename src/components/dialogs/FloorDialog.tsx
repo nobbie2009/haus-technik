@@ -4,10 +4,20 @@ import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
 import { parseLength, formatLength } from "../../utils/units";
 import { Modal } from "./Modal";
+import { RibbonSection } from "../RibbonSection";
 import { fitView } from "../../editor/interaction/commands";
 import { floorReference } from "../../models/floor";
 
-export function FloorDialog({ floorId, onClose }: { floorId: string | null; onClose: () => void }) {
+export function FloorDialog({
+  floorId,
+  onClose,
+  inline = false,
+}: {
+  floorId: string | null;
+  onClose: () => void;
+  inline?: boolean;
+}) {
+  const Container = inline ? RibbonSection : Modal;
   const project = useProjectStore((s) => s.project);
   const existing = floorId ? project.floors[floorId] : null;
   const [name, setName] = useState(
@@ -24,7 +34,7 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
   const [referenceY, setReferenceY] = useState(formatLength(reference.y, "m"));
   const [error, setError] = useState("");
   return (
-    <Modal title={floorId ? "Etage bearbeiten" : "Etage erstellen"} onClose={onClose}>
+    <Container title={floorId ? "Etage bearbeiten" : "Etage erstellen"} onClose={onClose}>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -100,6 +110,6 @@ export function FloorDialog({ floorId, onClose }: { floorId: string | null; onCl
           </button>
         </div>
       </form>
-    </Modal>
+    </Container>
   );
 }

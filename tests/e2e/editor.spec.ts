@@ -68,22 +68,22 @@ test("Möbel bemaßen, drehen, verschieben, duplizieren, sperren und wieder lade
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Möbel sperren", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await page.mouse.click(box.x + 300, box.y + 320);
   await expect(page.getByLabel("Breite", { exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Möbel entsperren", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Möbel ausblenden", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await page.mouse.click(box.x + 300, box.y + 320);
   await expect(page.getByLabel("Raumname", { exact: true })).not.toBeVisible();
@@ -93,8 +93,8 @@ test("Möbel bemaßen, drehen, verschieben, duplizieren, sperren und wieder lade
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Möbel einblenden", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   const saved = await exportProject(page);
@@ -223,42 +223,43 @@ test("Etagen, Ebenensperre, Duplizieren, Türen und Fenster", async ({ page }) =
   expect(Object.keys(sample.windows)).toHaveLength(4);
   await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.getByRole("button", { name: "Etage erstellen", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "Etage erstellen" });
+  const dialog = page.getByRole("region", { name: "Etage erstellen" });
   await dialog.getByLabel("Name", { exact: true }).fill("Keller");
   await dialog.getByLabel("Etagenhöhe (m)").fill("-2,8 m");
   await dialog.getByRole("button", { name: "Etage erstellen", exact: true }).click();
   await expect(dialog).not.toBeVisible();
   await expect(page.locator(".canvas-title")).toContainText("Keller");
+  await page.getByRole("button", { name: "Geschosse verwalten einklappen", exact: true }).click();
   await drawRectangle(page);
   await page.getByRole("button", { name: "Duplizieren", exact: true }).click();
   expect(Object.keys((await exportProject(page)).rooms)).toHaveLength(6);
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundriss sperren", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await expect(page.getByLabel("Raumname", { exact: true })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Löschen", exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundriss entsperren", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await expect(page.getByLabel("Raumname", { exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundriss ausblenden", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await expect(page.getByLabel("Raumname", { exact: true })).not.toBeVisible();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundriss einblenden", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await page.screenshot({ path: "test-results/editor-keller.png" });
 });

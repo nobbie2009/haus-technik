@@ -27,7 +27,9 @@ Ein Kaltstart ohne Verbindung zum Server und eine installierbare Offline-App sin
 
 - Die Bereichs-Tabs liegen oberhalb des Plans. **Werkzeuge** klappt das Menüband darunter ein und aus;
   ein Tabwechsel öffnet es. Die Werkzeuggruppen lassen sich bei Bedarf waagerecht verschieben.
-- Der Geschossname öffnet die Etagenverwaltung, **Ebenen** die Sichtbarkeit und Sperren.
+- Der Geschossname klappt die Etagenverwaltung direkt im Menüband auf, **Ebenen** die Sichtbarkeit und
+  Sperren. Geschosse auch direkt dort anlegen und bearbeiten. Die Listen lassen sich waagerecht
+  verschieben; der Pfeil nach oben klappt den Bereich wieder ein. Der Plan bleibt bedienbar.
 - **Eigenschaften** öffnet die rechte Seitenleiste; derselbe Knopf schließt sie. Auf dem iPhone ist dies
   die Schaltfläche mit dem Schieberegler-Symbol neben **Ebenen**.
 - Mit einem Finger Punkte setzen oder Objekte auswählen und verschieben. Platzierungen erfolgen beim Loslassen.

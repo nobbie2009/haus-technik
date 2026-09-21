@@ -78,8 +78,8 @@ test("Stromkreisbestand zeigt Leitungen und navigiert etagenübergreifend ohne D
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik sperren", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await open();
   await expect(inventory.getByText("Ebene gesperrt · nur ansehen")).toHaveCount(3);
@@ -89,8 +89,8 @@ test("Stromkreisbestand zeigt Leitungen und navigiert etagenübergreifend ohne D
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik ausblenden", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .getByRole("region", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Ebenen einklappen", exact: true })
     .click();
   await open();
   await expect(inventory.getByRole("button", { name: "SD-01 im Plan anzeigen", exact: true })).toBeDisabled();

@@ -50,6 +50,63 @@
 .ribbon-properties {
   display: none;
 }
+.ribbon-section {
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  max-height: 32dvh;
+  overflow: auto;
+  background: #fafbf8;
+}
+.ribbon-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ribbon-section-heading h3 {
+  margin: 0;
+  font-size: 12px;
+}
+.ribbon-section .floor-list,
+.ribbon-section .layer-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+.ribbon-section .floor-row,
+.ribbon-section .layer-row {
+  flex: 0 0 auto;
+  min-width: 200px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.ribbon-section button,
+.ribbon-section input:not([type="checkbox"]) {
+  min-height: 44px;
+}
+.ribbon-section .icon-button,
+.ribbon-section .floor-settings {
+  min-width: 44px;
+}
+.ribbon-section form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.ribbon-section form > .field,
+.ribbon-section form > .field-row {
+  flex: 1 1 180px;
+  margin: 0;
+}
+.ribbon-section form .field-hint {
+  flex: 1 1 300px;
+  margin: 0;
+}
+.ribbon-section .modal-actions {
+  margin: 0;
+}
 .ribbon-content {
   overflow: auto;
   height: 136px;
