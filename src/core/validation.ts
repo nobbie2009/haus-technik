@@ -1,3 +1,4 @@
+import { siteIssues } from "../site/validation";
 import { utilityIssues } from "../utilities/validation";
 import { housebookIssues } from "../housebook/validation";
 import { electricalIssues } from "../electrical/validation";
@@ -223,6 +224,8 @@ export function validateProject(input: unknown): ValidationResult {
     };
   const utilityErrors = utilityIssues(parsed.data);
   if (utilityErrors.length) return { success: false, issues: utilityErrors };
+  const siteErrors = siteIssues(parsed.data);
+  if (siteErrors.length) return { success: false, issues: siteErrors };
   const issues = [...relationalIssues(parsed.data), ...housebookIssues(parsed.data)];
   return issues.length ? { success: false, issues } : { success: true, project: parsed.data };
 }

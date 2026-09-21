@@ -1,10 +1,11 @@
 import type { Tool, ObjectKind } from "./types";
 import type { LayerKind } from "../models/layer";
 
-export type EditorCategory = "building" | "furniture" | "electrical" | "utilities" | "network";
+export type EditorCategory = "building" | "furniture" | "electrical" | "utilities" | "network" | "site";
 export const categories = [
   { id: "building", label: "Haus / Raum" },
   { id: "furniture", label: "Möbel" },
+  { id: "site", label: "Grundstück" },
   { id: "network", label: "Netzwerk" },
   { id: "electrical", label: "Elektrik" },
   { id: "utilities", label: "Wasser / Wärme / Gas" },
@@ -12,6 +13,7 @@ export const categories = [
 export function categoryForTool(tool: Tool, current: EditorCategory): EditorCategory {
   if (tool === "select" || tool === "pan") return current;
   if (tool === "utilityNode" || tool === "utilityPipe") return "utilities";
+  if (tool === "site" || (tool === "dimension" && current === "site")) return "site";
   if (tool === "network") return "network";
   if (tool === "furniture") return "furniture";
   if (tool === "electrical" || tool === "cable" || tool === "connect") return "electrical";
@@ -19,6 +21,7 @@ export function categoryForTool(tool: Tool, current: EditorCategory): EditorCate
 }
 export function categoryForObject(kind: ObjectKind): EditorCategory {
   if (kind === "utilityNodes" || kind === "utilityPipes") return "utilities";
+  if (kind === "siteElements") return "site";
   if (kind === "networkNodes") return "network";
   if (kind === "furniture") return "furniture";
   return [
@@ -37,6 +40,7 @@ export function categoryForObject(kind: ObjectKind): EditorCategory {
     : "building";
 }
 export function layerInCategory(kind: LayerKind, category: EditorCategory): boolean {
+  if (category === "site") return kind === "site" || kind === "dimensions";
   if (category === "utilities") return ["water", "heating", "gas"].includes(kind);
   return category === "building" ? kind === "floorPlan" || kind === "dimensions" : kind === category;
 }

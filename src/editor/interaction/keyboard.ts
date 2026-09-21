@@ -1,3 +1,4 @@
+import { confirmSite } from "../../site/drawing";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
@@ -55,7 +56,22 @@ export function useKeyboard(): void {
         else editor.cancel();
         return;
       }
+      if (
+        editor.tool === "site" &&
+        event.key === "Backspace" &&
+        !editor.draft.input &&
+        editor.draft.points.length
+      ) {
+        event.preventDefault();
+        useEditorStore.setState({ draft: { ...editor.draft, points: editor.draft.points.slice(0, -1) } });
+        return;
+      }
       if (event.key === "Enter" && editor.draft.points.length) {
+        if (editor.tool === "site") {
+          event.preventDefault();
+          confirmSite(editor.draft.cursor ?? editor.cursor, !editor.draft.input);
+          return;
+        }
         if (editor.tool === "utilityPipe") {
           event.preventDefault();
           confirmPipe(editor.draft.cursor ?? editor.cursor);
@@ -79,7 +95,7 @@ export function useKeyboard(): void {
         return;
       }
       if (
-        ["wall", "polygon"].includes(editor.tool) &&
+        ["wall", "polygon", "site"].includes(editor.tool) &&
         editor.draft.points.length &&
         (/^[0-9.,]$/.test(event.key) ||
           event.key === "Backspace" ||

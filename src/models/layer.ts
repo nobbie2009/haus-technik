@@ -8,6 +8,7 @@ export type LayerKind =
   | "water"
   | "heating"
   | "gas"
+  | "site"
   | "network"
   | "zigbee";
 

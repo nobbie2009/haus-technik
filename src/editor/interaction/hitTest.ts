@@ -1,3 +1,4 @@
+import { site, siteSegments } from "../../site/model";
 import { networkNodeTable } from "../../network/model";
 import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath, cableOnFloor } from "../../electrical/cables";
@@ -27,6 +28,17 @@ export function hitTest(
     for (const node of Object.values(networkNodeTable(project)).reverse())
       if (visible(node) && distance(node.position, point) * scale <= 20)
         return { kind: "networkNodes", id: node.id };
+    for (const item of Object.values(site(project).elements).reverse()) {
+      if (!visible(item)) continue;
+      if (
+        item.vertices.some((p) => distance(p, point) * scale <= 10) ||
+        siteSegments(item).some(
+          ([a, b]) =>
+            projectToSegment(point, a, b).distance <= (item.kind === "path" ? item.width / 2 : 0) + 6 / scale,
+        )
+      )
+        return { kind: "siteElements", id: item.id };
+    }
     const net = utilities(project);
     for (const node of Object.values(net.nodes).reverse())
       if (visible(node) && (distance(node.position, point) * scale <= 16 || containsFurniture(node, point)))

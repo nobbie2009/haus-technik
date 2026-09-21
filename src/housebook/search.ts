@@ -22,6 +22,7 @@ export type SearchResult = {
   position?: { x: number; y: number };
 };
 const labels: Record<Selection["kind"], string> = {
+  siteElements: "Außenobjekt",
   networkNodes: "Netzwerkgerät",
   utilityNodes: "Rohrkomponente",
   utilityPipes: "Rohrleitung",

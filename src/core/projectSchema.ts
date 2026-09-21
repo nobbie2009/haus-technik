@@ -106,6 +106,7 @@ export const projectSchema = z.strictObject({
         "water",
         "heating",
         "gas",
+        "site",
         "network",
         "zigbee",
       ]),

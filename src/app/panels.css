@@ -830,3 +830,17 @@
 .cursor-network {
   cursor: crosshair;
 }
+
+.layer-dot.site {
+  background: #47805a;
+}
+.site-library {
+  padding: 12px;
+}
+.site-library button {
+  min-height: 44px;
+  margin-bottom: 8px;
+}
+.cursor-site {
+  cursor: crosshair;
+}

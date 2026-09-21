@@ -18,7 +18,7 @@ export function TouchDrawingControls() {
           Mehrfachauswahl
         </button>
       )}
-      {["wall", "polygon", "cable", "utilityPipe", "dimension"].includes(editor.tool) && (
+      {["wall", "polygon", "cable", "utilityPipe", "dimension", "site"].includes(editor.tool) && (
         <button
           aria-pressed={editor.orthogonal}
           onClick={() => useEditorStore.setState({ orthogonal: !editor.orthogonal })}
@@ -39,7 +39,7 @@ export function TouchDrawingControls() {
           {editor.tool === "wall" ? "Wandzug beenden" : "Abbrechen"}
         </button>
       )}
-      {hasDraft && ["polygon", "cable", "utilityPipe"].includes(editor.tool) && (
+      {hasDraft && ["polygon", "cable", "utilityPipe", "site"].includes(editor.tool) && (
         <button
           onClick={() => {
             if (editor.draft.points.length === 1) editor.cancel();

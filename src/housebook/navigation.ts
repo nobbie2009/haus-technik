@@ -13,17 +13,19 @@ export function focusObject(target: Selection): boolean {
   if (categoryForObject(target.kind) === "electrical")
     return focusElectrical(target as Parameters<typeof focusElectrical>[0]);
   const position =
-    "position" in item && typeof item.position === "object"
-      ? item.position
-      : target.kind === "utilityPipes"
-        ? utilities(project).nodes[utilities(project).pipes[target.id]!.from]!.position
-        : target.kind === "rooms"
-          ? project.points[project.rooms[item.id]!.polygon.pointIds[0]!]!.position
-          : target.kind === "walls"
-            ? project.points[project.walls[item.id]!.startPointId]!.position
-            : "wallId" in item && item.wallId
-              ? project.points[project.walls[item.wallId]!.startPointId]!.position
-              : null;
+    "vertices" in item
+      ? item.vertices[0]!
+      : "position" in item && typeof item.position === "object"
+        ? item.position
+        : target.kind === "utilityPipes"
+          ? utilities(project).nodes[utilities(project).pipes[target.id]!.from]!.position
+          : target.kind === "rooms"
+            ? project.points[project.rooms[item.id]!.polygon.pointIds[0]!]!.position
+            : target.kind === "walls"
+              ? project.points[project.walls[item.id]!.startPointId]!.position
+              : "wallId" in item && item.wallId
+                ? project.points[project.walls[item.wallId]!.startPointId]!.position
+                : null;
   const editor = useEditorStore.getState();
   editor.setCategory(categoryForObject(target.kind));
   editor.setFloor(item.floorId);

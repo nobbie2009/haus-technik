@@ -1,3 +1,4 @@
+import { SiteRenderer } from "./SiteRenderer";
 import { NetworkRenderer } from "./NetworkRenderer";
 import { UtilityRenderer } from "./UtilityRenderer";
 import { CableRenderer } from "./CableRenderer";
@@ -18,6 +19,7 @@ import { floorReference, orderedFloorIds } from "../../models/floor";
 import { Group } from "react-konva";
 
 const hints = {
+  site: "Eckpunkte setzen · Enter: abschließen · Shift: rechtwinklig · Escape: abbrechen",
   network: "Gerät wählen und im Plan platzieren · danach ziehen oder rechts bearbeiten",
   utilityNode: "Komponente platzieren · Maße und Anschlüsse rechts bearbeiten",
   utilityPipe: "Startanschluss, Wegpunkte, Zielanschluss · Escape: abbrechen",
@@ -73,6 +75,7 @@ export function PlanStage() {
         </Layer>
         <Layer listening={false}>
           <BackgroundImage project={preview} floorId={editor.floorId} viewport={editor.viewport} />
+          <SiteRenderer project={preview} />
           <FloorRenderer
             project={preview}
             floorId={editor.floorId}

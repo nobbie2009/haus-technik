@@ -2,6 +2,7 @@ import { addUtilityNode } from "../../utilities/model";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
+import { confirmSite } from "../../site/drawing";
 import { addNetworkNode } from "../../network/model";
 import { addElectrical } from "../../electrical/actions";
 import { placeConsumer } from "../../electrical/placeConsumer";
@@ -117,6 +118,10 @@ export function useCanvasInteraction() {
     }
     if (editor.tool === "cable") {
       confirmCable(updateCursor(world, event.shiftKey));
+      return;
+    }
+    if (editor.tool === "site") {
+      confirmSite(updateCursor(world, event.shiftKey));
       return;
     }
     if (editor.tool === "network") {

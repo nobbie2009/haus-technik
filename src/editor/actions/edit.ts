@@ -1,3 +1,4 @@
+import { site } from "../../site/model";
 import { deleteNetworkNodes } from "../../network/model";
 import { housebook, setHousebook } from "../../housebook/model";
 import { utilities, pipeFloorPath } from "../../utilities/model";
@@ -31,6 +32,10 @@ export function selectedPointIds(project: Project, selection: Selection[]): Set<
 
 export function moveSelection(project: Project, selection: Selection[], delta: Vec2): void {
   if (delta.x === 0 && delta.y === 0) return;
+  for (const s of selection.filter((s) => s.kind === "siteElements")) {
+    const e = site(project).elements[s.id]!;
+    e.vertices = e.vertices.map((p) => add(p, delta));
+  }
   const networkIds = new Set(selection.filter((s) => s.kind === "networkNodes").map((s) => s.id));
   if (networkIds.size) {
     const book = housebook(project);
@@ -213,6 +218,17 @@ export function duplicateSelection(
   const pointMap = new Map<UUID, UUID>();
   const wallMap = new Map<UUID, UUID>();
   const output: Selection[] = [];
+  for (const s of selection.filter((s) => s.kind === "siteElements")) {
+    const original = site(project).elements[s.id]!,
+      id = newId();
+    site(project).elements[id] = {
+      ...structuredClone(original),
+      id,
+      name: `${original.name} – Kopie`,
+      vertices: original.vertices.map((p) => add(p, delta)),
+    };
+    output.push({ kind: "siteElements", id });
+  }
   const book = housebook(project);
   for (const selected of selection.filter((s) => s.kind === "networkNodes")) {
     const original = book.networkNodes.find((n) => n.id === selected.id)!;
@@ -225,7 +241,7 @@ export function duplicateSelection(
     });
     output.push({ kind: "networkNodes", id });
   }
-  if (output.length) setHousebook(project, book);
+  if (selection.some((s) => s.kind === "networkNodes")) setHousebook(project, book);
   const net = utilities(project),
     utilityCopies = new Map<string, string>();
   for (const selected of selection.filter((s) => s.kind === "utilityNodes")) {

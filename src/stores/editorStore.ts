@@ -1,3 +1,4 @@
+import { ensureSiteLayer, type SiteKind } from "../site/model";
 import { ensureNetworkLayer, type NetworkKind } from "../network/model";
 import type { Medium, UtilityKind } from "../utilities/model";
 import { create } from "zustand";
@@ -17,6 +18,8 @@ interface EditorState {
   cableStartId: UUID | null;
   connectionRequest: { startNodeId: string; endNodeId: string; cableId: string | null } | null;
   furnitureType: string;
+  siteKind: SiteKind;
+  siteWidth: number;
   networkKind: NetworkKind;
   electricalKind: import("../electrical/models").ElectricalKind;
   consumerEntryId: string | null;
@@ -50,6 +53,8 @@ const emptyDraft = (): DrawingDraft => ({ points: [], cursor: null, input: "" })
 export const useEditorStore = create<EditorState>((set, get) => ({
   category: "building",
   setCategory(category) {
+    if (category === "site")
+      useProjectStore.getState().commit("Grundstücksebene bereitstellen", ensureSiteLayer);
     if (category === "network")
       useProjectStore.getState().commit("Netzwerkebene bereitstellen", ensureNetworkLayer);
     set({
@@ -57,15 +62,17 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       consumerEntryId: null,
       selection: [],
       tool:
-        category === "building"
-          ? "select"
-          : category === "furniture"
-            ? "furniture"
-            : category === "network"
-              ? "network"
-              : category === "utilities"
-                ? "select"
-                : "electrical",
+        category === "site"
+          ? "site"
+          : category === "building"
+            ? "select"
+            : category === "furniture"
+              ? "furniture"
+              : category === "network"
+                ? "network"
+                : category === "utilities"
+                  ? "select"
+                  : "electrical",
       draft: emptyDraft(),
       cableStartId: null,
       connectionRequest: null,
@@ -80,6 +87,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   utilityMedium: "cold",
   utilityKind: "source",
   furnitureType: "sofa",
+  siteKind: "boundary",
+  siteWidth: 1000,
   networkKind: "router",
   electricalKind: "outlets",
   consumerEntryId: null,

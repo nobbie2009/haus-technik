@@ -11,6 +11,7 @@ import { deviceAppearance } from "../rendering/deviceAppearance";
 import { cableOnFloor } from "../electrical/cables";
 
 const labels: Record<ObjectKind, string> = {
+  siteElements: "Außenobjekt",
   networkNodes: "Netzwerkgerät",
   utilityNodes: "Rohrnetz-Komponente",
   utilityPipes: "Rohrleitung",
@@ -38,7 +39,7 @@ export function ObjectList() {
   const selection = useEditorStore((s) => s.selection);
   const result = useSimulationStore((s) => s.result);
   const rows = elementKinds
-    .filter((kind) => categoryForObject(kind) === category)
+    .filter((kind) => categoryForObject(kind) === category || (category === "site" && kind === "dimensions"))
     .flatMap((kind) =>
       Object.values(elementTables(project)[kind])
         .filter(

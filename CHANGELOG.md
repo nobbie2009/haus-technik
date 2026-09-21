@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.33.0 · 21.09.2026
+
+- Neuer Planungsbereich „Grundstück“ mit Grundstücksgrenzen, Wegen mit einstellbarer Breite, Terrassen, Beeten und Referenzpunkten auf einer eigenen sichtbaren und sperrbaren Ebene.
+- Eckpunkte maßhaltig bearbeiten; Kantenlängen, Umfang und Flächen anzeigen. Referenzpunkte mit genauem X-/Y-Abstand zu vorhandenen Grundstückspunkten anlegen und für den Punktfang beim Platzieren anderer Gewerke nutzen.
+- Außenobjekte auswählen, verschieben, duplizieren, löschen und rückgängig machen; lokale Speicherung und JSON-Import/-Export unterstützen alle Grundstücksdaten.
+- Grundstücksobjekte und Maße in SVG-/PDF-Planausgaben übernehmen; breite Wege beim Einpassen und Export vollständig berücksichtigen.
+
 ## 0.32.0 · 21.09.2026
 
 - Neuer Planungsbereich „Netzwerk“ mit eigener sichtbarer und sperrbarer Ebene. Router, Switches, Netzwerkdosen, Patchpanel, Access Points, Repeater, Server/NAS und Clients direkt per Klick im Grundriss platzieren.

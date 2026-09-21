@@ -1,3 +1,4 @@
+import { site, siteClosed, siteSegments } from "../site/model";
 import { networkLayer } from "../network/model";
 import { utilities, media, pipeFloorPath, pipeLength, pipeCaptionPoint, nodeKinds } from "../utilities/model";
 import type { Project } from "../models/project";
@@ -13,7 +14,7 @@ import { circuitMembers } from "../electrical/selectors";
 import { homeBook, homeKinds } from "./home";
 
 export type Primitive =
-  | { kind: "line"; points: Vec2[]; color: string; width: number }
+  | { kind: "line"; points: Vec2[]; color: string; width: number; rounded?: boolean }
   | { kind: "text"; position: Vec2; text: string; color: string; size: number };
 const colors = { existing: "#334b50", planned: "#176fba", remove: "#bb4433", completed: "#167863" };
 export function planPrimitives(
@@ -22,12 +23,47 @@ export function planPrimitives(
   mode: "building" | "electrical" | "all" = "all",
 ): Primitive[] {
   const result: Primitive[] = [];
-  const line = (points: Vec2[], color = "#334b50", width = 20) =>
-    result.push({ kind: "line", points, color, width });
+  const line = (points: Vec2[], color = "#334b50", width = 20, rounded = false) =>
+    result.push({ kind: "line", points, color, width, ...(rounded ? { rounded } : {}) });
   const text = (position: Vec2, value: string, color = "#334b50", size = 140) =>
     result.push({ kind: "text", position, text: value, color, size });
   const visible = (item: { floorId: string; layerId: string }) =>
     item.floorId === floorId && project.layers[item.layerId]?.visible;
+  for (const item of Object.values(site(project).elements).filter(visible)) {
+    const vertices = siteClosed(item.kind) ? [...item.vertices, item.vertices[0]!] : item.vertices;
+    const color = item.kind === "path" || item.kind === "terrace" ? "#87715c" : "#47805a";
+    if (item.kind === "path") line(vertices, "#ded3c5", item.width, true);
+    line(vertices, color, 25);
+    if (item.kind === "reference") {
+      const p = item.vertices[0]!;
+      line(
+        [
+          { x: p.x - 80, y: p.y },
+          { x: p.x + 80, y: p.y },
+        ],
+        "#47805a",
+        20,
+      );
+      line(
+        [
+          { x: p.x, y: p.y - 80 },
+          { x: p.x, y: p.y + 80 },
+        ],
+        "#47805a",
+        20,
+      );
+    }
+    text(item.vertices[0]!, item.name, color, 120);
+    for (const [i, p] of item.vertices.entries())
+      text({ x: p.x + 80, y: p.y - 130 }, `P${i + 1}`, "#47805a", 100);
+    for (const [a, b] of siteSegments(item))
+      text(
+        { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 + 100 },
+        `${(Math.hypot(a.x - b.x, a.y - b.y) / 1000).toFixed(2)} m`,
+        "#47805a",
+        100,
+      );
+  }
   for (const wall of Object.values(project.walls).filter(visible)) {
     const a = project.points[wall.startPointId]!.position,
       b = project.points[wall.endPointId]!.position;
@@ -257,7 +293,10 @@ export function planPrimitives(
 export function planBounds(primitives: Primitive[]) {
   const points = primitives.flatMap((p) =>
     p.kind === "line"
-      ? p.points
+      ? p.points.flatMap((v) => [
+          { x: v.x - p.width / 2, y: v.y - p.width / 2 },
+          { x: v.x + p.width / 2, y: v.y + p.width / 2 },
+        ])
       : [p.position, { x: p.position.x + p.text.length * p.size * 0.65, y: p.position.y + p.size }],
   );
   return points.length
@@ -283,7 +322,7 @@ export function planSvg(
 ) {
   const primitives = planPrimitives(project, floorId, mode),
     b = planBounds(primitives);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${b.width / scale}mm" height="${b.height / scale}mm" viewBox="${b.x} ${-b.y} ${b.width} ${b.height}"><title>${escapeXml(project.name)} – ${escapeXml(project.floors[floorId]!.name)} – 1:${scale}</title><rect x="${b.x}" y="${-b.y}" width="${b.width}" height="${b.height}" fill="white"/>${primitives.map((p) => (p.kind === "line" ? `<polyline points="${p.points.map((v) => `${v.x},${-v.y}`).join(" ")}" fill="none" stroke="${p.color}" stroke-width="${p.width}"/>` : `<text x="${p.position.x}" y="${-p.position.y}" font-family="Arial,sans-serif" font-size="${p.size}" fill="${p.color}">${escapeXml(p.text)}</text>`)).join("")}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${b.width / scale}mm" height="${b.height / scale}mm" viewBox="${b.x} ${-b.y} ${b.width} ${b.height}"><title>${escapeXml(project.name)} – ${escapeXml(project.floors[floorId]!.name)} – 1:${scale}</title><rect x="${b.x}" y="${-b.y}" width="${b.width}" height="${b.height}" fill="white"/>${primitives.map((p) => (p.kind === "line" ? `<polyline points="${p.points.map((v) => `${v.x},${-v.y}`).join(" ")}" fill="none" stroke="${p.color}" stroke-width="${p.width}"${p.rounded ? ' stroke-linecap="round" stroke-linejoin="round"' : ""}/>` : `<text x="${p.position.x}" y="${-p.position.y}" font-family="Arial,sans-serif" font-size="${p.size}" fill="${p.color}">${escapeXml(p.text)}</text>`)).join("")}</svg>`;
 }
 export function download(data: BlobPart, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([data], { type })),
@@ -485,6 +524,7 @@ export async function exportPlanPdf(
         if (primitive.kind === "line") {
           doc.setDrawColor(primitive.color);
           doc.setLineWidth(primitive.width / scale);
+          doc.setLineCap(primitive.rounded ? "round" : "butt");
           primitive.points
             .slice(1)
             .forEach((p, i) => doc.line(x(primitive.points[i]!), y(primitive.points[i]!), x(p), y(p)));

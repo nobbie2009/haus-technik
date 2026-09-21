@@ -1,3 +1,4 @@
+import { SiteLibrary } from "./site/SiteLibrary";
 import { NetworkLibrary } from "./network/NetworkLibrary";
 import { UtilityLibrary } from "./utilities/UtilityLibrary";
 import {
@@ -79,6 +80,7 @@ export function ToolPanel() {
               </button>
             ))}
         </nav>
+        {category === "site" && <SiteLibrary />}
         {category === "network" && <NetworkLibrary />}
         {category === "utilities" && <UtilityLibrary />}
         {category === "furniture" && <FurnitureLibrary />}

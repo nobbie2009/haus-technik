@@ -1,3 +1,4 @@
+import { siteSnapPoints, siteClosed } from "../../site/model";
 import { utilities } from "../../utilities/model";
 import { nearestElectricalNode } from "../../electrical/cables";
 import type { Vec2 } from "../../models/common";
@@ -26,9 +27,16 @@ export function updateCursor(raw: Vec2, shift = false): Vec2 {
   const visiblePoints = new Set(walls.flatMap((wall) => [wall.startPointId, wall.endPointId]));
   let result = snap(
     raw,
-    Object.values(project.points)
-      .filter((p) => visiblePoints.has(p.id))
-      .map((p) => ({ id: p.id, position: p.position })),
+    [
+      ...Object.values(project.points)
+        .filter((p) => visiblePoints.has(p.id))
+        .map((p) => ({ id: p.id, position: p.position })),
+      ...siteSnapPoints(
+        project,
+        editor.floorId,
+        new Set(editor.dragOffset ? editor.selection.map((s) => s.id) : []),
+      ),
+    ],
     walls.map((wall) => ({
       id: wall.id,
       start: project.points[wall.startPointId]!.position,
@@ -52,7 +60,11 @@ export function updateCursor(raw: Vec2, shift = false): Vec2 {
         ? { x: point.x, y: anchor.y }
         : { x: anchor.x, y: point.y };
   }
-  if (anchor && editor.draft.input && (editor.tool === "wall" || editor.tool === "polygon")) {
+  if (
+    anchor &&
+    editor.draft.input &&
+    (editor.tool === "wall" || editor.tool === "polygon" || editor.tool === "site")
+  ) {
     try {
       const direction = distance(anchor, point) > 0.001 ? point : { x: anchor.x + 1, y: anchor.y };
       point = resizeWallEndpoints(anchor, direction, parseLength(editor.draft.input)).end;
@@ -61,7 +73,7 @@ export function updateCursor(raw: Vec2, shift = false): Vec2 {
     }
   }
   if (
-    editor.tool === "polygon" &&
+    (editor.tool === "polygon" || (editor.tool === "site" && siteClosed(editor.siteKind))) &&
     editor.draft.points.length > 2 &&
     distance(raw, editor.draft.points[0]!) * editor.viewport.scale < 10 &&
     !editor.draft.input
