@@ -3,6 +3,7 @@ import type { Project } from "../../models/project";
 import { housebook } from "../../housebook/model";
 import { networkLayer, type NetworkKind } from "../../network/model";
 import { useEditorStore } from "../../stores/editorStore";
+import { isTvKind, tvCatalog } from "../../network/tv";
 
 const symbols: Record<NetworkKind, string> = {
   router: "R",
@@ -13,9 +14,13 @@ const symbols: Record<NetworkKind, string> = {
   repeater: "RP",
   server: "NAS",
   client: "PC",
+  ...(Object.fromEntries(Object.entries(tvCatalog).map(([id, item]) => [id, item.symbol])) as Record<
+    keyof typeof tvCatalog,
+    string
+  >),
 };
 function NetworkSymbol({ kind, selected = false }: { kind: NetworkKind; selected?: boolean }) {
-  const color = selected ? "#176fba" : "#7556a2";
+  const color = selected ? "#176fba" : isTvKind(kind) ? "#a45b13" : "#7556a2";
   return (
     <>
       <Rect
@@ -61,12 +66,33 @@ export function NetworkRenderer({ project }: { project: Project }) {
       {book.networkLinks.map((link) => {
         const a = book.networkNodes.find((n) => n.id === link.from),
           b = book.networkNodes.find((n) => n.id === link.to);
+        const coax = a && isTvKind(a.kind);
+        const editing = editor.tool === "networkCable" && editor.networkCableId === link.id;
+        const path = editing
+          ? [...editor.draft.points, ...(editor.draft.cursor ? [editor.draft.cursor] : [])]
+          : (link.path ?? []);
+        if (coax && a && b && a.floorId !== b.floorId) {
+          const local = a.floorId === editor.floorId ? a : b.floorId === editor.floorId ? b : null;
+          const remote = local === a ? b : a;
+          return local ? (
+            <Group key={link.id}>
+              <Circle x={x(local.position.x)} y={y(local.position.y) + 24} radius={5} stroke="#a45b13" />
+              <Text
+                x={x(local.position.x) + 10}
+                y={y(local.position.y) + 18}
+                text={`${link.name} → ${project.floors[remote.floorId]?.name}`}
+                fontSize={11}
+                fill="#a45b13"
+              />
+            </Group>
+          ) : null;
+        }
         return a?.floorId === editor.floorId && b?.floorId === editor.floorId ? (
           <Line
             key={link.id}
-            points={[x(a.position.x), y(a.position.y), x(b.position.x), y(b.position.y)]}
-            stroke="#7556a2"
-            dash={[5, 4]}
+            points={[a.position, ...path, b.position].flatMap((p) => [x(p.x), y(p.y)])}
+            stroke={coax ? "#a45b13" : "#7556a2"}
+            dash={editing || !coax ? [5, 4] : []}
           />
         ) : null;
       })}

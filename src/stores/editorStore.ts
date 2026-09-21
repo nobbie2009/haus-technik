@@ -21,6 +21,7 @@ interface EditorState {
   siteKind: SiteKind;
   siteWidth: number;
   networkKind: NetworkKind;
+  networkCableId: string | null;
   electricalKind: import("../electrical/models").ElectricalKind;
   consumerEntryId: string | null;
   utilityMedium: Medium;
@@ -77,6 +78,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
                   : "electrical",
       draft: emptyDraft(),
       cableStartId: null,
+      networkCableId: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -88,6 +90,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   tool: "select",
   connectionRequest: null,
   cableStartId: null,
+  networkCableId: null,
   utilityMedium: "cold",
   utilityKind: "source",
   furnitureType: "sofa",
@@ -126,6 +129,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       selection: category === get().category ? get().selection : [],
       draft: emptyDraft(),
       cableStartId: null,
+      networkCableId: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -139,6 +143,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       selection: [],
       draft: emptyDraft(),
       cableStartId: null,
+      networkCableId: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -148,8 +153,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   cancel() {
     set({
+      tool: get().tool === "networkCable" ? "select" : get().tool,
       draft: emptyDraft(),
       cableStartId: null,
+      networkCableId: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,

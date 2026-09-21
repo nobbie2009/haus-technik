@@ -1,3 +1,4 @@
+import { finishNetworkPath } from "../network/drawing";
 import { useEditorStore } from "../stores/editorStore";
 import { confirmDrawing } from "../editor/interaction/drawing";
 
@@ -34,6 +35,7 @@ export function TouchDrawingControls() {
           Raum schließen
         </button>
       )}
+      {editor.tool === "networkCable" && <button onClick={finishNetworkPath}>Koaxweg speichern</button>}
       {hasDraft && (
         <button onClick={() => editor.cancel()}>
           {editor.tool === "wall" ? "Wandzug beenden" : "Abbrechen"}

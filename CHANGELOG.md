@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.40.0 · 21.09.2026
+
+- TV-/SAT-Geräte im Netzwerkbereich platzieren: SAT-Schüssel, LNB, Multischalter, terrestrische Antenne, Verstärker, Koax-Verteiler, Antennendose, Receiver und Fernseher. Modelle, Satellitenposition, LNB-Ausführung, Spiegelgröße und benannte Anschlüsse bearbeiten.
+- Koaxanschlüsse verbinden, Kabeldaten nachträglich bearbeiten und Leitungswege mit Wegpunkten per Maus oder Touch zeichnen. Etagenverbindungen mit Zielgeschoss kennzeichnen; Leitungslängen samt Höhenunterschied und Zuschlag sowie TV-Komponenten in den Export übernehmen.
+- Anschlussbelegung auf doppelte Verbindungen prüfen und Koax- von Netzwerkports trennen. Speichern, Neuladen und Rückgängig für Leitungswege unterstützen.
+
 ## 0.39.0 · 21.09.2026
 
 - Einzelne Möbel im Auswahlmodus über acht Eck- und Seitengriffe direkt im Plan vergrößern und verkleinern. Gegenüberliegende Kanten festhalten, gedrehte Möbel entlang ihrer eigenen Achsen skalieren und aktuelle Breite/Tiefe an der Vorschau anzeigen.

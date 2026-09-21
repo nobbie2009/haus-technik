@@ -1,3 +1,4 @@
+import { finishNetworkPath } from "../../network/drawing";
 import { confirmSite } from "../../site/drawing";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
@@ -62,6 +63,16 @@ export function useKeyboard(): void {
         !editor.draft.input &&
         editor.draft.points.length
       ) {
+        event.preventDefault();
+        useEditorStore.setState({ draft: { ...editor.draft, points: editor.draft.points.slice(0, -1) } });
+        return;
+      }
+      if (editor.tool === "networkCable" && event.key === "Enter") {
+        event.preventDefault();
+        finishNetworkPath();
+        return;
+      }
+      if (editor.tool === "networkCable" && event.key === "Backspace") {
         event.preventDefault();
         useEditorStore.setState({ draft: { ...editor.draft, points: editor.draft.points.slice(0, -1) } });
         return;

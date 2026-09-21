@@ -1,3 +1,5 @@
+import { isTvKind, portName } from "../network/tv";
+import { networkCableLength } from "../network/cables";
 import { site, siteClosed, siteSegments } from "../site/model";
 import { networkLayer } from "../network/model";
 import { utilities, media, pipeFloorPath, pipeLength, pipeCaptionPoint, nodeKinds } from "../utilities/model";
@@ -243,11 +245,28 @@ export function planPrimitives(
     for (const node of book.networkNodes.filter(
       (n) => n.floorId === floorId && networkLayer(project)?.visible !== false,
     ))
-      text(node.position, `${networkLabels[node.kind]}: ${node.name}`, "#7556a2", 120);
+      text(
+        node.position,
+        `${networkLabels[node.kind]}: ${node.name}`,
+        isTvKind(node.kind) ? "#a45b13" : "#7556a2",
+        120,
+      );
     for (const link of networkLayer(project)?.visible === false ? [] : book.networkLinks) {
       const a = book.networkNodes.find((n) => n.id === link.from),
         b = book.networkNodes.find((n) => n.id === link.to);
-      if (a?.floorId === floorId && b?.floorId === floorId) line([a.position, b.position], "#7556a2", 15);
+      if (a?.floorId === floorId && b?.floorId === floorId)
+        line([a.position, ...(link.path ?? []), b.position], isTvKind(a.kind) ? "#a45b13" : "#7556a2", 15);
+      else if (a && b && isTvKind(a.kind)) {
+        const local = a.floorId === floorId ? a : b.floorId === floorId ? b : null;
+        const remote = local === a ? b : a;
+        if (local)
+          text(
+            { x: local.position.x, y: local.position.y - 250 },
+            `${link.name} → ${project.floors[remote.floorId]?.name}`,
+            "#a45b13",
+            110,
+          );
+      }
     }
   }
   if (mode === "all") {
@@ -391,14 +410,14 @@ export function materialRows(project: Project): string[][] {
   const book = housebook(project);
   for (const item of book.networkNodes)
     rows.push([
-      "Netzwerk",
+      isTvKind(item.kind) ? "TV / SAT" : "Netzwerk",
       "",
       item.name,
       project.floors[item.floorId]?.name ?? "Etage fehlt",
       "Dokumentiert",
       "1",
       "Stück",
-      `${networkLabels[item.kind]} · ${item.ports} Ports · ${item.details?.ssid ?? ""} · ${item.details?.location ?? ""}`,
+      `${networkLabels[item.kind]} · ${item.ports} Ports · ${item.tv ? `${item.tv.model} · ${item.tv.satellite} · ${item.tv.lnbType}` : (item.details?.ssid ?? "")} · ${item.details?.location ?? ""}`,
     ]);
   for (const item of homeBook(project).items)
     rows.push([
@@ -414,19 +433,16 @@ export function materialRows(project: Project): string[][] {
   for (const link of book.networkLinks) {
     const a = book.networkNodes.find((n) => n.id === link.from)!,
       b = book.networkNodes.find((n) => n.id === link.to)!;
-    const length =
-      Math.hypot(a.position.x - b.position.x, a.position.y - b.position.y) +
-      Math.abs((project.floors[a.floorId]?.elevation ?? 0) - (project.floors[b.floorId]?.elevation ?? 0)) +
-      link.allowance;
+    const length = networkCableLength(project, a, b, link);
     rows.push([
-      "Netzwerkkabel",
+      isTvKind(a.kind) ? "Koaxkabel" : "Netzwerkkabel",
       link.name,
       link.cableType,
       project.floors[a.floorId]?.name ?? "",
       "Dokumentiert",
       (length / 1000).toFixed(2),
       "m",
-      `${a.name}:${link.fromPort} → ${b.name}:${link.toPort} · Luftlinie/Etagenhöhe/Zuschlag`,
+      `${a.name}:${portName(a, link.fromPort)} → ${b.name}:${portName(b, link.toPort)} · ${link.path?.length ? "Leitungsweg" : "Luftlinie"}/Etagenhöhe/Zuschlag`,
     ]);
   }
   const net = utilities(project);

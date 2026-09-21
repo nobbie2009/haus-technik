@@ -1,3 +1,4 @@
+import { isTvKind } from "../network/tv";
 import type { Project } from "../models/project";
 import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
@@ -88,6 +89,22 @@ export function housebookIssues(project: Project): { path: string; message: stri
       for (const link of networkLinks) {
         const from = networkNodes.find((n) => n.id === link.from),
           to = networkNodes.find((n) => n.id === link.to);
+        if (from && to && from.floorId !== to.floorId && link.path?.length)
+          issues.push({
+            path: "metadata.housebook.networkLinks",
+            message: "Leitungswegpunkte benötigen Start und Ziel auf derselben Etage.",
+          });
+        if (
+          from &&
+          to &&
+          (isTvKind(from.kind) !== isTvKind(to.kind) ||
+            (link.medium === "coax" && (!isTvKind(from.kind) || !isTvKind(to.kind))) ||
+            (link.medium === "ethernet" && (isTvKind(from.kind) || isTvKind(to.kind))))
+        )
+          issues.push({
+            path: "metadata.housebook.networkLinks",
+            message: "Koaxanschlüsse nur mit TV-/SAT-Komponenten verbinden; Netzwerkports getrennt zuordnen.",
+          });
         if (!from || !to || from.id === to.id || link.fromPort > from.ports || link.toPort > to.ports)
           issues.push({
             path: "metadata.housebook.networkLinks",

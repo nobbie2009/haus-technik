@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { tvCatalog } from "../network/tv";
 import type { Entity, JsonValue } from "../models/common";
 import type { Project } from "../models/project";
 import type { SimulationScenario } from "../simulation/models";
@@ -80,11 +81,29 @@ export const bookSchema = z.strictObject({
           "repeater",
           "server",
           "client",
+          "satDish",
+          "lnb",
+          "multiswitch",
+          "antenna",
+          "tvAmplifier",
+          "coaxSplitter",
+          "tvSocket",
+          "satReceiver",
+          "television",
         ]),
         details: z
           .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
           .optional(),
         ports: z.number().int().min(1).max(256),
+        tv: z
+          .strictObject({
+            portNames: z.array(name).max(256),
+            satellite: text,
+            lnbType: text,
+            diameterMm: n.positive().nullable(),
+            model: text,
+          })
+          .optional(),
       }),
     )
     .max(1000),
@@ -99,6 +118,8 @@ export const bookSchema = z.strictObject({
         toPort: z.number().int().positive(),
         cableType: name,
         allowance: n.nonnegative(),
+        medium: z.enum(["ethernet", "coax"]).optional(),
+        path: z.array(point).max(2000).optional(),
       }),
     )
     .max(2000),
@@ -136,6 +157,10 @@ export const networkLabels = {
   repeater: "WLAN-Repeater",
   server: "Server / NAS",
   client: "Netzwerkgerät / Client",
+  ...(Object.fromEntries(Object.entries(tvCatalog).map(([id, item]) => [id, item.label])) as Record<
+    keyof typeof tvCatalog,
+    string
+  >),
 };
 export function housebook(project: Project): Housebook {
   return project.metadata.housebook

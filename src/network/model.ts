@@ -2,6 +2,7 @@ import type { Project } from "../models/project";
 import type { Vec2, EntityTable, FloorElement } from "../models/common";
 import { bookSchema, housebook, setHousebook, networkLabels, type Housebook } from "../housebook/model";
 import { newId } from "../utils/uuid";
+import { isTvKind, tvCatalog, tvDefaults } from "./tv";
 
 export type NetworkNode = Housebook["networkNodes"][number];
 export type NetworkKind = NetworkNode["kind"];
@@ -14,6 +15,10 @@ export const networkPorts: Record<NetworkKind, number> = {
   repeater: 1,
   server: 2,
   client: 1,
+  ...(Object.fromEntries(Object.entries(tvCatalog).map(([id, item]) => [id, item.ports.length])) as Record<
+    keyof typeof tvCatalog,
+    number
+  >),
 };
 export function networkLayer(project: Project) {
   return Object.values(project.layers).find((layer) => layer.kind === "network");
@@ -59,6 +64,7 @@ export function addNetworkNode(project: Project, floorId: string, position: Vec2
     position: { ...position },
     name: `${networkLabels[kind]} ${number}`,
     ports: networkPorts[kind],
+    ...(isTvKind(kind) ? { tv: tvDefaults(kind) } : {}),
   });
   setHousebook(project, book);
   return id;

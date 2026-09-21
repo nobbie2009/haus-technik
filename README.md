@@ -99,6 +99,12 @@ GitHub-CI, Dependabot und Beitragsvorlagen sind vorbereitet: [GitHub-Anleitung](
 Einklappbare Seitenleisten, Hoch-/Querformat, Zwei-Finger-Zoom, Zeichenaktionen ohne Tastatur und WLAN-Start.
 Anleitung und Testgrenzen: [iPad](docs/ipad.md). Offene Schritte: [Roadmap](docs/roadmap.md).
 
+## Seit 0.40.0: TV und SAT
+
+SAT-Schüssel, LNB, Multischalter, Antennendosen und weitere TV-Geräte im Netzwerkbereich platzieren,
+Anschlüsse benennen und Koaxleitungen mit editierbaren Kabeldaten und gezeichneten Leitungswegen verbinden.
+[Bedienung und Modellgrenzen](docs/tv-sat.md).
+
 ## Seit 0.12.0: Hausakte
 
 Über **Hausakte** stehen Grundrissvorlagen (Bild/PDF), Projektprüfung, maßstäbliche PDF-/SVG-Ausgabe, Materiallisten, gespeicherte Szenarien, Versorgungsschema, separate Leiterprüfung, Objektakten, Umbauzustände, Raumvorlagen, Netzwerkplanung, Wiederherstellung und lesender Home-Assistant-Abruf bereit.

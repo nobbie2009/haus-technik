@@ -109,6 +109,13 @@ export function useCanvasInteraction() {
       return;
     }
     if (event.button !== 0) return;
+    if (editor.tool === "networkCable") {
+      if (!editor.networkCableId) return;
+      const position = updateCursor(world, event.shiftKey);
+      const current = useEditorStore.getState();
+      useEditorStore.setState({ draft: { ...current.draft, points: [...current.draft.points, position] } });
+      return;
+    }
     if (editor.tool === "utilityPipe") {
       confirmPipe(updateCursor(world, event.shiftKey));
       return;

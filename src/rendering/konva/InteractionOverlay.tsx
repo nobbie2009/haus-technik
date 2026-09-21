@@ -28,7 +28,7 @@ export function InteractionOverlay() {
       : "";
   return (
     <>
-      {vertices.length > 1 && tool !== "utilityPipe" && (
+      {vertices.length > 1 && tool !== "utilityPipe" && tool !== "networkCable" && (
         <Line
           points={vertices.flatMap((v) => {
             const value = screen(v);

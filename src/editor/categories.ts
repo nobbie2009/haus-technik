@@ -14,7 +14,7 @@ export function categoryForTool(tool: Tool, current: EditorCategory): EditorCate
   if (tool === "select" || tool === "pan") return current;
   if (tool === "utilityNode" || tool === "utilityPipe") return "utilities";
   if (tool === "site" || (tool === "dimension" && current === "site")) return "site";
-  if (tool === "network") return "network";
+  if (tool === "network" || tool === "networkCable") return "network";
   if (tool === "furniture") return "furniture";
   if (tool === "electrical" || tool === "cable" || tool === "connect") return "electrical";
   return "building";
