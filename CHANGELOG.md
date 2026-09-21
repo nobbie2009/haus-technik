@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.38.1 · 21.09.2026
+
+- Popups beim Ziehen einer Textmarkierung über den Dialogrand offen halten. Schließen über den Hintergrund nur auslösen, wenn der Klick dort beginnt und endet; abgebrochene Zeigergesten verwerfen. Schließen-Schaltfläche und Escape bleiben unverändert bedienbar.
+
 ## 0.38.0 · 21.09.2026
 
 - Bereichs-Tabs und Zeichenwerkzeuge aus der linken Seitenleiste in ein horizontales Menüband oberhalb des Plans verlagern. Je Bereich die passenden Vorlagen und Aktionen anzeigen; die bisherige linke Spalte steht dem Plan zur Verfügung.
