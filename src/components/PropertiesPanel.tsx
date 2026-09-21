@@ -4,7 +4,8 @@ import { SiteProperties } from "./site/SiteProperties";
 import { NetworkProperties } from "./network/NetworkProperties";
 import { UtilityProperties } from "./utilities/UtilityProperties";
 import { CableProperties } from "./electrical/CableProperties";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
+import { searchEntries } from "../housebook/search";
 import { AssetDialog } from "./housebook/AssetDialog";
 import { ElectricalProperties } from "./electrical/ElectricalProperties";
 import { FurnitureProperties } from "./properties/FurnitureProperties";
@@ -42,7 +43,11 @@ const labels = {
   windows: "Fenster",
   dimensions: "Bemaßung",
 };
+const HousebookDialog = lazy(() =>
+  import("./housebook/HousebookDialog").then((m) => ({ default: m.HousebookDialog })),
+);
 export function PropertiesPanel() {
+  const [action, setAction] = useState<"connections" | "qr" | null>(null);
   const [assetOpen, setAssetOpen] = useState(false);
   const project = useProjectStore((s) => s.project);
   const selection = useEditorStore((s) => s.selection);
@@ -96,6 +101,21 @@ export function PropertiesPanel() {
             </div>
           )}
           <SelectionActions locked={locked} />
+          {selected && entity && (
+            <div className="book-actions">
+              <button onClick={() => setAction("connections")}>Verbindungen / Abschalten</button>
+              <button onClick={() => setAction("qr")}>QR-Code für dieses Objekt</button>
+            </div>
+          )}
+          {action && selected && (
+            <Suspense fallback={<p>Hausakte wird geladen …</p>}>
+              <HousebookDialog
+                initialSection={action}
+                initialQrKey={searchEntries(project).find((r) => r.target?.id === selected.id)?.key ?? ""}
+                onClose={() => setAction(null)}
+              />
+            </Suspense>
+          )}
           {selected && entity && selected.kind !== "networkNodes" && (
             <button onClick={() => setAssetOpen(true)}>Objektakte und Umbauzustand</button>
           )}

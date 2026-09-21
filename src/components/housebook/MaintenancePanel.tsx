@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MaintenanceCalendar } from "./MaintenanceCalendar";
 import { useProjectStore } from "../../stores/projectStore";
 import { homeBook, dueOverview, completeTask, localDate, type MaintenanceTask } from "../../housebook/home";
 import { newId } from "../../utils/uuid";
@@ -48,6 +49,7 @@ export function MaintenancePanel({
   return (
     <section>
       <h3>Wartungen & Prüftermine</h3>
+      <MaintenanceCalendar />
       <p>
         Termine aus Hausobjekten und Objektakten stehen hier gemeinsam. Erinnerungen werden in dieser Ansicht
         angezeigt.

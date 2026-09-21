@@ -11,6 +11,7 @@ import type { DrawingDraft, Selection, Tool } from "../editor/types";
 import { useProjectStore } from "./projectStore";
 
 interface EditorState {
+  connectionHighlight: { projectId: string; ids: string[] } | null;
   category: EditorCategory;
   setCategory: (category: EditorCategory) => void;
   floorId: UUID;
@@ -55,6 +56,7 @@ interface EditorState {
 const emptyDraft = (): DrawingDraft => ({ points: [], cursor: null, input: "" });
 
 export const useEditorStore = create<EditorState>((set, get) => ({
+  connectionHighlight: null,
   category: "building",
   setCategory(category) {
     if (category === "site")

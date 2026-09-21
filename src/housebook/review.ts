@@ -5,6 +5,9 @@ import { deviceCircuitId } from "../electrical/selectors";
 import { simulate } from "../simulation/solve";
 import { emptyScenario } from "../simulation/models";
 import { asset } from "./model";
+import { housebook } from "./model";
+import { utilities } from "../utilities/model";
+import { solarPlacement } from "../electrical/solarPlan";
 import { circuitSupply, objectSupply } from "../electrical/supply";
 export interface ReviewIssue {
   id: string;
@@ -24,6 +27,7 @@ export function projectReview(project: Project): ReviewIssue[] {
   for (const item of Object.values(e.outlets))
     if (!item.circuitId) add(item.id, `${item.name}: Stromkreis fehlt.`, { kind: "outlets", id: item.id });
   for (const item of Object.values(e.devices)) {
+    if (solarPlacement(item)) continue;
     const target: Selection = { kind: "devices", id: item.id };
     if (!deviceCircuitId(project, item)) add(item.id, `${item.name}: Anschluss fehlt.`, target);
     if (item.ratedPower === null && item.ratedCurrent === null)
@@ -43,7 +47,7 @@ export function projectReview(project: Project): ReviewIssue[] {
       add(board.id, `${board.name}: Einspeisezuordnung fehlt.`, { kind: "distributionBoards", id: board.id });
   const simulation = simulate(project, emptyScenario());
   for (const item of Object.values(simulation.devices))
-    for (const message of item.issues)
+    for (const message of solarPlacement(e.devices[item.id]!) ? [] : item.issues)
       add(item.id, `${e.devices[item.id]!.name}: ${message}`, { kind: "devices", id: item.id });
   for (const kind of elementKinds)
     for (const item of Object.values(elementTables(project)[kind])) {
@@ -63,5 +67,36 @@ export function projectReview(project: Project): ReviewIssue[] {
       ))
         add(item.id, `${item.name}: ${warning}`, { kind, id: item.id });
     }
-  return [...new Map(issues.map((i) => [i.message, i])).values()];
+  const net = utilities(project),
+    book = housebook(project);
+  for (const node of Object.values(net.nodes))
+    if (!Object.values(net.pipes).some((pipe) => pipe.from === node.id || pipe.to === node.id))
+      add(node.id, `${node.name}: Rohranschluss fehlt.`, { kind: "utilityNodes", id: node.id });
+  for (const node of book.networkNodes)
+    if (!book.networkLinks.some((link) => link.from === node.id || link.to === node.id))
+      add(
+        node.id,
+        `${node.name}: Keine Kabelverbindung dokumentiert (bei WLAN-Geräten eventuell beabsichtigt).`,
+        { kind: "networkNodes", id: node.id },
+        "info",
+      );
+  const labels = new Map<string, string>();
+  for (const kind of elementKinds)
+    for (const item of Object.values(elementTables(project)[kind])) {
+      if (!("label" in item) || typeof item.label !== "string" || !item.label.trim()) continue;
+      const key = item.label.trim().toLocaleLowerCase("de-DE");
+      if (labels.has(key)) add(item.id, `Doppelte Kennzeichnung „${item.label}“.`, { kind, id: item.id });
+      else labels.set(key, item.id);
+    }
+  for (const node of Object.values(e.junctions)) {
+    const count = Object.values(e.cables).filter(
+      (c) => c.startNodeId === node.id || c.endNodeId === node.id,
+    ).length;
+    if (count < 2)
+      add(node.id, `${node.name}: Offenes Leitungsende (${count} Leitungen).`, {
+        kind: "junctions",
+        id: node.id,
+      });
+  }
+  return [...new Map(issues.map((i) => [`${i.target?.id}:${i.message}`, i])).values()];
 }

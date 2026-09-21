@@ -6,6 +6,8 @@ import { CableRenderer } from "./CableRenderer";
 import { TouchDrawingControls } from "../../components/TouchDrawingControls";
 import { BackgroundImage, HousebookOverlay } from "./HousebookOverlay";
 import { ElectricalRenderer, ElectricalPreview } from "./ElectricalRenderer";
+import { ConnectionOverlay } from "./ConnectionOverlay";
+import { useEditorStore } from "../../stores/editorStore";
 import { FurnitureRenderer, FurniturePreview } from "./FurnitureRenderer";
 import { Stage, Layer } from "react-konva";
 import { Scan, Minus, Plus } from "lucide-react";
@@ -138,6 +140,7 @@ export function PlanStage() {
           <InteractionOverlay />
           <NetworkRenderer project={preview} />
           <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
+          <ConnectionOverlay project={preview} />
         </Layer>
       </Stage>
       <WallDimensionEditor />
@@ -149,6 +152,11 @@ export function PlanStage() {
           : hints[editor.tool]}
       </div>
       <div className="canvas-controls">
+        {editor.connectionHighlight?.projectId === project.id && (
+          <button onClick={() => useEditorStore.setState({ connectionHighlight: null })}>
+            Hervorhebung beenden
+          </button>
+        )}
         <button aria-label="Verkleinern" onClick={() => zoom(0.8)}>
           <Minus size={15} />
         </button>

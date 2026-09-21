@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.47.0 · 21.09.2026
+
+- Verbindungen vom ausgewählten Planobjekt oder aus der Hausakte verfolgen: elektrische Versorgungszuordnungen bis zur Einspeisung, dokumentierte Kabelwege über Abzweigdosen sowie zusammenhängende Rohr-, Netzwerk- und SAT-Netze. Ergebnisse mit Geschoss und Raum auflisten und im Plan hervorheben.
+- Absperr- und Abschaltübersicht für Sicherungen, Stromkreise und Rohrkomponenten ergänzen. Elektrisch nachgeordnete Objekte anzeigen; im Rohrnetz alternative Versorgungswege und bereits geschlossene Ventile berücksichtigen. Dokumentationsanalyse ohne Änderung realer Schaltzustände.
+- Bestand und Umbauziel je Geschoss mit gleichem Bildausschnitt nebeneinander vergleichen. Geplante Objekte beziehungsweise Rückbau anhand der Objektakten ausblenden, ohne Projektdaten zu verändern.
+- Projektprüfung um doppelte Kennzeichnungen, offene Abzweigdosen, fehlende Rohranschlüsse und nicht dokumentierte Netzwerkverbindungen erweitern. Solarobjekte nicht als unvollständig erfasste Verbraucher melden; Ergebnisse filtern und als CSV ausgeben.
+- Wartungen in einem Monatskalender mit Tagesauswahl anzeigen und aktuelle Fälligkeiten als ICS-Kalenderdatei exportieren.
+- Benannte Versionsstände dauerhaft von der automatischen Bereinigung ausnehmen, Änderungen zum aktuellen Projekt auflisten und Einzelstände als Datei sichern. Die bestehende rückgängig machbare Wiederherstellung auch für benannte Stände verwenden.
+- QR-Aufkleber direkt aus den Eigenschaften eines Planobjekts öffnen, als Vorschau anzeigen und einzeln als PNG speichern. Die vorhandene PDF-Ausgabe und Prüfung der Projektzuordnung weiterverwenden.
+
 ## 0.46.1 · 21.09.2026
 
 - Wiederholtes Platzieren von Solarmodulen ermöglichen: zunächst freie Einträge aus der Solarakte verwenden, anschließend die Modulanzahl automatisch erweitern. Wiederholtes Platzieren eines Balkonkraftwerks legt eine weitere eigenständige Anlage an und wählt sie für folgende Komponenten aus.

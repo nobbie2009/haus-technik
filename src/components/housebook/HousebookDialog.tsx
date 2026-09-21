@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { ConnectionsPanel } from "./ConnectionsPanel";
+import { ComparePanel } from "./ComparePanel";
+import { VersionsPanel } from "./VersionsPanel";
 import { Modal } from "../dialogs/Modal";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -46,6 +49,8 @@ import { saveRoomTemplate, insertRoomTemplate } from "../../housebook/templates"
 import type { Project } from "../../models/project";
 const sections = {
   overview: "Übersicht",
+  connections: "Verbindungen & Abschalten",
+  compare: "Bestand / Umbau",
   backup: "Sicherung & Gerätewechsel",
   chronicle: "Hauschronik",
   quick: "Haus-Schnellübersicht",
@@ -76,17 +81,21 @@ export function HousebookDialog({
   qrTarget,
   initialMeterId,
   initialSolarId,
+  initialSection,
+  initialQrKey,
 }: {
   onClose: () => void;
   initialMeterId?: string;
   initialSolarId?: string;
+  initialSection?: keyof typeof sections;
+  initialQrKey?: string;
   qrTarget?: { projectId: string; key: string } | null | undefined;
 }) {
   const project = useProjectStore((s) => s.project),
     globalError = useProjectStore((s) => s.error),
     floorId = useEditorStore((s) => s.floorId);
   const [section, setSection] = useState<keyof typeof sections>(
-      initialSolarId !== undefined ? "solar" : initialMeterId ? "usage" : "overview",
+      initialSection ?? (initialSolarId !== undefined ? "solar" : initialMeterId ? "usage" : "overview"),
     ),
     [record, setRecord] = useState<Selection | null>(null);
   const [entryId, setEntryId] = useState<string | undefined>(initialSolarId || initialMeterId),
@@ -103,8 +112,11 @@ export function HousebookDialog({
     [mode, setMode] = useState<"all" | "building" | "electrical">("all");
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
-  const [snapshots, setSnapshots] = useState<{ id: string; savedAt: string; project: Project }[]>([]);
+  const [snapshots, setSnapshots] = useState<
+    { id: string; savedAt: string; project: Project; name?: string }[]
+  >([]);
   const [restore, setRestore] = useState<string | null>(null);
+  const [checkFilter, setCheckFilter] = useState("");
   const [roomId, setRoomId] = useState(Object.keys(project.rooms)[0] ?? ""),
     [templateName, setTemplateName] = useState("Raumvorlage"),
     [x, setX] = useState(15000),
@@ -171,6 +183,8 @@ export function HousebookDialog({
             ))}
           </nav>
           <div className="book-content" aria-busy={busy}>
+            {section === "connections" && <ConnectionsPanel onClose={onClose} />}
+            {section === "compare" && <ComparePanel />}
             {qrTarget && qrTarget.projectId !== project.id && (
               <div className="home-summary">
                 <p>
@@ -295,17 +309,38 @@ export function HousebookDialog({
               <section>
                 <h3>Projektprüfung</h3>
                 <p>Hinweise zur Vollständigkeit der Dokumentation und des statischen Versorgungsmodells.</p>
+                <Field label="Prüfergebnisse filtern">
+                  <input value={checkFilter} onChange={(e) => setCheckFilter(e.target.value)} />
+                </Field>
+                <button
+                  onClick={() =>
+                    download(
+                      csv([
+                        ["Einstufung", "Hinweis"],
+                        ...issues.map((i) => [i.severity === "warning" ? "Prüfen" : "Hinweis", i.message]),
+                      ]),
+                      "Planpruefung.csv",
+                      "text/csv;charset=utf-8",
+                    )
+                  }
+                >
+                  Prüfbericht als CSV
+                </button>
                 {!issues.length && <p>Keine Hinweise in den aktuell geprüften Angaben.</p>}
                 <ul className="book-list">
-                  {issues.map((i) => (
-                    <li key={i.id}>
-                      <span>
-                        <small>{i.severity === "warning" ? "Prüfen" : "Hinweis"}</small>
-                        {i.message}
-                      </span>
-                      {i.target && <button onClick={() => jump(i.target!)}>Im Plan</button>}
-                    </li>
-                  ))}
+                  {issues
+                    .filter((i) =>
+                      i.message.toLocaleLowerCase("de-DE").includes(checkFilter.toLocaleLowerCase("de-DE")),
+                    )
+                    .map((i) => (
+                      <li key={i.id}>
+                        <span>
+                          <small>{i.severity === "warning" ? "Prüfen" : "Hinweis"}</small>
+                          {i.message}
+                        </span>
+                        {i.target && <button onClick={() => jump(i.target!)}>Im Plan</button>}
+                      </li>
+                    ))}
                 </ul>
               </section>
             )}
@@ -376,7 +411,7 @@ export function HousebookDialog({
               <ChroniclePanel key={`${project.id}:${entryId}`} initialId={entryId} onClose={onClose} />
             )}
             {section === "quick" && <QuickOverviewPanel key={project.id} />}
-            {section === "qr" && <QrPanel />}
+            {section === "qr" && <QrPanel initialKey={initialQrKey} />}
             {section === "scenarios" && <ScenariosPanel onClose={onClose} />}
             {section === "schematic" && <SchematicPanel onClose={onClose} />}
             {section === "assets" && (
@@ -554,6 +589,9 @@ export function HousebookDialog({
             )}
             {section === "history" && (
               <section>
+                <VersionsPanel
+                  refresh={async () => setSnapshots(await projectRepository.snapshots(project.id))}
+                />
                 <h3>Ältere Projektstände</h3>
                 <p>
                   Beim Überschreiben werden bis zu 20 frühere Stände mit begrenztem Speicherbudget aufbewahrt.
@@ -571,7 +609,10 @@ export function HousebookDialog({
                   {snapshots.map((s) => (
                     <li key={s.id}>
                       <span>
-                        <strong>{new Date(s.savedAt).toLocaleString("de-DE")}</strong>
+                        <strong>
+                          {s.name ? `${s.name} · ` : ""}
+                          {new Date(s.savedAt).toLocaleString("de-DE")}
+                        </strong>
                         <small>
                           {s.project.name} · Revision {s.project.version}
                         </small>

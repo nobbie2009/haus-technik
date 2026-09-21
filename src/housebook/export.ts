@@ -345,9 +345,10 @@ export function planSvg(
   floorId: string,
   scale: number,
   mode: "building" | "electrical" | "all",
+  bounds?: ReturnType<typeof planBounds>,
 ) {
   const primitives = planPrimitives(project, floorId, mode),
-    b = planBounds(primitives);
+    b = bounds ?? planBounds(primitives);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${b.width / scale}mm" height="${b.height / scale}mm" viewBox="${b.x} ${-b.y} ${b.width} ${b.height}"><title>${escapeXml(project.name)} – ${escapeXml(project.floors[floorId]!.name)} – 1:${scale}</title><rect x="${b.x}" y="${-b.y}" width="${b.width}" height="${b.height}" fill="white"/>${primitives.map((p) => (p.kind === "line" ? `<polyline points="${p.points.map((v) => `${v.x},${-v.y}`).join(" ")}" fill="none" stroke="${p.color}" stroke-width="${p.width}"${p.rounded ? ' stroke-linecap="round" stroke-linejoin="round"' : ""}/>` : `<text x="${p.position.x}" y="${-p.position.y}" font-family="Arial,sans-serif" font-size="${p.size}" fill="${p.color}">${escapeXml(p.text)}</text>`)).join("")}</svg>`;
 }
 export function download(data: BlobPart, filename: string, type: string) {

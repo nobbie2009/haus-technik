@@ -1,18 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { searchEntries } from "../../housebook/search";
 import { qrLabelsPdf } from "../../housebook/housePrint";
 import { qrLink } from "../../housebook/qr";
 import { Field } from "./shared";
-export function QrPanel() {
+export function QrPanel({ initialKey }: { initialKey?: string | undefined }) {
   const p = useProjectStore((s) => s.project),
     rows = searchEntries(p),
     [base, setBase] = useState(`${window.location.origin}${window.location.pathname}`),
     [filter, setFilter] = useState(""),
-    [keys, setKeys] = useState<string[]>([]),
+    [keys, setKeys] = useState<string[]>(initialKey ? [initialKey] : []),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const selected = rows.filter((r) => keys.includes(r.key));
+  const [preview, setPreview] = useState("");
+  const single = selected.length === 1 ? selected[0]?.key : undefined;
+  useEffect(() => {
+    let active = true;
+    setPreview("");
+    setError("");
+    if (single) {
+      try {
+        void import("qrcode")
+          .then((qr) => qr.toDataURL(qrLink(base, p.id, single), { width: 256, margin: 4 }))
+          .then((url) => {
+            if (active) setPreview(url);
+          })
+          .catch((e) => {
+            if (active) setError(String(e));
+          });
+      } catch (e) {
+        setError(String(e));
+      }
+    }
+    return () => {
+      active = false;
+    };
+  }, [base, p.id, single]);
   return (
     <section>
       <h3>QR-Aufkleber</h3>
@@ -37,6 +61,15 @@ export function QrPanel() {
         <input value={filter} onChange={(e) => setFilter(e.target.value)} />
       </Field>
       <p>{selected.length} Aufkleber ausgewählt</p>
+      {preview && (
+        <figure>
+          <img width={256} height={256} src={preview} alt={`QR-Code für ${selected[0]?.title}`} />
+          <figcaption>{selected[0]?.title}</figcaption>
+          <a href={preview} download="Hausobjekt-QR.png">
+            QR-Code als Bild speichern
+          </a>
+        </figure>
+      )}
       <div className="book-actions">
         <button onClick={() => setKeys([])}>Auswahl leeren</button>
         <button

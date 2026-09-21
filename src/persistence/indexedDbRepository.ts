@@ -76,11 +76,31 @@ export class IndexedDbRepository implements ProjectRepository {
   async save(project: Project): Promise<void> {
     await this.write(project, true);
   }
-  async snapshots(projectId: string): Promise<{ id: string; savedAt: string; project: Project }[]> {
-    return ((await this.read("snapshots")) as { id: string; savedAt: string; project: Project }[])
+  async snapshots(
+    projectId: string,
+  ): Promise<{ id: string; savedAt: string; project: Project; name?: string }[]> {
+    return (
+      (await this.read("snapshots")) as { id: string; savedAt: string; project: Project; name?: string }[]
+    )
       .filter((s) => s.project.id === projectId)
       .sort((a, b) => b.savedAt.localeCompare(a.savedAt))
       .map((s) => ({ ...s, project: migrateProject(s.project) }));
+  }
+  async saveNamedSnapshot(project: Project, name: string): Promise<void> {
+    if (!name.trim() || name.trim().length > 150)
+      throw new Error("Bitte einen Namen mit 1 bis 150 Zeichen eingeben.");
+    const validated = parseProject(project),
+      db = await this.open();
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction("snapshots", "readwrite");
+      transaction
+        .objectStore("snapshots")
+        .put({ id: newId(), savedAt: new Date().toISOString(), name: name.trim(), project: validated });
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () =>
+        reject(transaction.error ?? new Error("Versionsstand konnte nicht gespeichert werden."));
+    });
   }
   private async write(project: Project, activate: boolean): Promise<void> {
     const validated = parseProject(project);
@@ -107,8 +127,8 @@ export class IndexedDbRepository implements ProjectRepository {
           snapshots.put({ id: newId(), savedAt: new Date().toISOString(), project: current });
           const all = snapshots.getAll();
           all.onsuccess = () => {
-            const entries = (all.result as { id: string; savedAt: string; project: Project }[])
-              .filter((s) => s.project.id === project.id)
+            const entries = (all.result as { id: string; savedAt: string; project: Project; name?: string }[])
+              .filter((s) => s.project.id === project.id && !s.name)
               .sort((a, b) => b.savedAt.localeCompare(a.savedAt));
             let bytes = 0;
             entries.forEach((s, index) => {
