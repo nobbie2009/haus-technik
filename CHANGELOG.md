@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.44.0 · 21.09.2026
+
+- Home-Assistant-Adresse und Zugriffstoken automatisch lokal im Browser speichern und nach Dialogwechsel oder Neuladen wieder einsetzen. Verbindungseinstellungen getrennt vom Projekt halten; keine Zugangsdaten in Projektdateien oder Exporte übernehmen.
+- „Verbindung verwerfen“ löscht auch die gespeicherte Adresse und den Token. Fehler beim Laden, Speichern oder Löschen verständlich anzeigen; Zustände weiterhin nur auf ausdrücklichen Abruf lesen.
+
 ## 0.43.0 · 21.09.2026
 
 - Geschossverwaltung und Ebenensteuerung als aufklappbare Bereiche direkt im Menüband anzeigen. Geschosse wechseln sowie Ebenen einblenden, ausblenden und sperren, ohne den Plan durch ein Popup zu blockieren.

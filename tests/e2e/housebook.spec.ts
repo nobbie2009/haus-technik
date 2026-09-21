@@ -126,7 +126,9 @@ test("Netzwerk anlegen, Ports prüfen und Raumvorlage einfügen", async ({ page 
   await expect(page.getByRole("dialog", { name: "Hausakte", exact: true })).not.toBeVisible();
   expect(Object.keys((await exported(page)).rooms)).toHaveLength(5);
 });
-test("Home Assistant liest nur Zustände und speichert keinen Token", async ({ page }) => {
+test("Home Assistant merkt Adresse und Token lokal, exportiert sie nicht und kann sie vergessen", async ({
+  page,
+}) => {
   const { project, devices } = simulationFixture();
   project.electrical.devices[devices[0]!]!.metadata.asset = { homeAssistantEntity: "sensor.tv_power" };
   const methods: string[] = [];
@@ -139,7 +141,7 @@ test("Home Assistant liest nur Zustände und speichert keinen Token", async ({ p
   await load(page, project);
   await page.getByRole("button", { name: "Home Assistant", exact: true }).click();
   await page.getByLabel("Home-Assistant-Basisadresse").fill("http://127.0.0.1:5173/ha-test");
-  await page.getByLabel("Zugriffstoken (nur für diesen Dialog)").fill("test-only-not-a-real-token");
+  await page.getByLabel("Zugriffstoken").fill("test-only-not-a-real-token");
   await page.getByRole("button", { name: "Zustände jetzt abrufen" }).click();
   await expect(page.getByRole("cell", { name: "42 W", exact: true })).toBeVisible();
   expect(methods).toEqual(["GET"]);
@@ -147,7 +149,22 @@ test("Home Assistant liest nur Zustände und speichert keinen Token", async ({ p
   expect(JSON.stringify(await exported(page))).not.toContain("test-only-not-a-real-token");
   await page.getByRole("button", { name: "Hausakte", exact: true }).click();
   await page.getByRole("button", { name: "Home Assistant", exact: true }).click();
-  await expect(page.getByLabel("Zugriffstoken (nur für diesen Dialog)")).toHaveValue("");
+  await expect(page.getByLabel("Zugriffstoken")).toHaveValue("test-only-not-a-real-token");
+  await expect(page.getByLabel("Home-Assistant-Basisadresse")).toHaveValue("http://127.0.0.1:5173/ha-test");
+  await page.reload();
+  await page.getByRole("button", { name: "Hausakte", exact: true }).click();
+  await page.getByRole("button", { name: "Home Assistant", exact: true }).click();
+  await expect(page.getByLabel("Zugriffstoken")).toHaveValue("test-only-not-a-real-token");
+  await expect(page.getByLabel("Home-Assistant-Basisadresse")).toHaveValue("http://127.0.0.1:5173/ha-test");
+  expect(methods).toEqual(["GET"]);
+  await page.getByRole("button", { name: "Verbindung verwerfen", exact: true }).click();
+  await expect(page.getByLabel("Zugriffstoken")).toHaveValue("");
+  await expect(page.getByLabel("Home-Assistant-Basisadresse")).toHaveValue("");
+  await page.reload();
+  await page.getByRole("button", { name: "Hausakte", exact: true }).click();
+  await page.getByRole("button", { name: "Home Assistant", exact: true }).click();
+  await expect(page.getByLabel("Zugriffstoken")).toHaveValue("");
+  await expect(page.getByLabel("Home-Assistant-Basisadresse")).toHaveValue("");
 });
 test("PDF-Seite importieren und Projektstand wiederherstellen", async ({ page }) => {
   await load(page);

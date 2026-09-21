@@ -63,7 +63,7 @@ Eine atomare Vergleichsprüfung verhindert, dass ein anderer Tab einen seit sein
 
 ## Home Assistant
 
-In Objektakten werden Entitäts-IDs hinterlegt. **Home Assistant** kann Zustände auf ausdrücklichen Abruf über die [offizielle REST-API](https://developers.home-assistant.io/docs/api/rest/) lesen. Basisadresse und Zugriffstoken verbleiben nur im Arbeitsspeicher dieses Dialogbereichs; weder Projekt, IndexedDB noch JSON-Export enthalten sie. Die Implementierung verwendet ausschließlich GET /api/states, keine Steuerbefehle oder automatische Aktualisierung. Umleitungen werden nicht verfolgt.
+In Objektakten werden Entitäts-IDs hinterlegt. **Home Assistant** kann Zustände auf ausdrücklichen Abruf über die [offizielle REST-API](https://developers.home-assistant.io/docs/api/rest/) lesen. Seit 0.44.0 werden Basisadresse und Zugriffstoken bei der Eingabe automatisch lokal in diesem Browser gespeichert und beim nächsten Öffnen wieder geladen. **Verbindung verwerfen** löscht beide Angaben. Sie gehören zu den lokalen Verbindungseinstellungen, nicht zum Projekt: JSON-Exporte und Projektübertragungen enthalten sie nicht. Auf einem anderen Gerät oder unter einer anderen App-Adresse müssen sie erneut eingegeben werden. Die Implementierung verwendet ausschließlich GET /api/states, keine Steuerbefehle oder automatische Aktualisierung. Umleitungen werden nicht verfolgt.
 
 Der Browser benötigt Zugriff auf die Instanz und eine passende CORS-Freigabe für den App-Origin. HTTPS/HTTP-Mischbetrieb kann der Browser blockieren. Die Verbindung wurde mit einer simulierten API getestet; ein Test mit einer konkreten Hausinstallation benötigt deren Adresse und einen im Dialog eingegebenen Token.
 

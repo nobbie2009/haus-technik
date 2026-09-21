@@ -3,6 +3,10 @@ import { useProjectStore } from "../../stores/projectStore";
 import { elementTables } from "../../core/elementTables";
 import { asset } from "../../housebook/model";
 import { Field } from "./shared";
+import {
+  loadHomeAssistantConnection,
+  saveHomeAssistantConnection,
+} from "../../persistence/homeAssistantConnection";
 interface State {
   entity_id: string;
   state: string;
@@ -11,14 +15,37 @@ interface State {
 }
 export function HomeAssistantPanel() {
   const project = useProjectStore((s) => s.project);
-  const [url, setUrl] = useState(""),
-    [token, setToken] = useState(""),
+  const [initial] = useState(() => {
+    try {
+      return { ...loadHomeAssistantConnection(), error: "" };
+    } catch {
+      return {
+        url: "",
+        token: "",
+        error:
+          "Gespeicherte Verbindung konnte nicht geladen werden. Bitte Adresse und Token erneut eingeben.",
+      };
+    }
+  });
+  const [storageError, setStorageError] = useState(initial.error);
+  const [url, setUrl] = useState(initial.url),
+    [token, setToken] = useState(initial.token),
     [states, setStates] = useState<State[]>([]),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [readAt, setReadAt] = useState("");
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
+  const remember = (url: string, token: string) => {
+    try {
+      saveHomeAssistantConnection({ url, token });
+      setStorageError("");
+    } catch {
+      setStorageError(
+        "Die Verbindung konnte nicht im Browser gespeichert oder gelöscht werden. Bitte Browserspeicher-Einstellungen prüfen.",
+      );
+    }
+  };
   const mapped = Object.values(elementTables(project))
     .flatMap((table) => Object.values(table))
     .filter((item) => asset(item).homeAssistantEntity);
@@ -114,19 +141,25 @@ export function HomeAssistantPanel() {
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value);
+                remember(e.target.value, token);
                 setStates([]);
                 setReadAt("");
               }}
             />
           </Field>
-          <Field label="Zugriffstoken (nur für diesen Dialog)">
+          <Field label="Zugriffstoken">
             <input
               type="password"
               disabled={busy}
               autoComplete="off"
               required
               value={token}
-              onChange={(e) => setToken(e.target.value)}
+              onChange={(e) => {
+                setToken(e.target.value);
+                remember(url, e.target.value);
+                setStates([]);
+                setReadAt("");
+              }}
             />
           </Field>
         </div>
@@ -136,6 +169,8 @@ export function HomeAssistantPanel() {
             type="button"
             onClick={() => {
               controller.current?.abort();
+              remember("", "");
+              setUrl("");
               setToken("");
               setStates([]);
               setReadAt("");
@@ -146,10 +181,13 @@ export function HomeAssistantPanel() {
         </div>
       </form>
       <p>
-        Adresse und Token werden nicht im Projekt oder Browserspeicher gespeichert. Der Browser muss die
-        Instanz erreichen können; Home Assistant muss Anfragen von dieser App-Adresse erlauben (CORS).
-        HTTPS-Seiten können keine unverschlüsselten HTTP-Instanzen abfragen.
+        Adresse und Token werden automatisch lokal in diesem Browser gespeichert und beim nächsten Öffnen
+        wieder geladen. „Verbindung verwerfen“ löscht beide Angaben. Projektdateien und Exporte enthalten
+        diese Zugangsdaten nicht. Der Browser muss die Instanz erreichen können; Home Assistant muss Anfragen
+        von dieser App-Adresse erlauben (CORS). HTTPS-Seiten können keine unverschlüsselten HTTP-Instanzen
+        abfragen.
       </p>
+      {storageError && <p role="alert">{storageError}</p>}
       {error && <p role="alert">{error}</p>}
       {readAt && (
         <p role="status">Zuletzt gelesen: {readAt}. Momentaufnahme, keine automatische Aktualisierung.</p>
