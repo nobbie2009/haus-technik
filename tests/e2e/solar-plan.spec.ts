@@ -11,6 +11,28 @@ async function exported(page: Page): Promise<Project> {
   for await (const chunk of await (await event).createReadStream()) chunks.push(Buffer.from(chunk));
   return JSON.parse(Buffer.concat(chunks).toString());
 }
+test("Mehrere Balkonkraftwerke und zusätzliche Module ohne erneute Werkzeugwahl platzieren", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByLabel("Solarobjekt platzieren", { exact: true }).selectOption("plant");
+  const surface = (await page.getByTestId("drawing-surface").boundingBox())!;
+  await page.mouse.click(surface.x + 200, surface.y + 200);
+  await page.mouse.click(surface.x + 450, surface.y + 200);
+  await page.getByLabel("Solarobjekt platzieren", { exact: true }).selectOption("module");
+  for (const x of [200, 400, 600]) await page.mouse.click(surface.x + x, surface.y + 450);
+  const stored = await exported(page);
+  const plants = solarPlants(stored);
+  expect(plants).toHaveLength(2);
+  expect(plants[0]!.modules).toHaveLength(0);
+  expect(plants[1]!.modules[0]!.quantity).toBe(3);
+  expect(Object.values(stored.electrical.devices)).toHaveLength(5);
+  await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
+  await page.reload();
+  expect(solarPlants(await exported(page))).toEqual(plants);
+});
 test("Vorhandenes Balkonkraftwerk mit Modulen, Wechselrichter und Speicher im Plan zeichnen", async ({
   page,
 }) => {

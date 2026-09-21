@@ -8,8 +8,10 @@ test("Solaranlage per Touch platzieren und die Solarakte öffnen", async ({ page
   await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.touchscreen.tap(box.x + 300, box.y + 250);
+  await page.touchscreen.tap(box.x + 550, box.y + 250);
   await page.getByRole("button", { name: "Eigenschaften", exact: true }).tap();
   await expect(page.getByRole("heading", { name: "Balkonkraftwerk", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Elektro-Name", { exact: true })).toHaveValue("Balkonkraftwerk 2");
   await page.getByRole("button", { name: "Zugehörige Solarakte öffnen", exact: true }).tap();
   const dialog = page.getByRole("dialog", { name: "Hausakte", exact: true });
   await dialog.getByRole("button", { name: "Im Plan platzieren: Wechselrichter", exact: true }).tap();

@@ -33,16 +33,37 @@ it("platziert vorhandene Module einzeln und erhält zentrale Leistungsdaten", ()
   const b = placeSolar(project, floor, { x: 1200, y: 0 }, "module", plant.id);
   expect(solarPlacement(project.electrical.devices[a]!)!.index).toBe(0);
   expect(solarPlacement(project.electrical.devices[b]!)!.index).toBe(1);
-  expect(() => placeSolar(project, floor, { x: 0, y: 0 }, "module", plant.id)).toThrow("bereits platziert");
+  const c = placeSolar(project, floor, { x: 2400, y: 0 }, "module", plant.id);
+  expect(solarPlacement(project.electrical.devices[c]!)!.index).toBe(2);
+  expect(solarPlants(project)[0]!.modules[0]!.quantity).toBe(3);
+  expect(solarPlanDetails(project, project.electrical.devices[c]!)).toContain("440 Wp");
+  delete project.electrical.devices[b];
+  const replacement = placeSolar(project, floor, { x: 1200, y: 0 }, "module", plant.id);
+  expect(solarPlacement(project.electrical.devices[replacement]!)!.index).toBe(1);
+  expect(solarPlants(project)[0]!.modules[0]!.quantity).toBe(3);
   expect(solarPlants(project)).toHaveLength(1);
   expect(solarPlanDetails(project, project.electrical.devices[a]!)).toContain("440 Wp");
   plant.modules[0]!.wp = 450;
+  plant.modules[0]!.quantity = 3;
   setSolarPlants(project, [plant]);
   expect(solarPlanDetails(project, project.electrical.devices[a]!)).toContain("450 Wp");
   expect(project.electrical.devices[a]!.ratedPower).toBeNull();
   const inverter = placeSolar(project, floor, { x: 0, y: 2000 }, "inverter", plant.id);
   expect(solarPlanDetails(project, project.electrical.devices[inverter]!)).toContain("800 W AC");
   expect(() => placeSolar(project, floor, { x: 0, y: 0 }, "inverter", plant.id)).toThrow("bereits platziert");
+  expect(() => parseProject(project)).not.toThrow();
+});
+it("legt beim wiederholten Platzieren weitere eigenständige Balkonkraftwerke an", () => {
+  const project = createProject(),
+    floor = project.floorOrder[0]!;
+  const first = placeSolar(project, floor, { x: 0, y: 0 }, "plant", null);
+  const firstPlant = solarPlacement(project.electrical.devices[first]!)!.plantId;
+  const second = placeSolar(project, floor, { x: 3000, y: 0 }, "plant", firstPlant);
+  const secondPlant = solarPlacement(project.electrical.devices[second]!)!.plantId;
+  expect(secondPlant).not.toBe(firstPlant);
+  expect(solarPlants(project).map((p) => p.name)).toEqual(["Balkonkraftwerk 1", "Balkonkraftwerk 2"]);
+  const module = placeSolar(project, floor, { x: 4000, y: 0 }, "module", secondPlant);
+  expect(solarPlacement(project.electrical.devices[module]!)!.plantId).toBe(secondPlant);
   expect(() => parseProject(project)).not.toThrow();
 });
 it("respektiert die Elektrikebenensperre ohne neue Solarakte zu hinterlassen", () => {

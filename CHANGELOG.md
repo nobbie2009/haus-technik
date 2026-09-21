@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.46.1 · 21.09.2026
+
+- Wiederholtes Platzieren von Solarmodulen ermöglichen: zunächst freie Einträge aus der Solarakte verwenden, anschließend die Modulanzahl automatisch erweitern. Wiederholtes Platzieren eines Balkonkraftwerks legt eine weitere eigenständige Anlage an und wählt sie für folgende Komponenten aus.
+
 ## 0.46.0 · 21.09.2026
 
 - Balkonkraftwerk, einzelne Solarmodule, Wechselrichter und Batteriespeicher im Elektrik-Menüband auswählen und maßstäblich im Plan platzieren. Abmessungen und Drehung bearbeiten; Solarsymbole auch in Planexport und Materialliste berücksichtigen.

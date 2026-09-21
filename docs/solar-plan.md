@@ -2,7 +2,7 @@
 
 Im Menüband **Elektrik** unter **Solaranlage** eine vorhandene Anlage oder „Neue Anlage beim Platzieren“ auswählen. Unter **Solarobjekt** Balkonkraftwerk, Solarmodul, Wechselrichter oder Batteriespeicher wählen und anschließend die Position im Plan anklicken oder antippen.
 
-Das Balkonkraftwerk dient als Übersicht der gesamten Anlage. Die Komponenten können zusätzlich einzeln eingezeichnet werden. Bei vorhandenen Modulgruppen wird jeweils das nächste noch nicht platzierte Modul verwendet. Weitere Module zuerst in der Solarakte erfassen. Pro Anlage können eine Übersicht, ein Wechselrichter und ein Speicher platziert werden.
+Das Balkonkraftwerk dient als Übersicht der gesamten Anlage. Ist diese bereits platziert, legt ein weiterer Klick eine neue Anlage mit eigener Solarakte an und wählt sie für die nächsten Komponenten aus. Die Komponenten können zusätzlich einzeln eingezeichnet werden. Bei vorhandenen Modulgruppen wird jeweils das nächste noch nicht platzierte Modul verwendet. Sind alle erfassten Module platziert, erweitert jeder weitere Klick die letzte Modulgruppe automatisch; deren Leistungs- und Modelldaten gelten auch für die zusätzlichen Module. Eine volle Modulgruppe wird durch eine neue Gruppe ohne Vorgabedaten ergänzt. Pro Anlage können eine Übersicht, ein Wechselrichter und ein Speicher platziert werden.
 
 Im Auswahlmodus lassen sich die Objekte verschieben. In den Eigenschaften können Breite, Tiefe, Höhe und Drehung angepasst werden. Die Vorgabemaße sind Beispiele und sollten an die tatsächlichen Geräte angepasst werden.
 

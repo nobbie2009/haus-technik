@@ -71,9 +71,21 @@ export function placeSolar(
   const plants = solarPlants(project);
   let plant = plants.find((p) => p.id === plantId);
   if (plantId && !plant) throw new Error("Die gewählte Solaranlage fehlt.");
+  if (
+    kind === "plant" &&
+    plant &&
+    Object.values(project.electrical.devices).some((device) => {
+      const placement = solarPlacement(device);
+      return placement?.plantId === plant!.id && placement.kind === "plant";
+    })
+  )
+    plant = undefined;
   if (!plant) {
+    if (plants.length >= 100) throw new Error("Die maximale Anzahl von 100 Solaranlagen ist erreicht.");
     plant = newSolarPlant();
-    plant.name = `Balkonkraftwerk ${plants.length + 1}`;
+    let number = 1;
+    while (plants.some((p) => p.name === `Balkonkraftwerk ${number}`)) number++;
+    plant.name = `Balkonkraftwerk ${number}`;
     plants.push(plant);
   }
   if (kind === "battery" && !plant.battery)
@@ -86,7 +98,7 @@ export function placeSolar(
   let moduleId: string | null = null,
     index = 0;
   if (kind === "module") {
-    const slot = plant.modules
+    let slot = plant.modules
       .flatMap((m) => Array.from({ length: m.quantity }, (_, i) => ({ moduleId: m.id, index: i })))
       .find(
         (slot) =>
@@ -94,10 +106,16 @@ export function placeSolar(
             (p) => p?.kind === "module" && p.moduleId === slot.moduleId && p.index === slot.index,
           ),
       );
-    if (!slot)
-      throw new Error(
-        "Alle erfassten Module sind bereits platziert. Weitere Module zuerst in der Solarakte ergänzen.",
-      );
+    if (!slot) {
+      let group = plant.modules.at(-1)!;
+      if (group.quantity >= 1000) {
+        if (plant.modules.length >= 100)
+          throw new Error("Die maximale Modulanzahl dieser Anlage ist erreicht.");
+        group = { id: newId(), quantity: 1, wp: null, asset: assetSchema.parse({}) };
+        plant.modules.push(group);
+      } else group.quantity++;
+      slot = { moduleId: group.id, index: group.quantity - 1 };
+    }
     moduleId = slot.moduleId;
     index = slot.index;
   } else if (placements.some((p) => p?.kind === kind))
