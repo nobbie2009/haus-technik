@@ -3,6 +3,18 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
+## Bebildertes Handbuch
+
+In der oberen App-Leiste **Handbuch** öffnen: 31 Kapitel mit 25 Abbildungen aus Beispielprojekten,
+ausführlichen Schrittfolgen, FAQ, alphabetischem Stichwortverzeichnis und lokaler Volltextsuche.
+Auch über die Tastaturhilfe erreichbar. Die Anleitung wird mit der App ausgeliefert und benötigt
+keinen externen Suchdienst. Kapitel und einzelne Antworten lassen sich direkt verlinken.
+
+Redaktionelle Quelle: [Handbuch](docs/handbuch.md). `npm run handbook:build` erstellt die HTML-Ausgabe
+unter `public/handbuch/index.html`; `npm run dev` und `npm run build` erledigen diesen Schritt automatisch.
+Die eingebundenen Fachtexte bleiben unter `docs/` gepflegt. Bilder unter `public/handbuch/bilder/`
+zeigen ausschließlich Testprojekte und sind mit ihrem Aufnahmestand gekennzeichnet.
+
 ## Grundstück per GPS erfassen
 
 Auf iPhone und iPad lassen sich Grundstücksgrenzen, Wege, Beete und Referenzpunkte per Standortaufnahme erfassen. Benötigt HTTPS und Standortfreigabe; GPS dient zur Groberfassung. [Anleitung](docs/gps-grundstueck.md).

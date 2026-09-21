@@ -41,4 +41,4 @@ Eine Anlage mit Name, Standort, Inbetriebnahme, Ausrichtung, Neigung, Foto, Noti
 
 Ablesungen werden wie bisher unter **Zähler & Verbrauch** erfasst. In der Solarakte erscheint die Summe aus auswertbaren Ableseintervallen samt erfassten Tagen; Lücken durch Zählerwechsel bleiben ausdrücklich unbekannt. Wp, W und kWh werden getrennt behandelt. Es gibt keine automatische Ertragsprognose, Eigenverbrauchs- oder Wirtschaftlichkeitsberechnung.
 
-Das Löschen einer Anlage lässt ihren Ertragszähler und seine Ablesungen bestehen. Gelöschte Steckdosen oder Zähler werden in der Akte als fehlende Zuordnung angezeigt. Anlagendaten und Fotos sind im Projekt-JSON gesichert; es gibt weiterhin keine automatische Synchronisierung zwischen PC und iPad.
+Das Löschen einer Anlage lässt ihren Ertragszähler und seine Ablesungen bestehen. Gelöschte Steckdosen oder Zähler werden in der Akte als fehlende Zuordnung angezeigt. Anlagendaten und Fotos sind im Projekt-JSON gesichert. Seit 0.48.0 steht zusätzlich der optionale Projektdienst für gemeinsame Projekte auf PC und iPad bereit.

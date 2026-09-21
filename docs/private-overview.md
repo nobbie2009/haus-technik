@@ -1,6 +1,6 @@
 # Private Hausübersicht
 
-Seit Version 0.18.0 stehen in der **Hausakte** sechs zusätzliche beziehungsweise erweiterte Bereiche bereit. Die Daten gehören zum geöffneten Projekt und werden automatisch lokal gespeichert. Mit **JSON exportieren** sicherst du auch Fotos, Ablesungen und Wartungsverläufe. PC und iPad haben weiterhin getrennte lokale Speicher; zum Übertragen dient die Projektdatei.
+Seit Version 0.18.0 stehen in der **Hausakte** zusätzliche Bereiche bereit. Die Daten gehören zum geöffneten Projekt und werden automatisch lokal gespeichert. Mit **JSON exportieren** sicherst du auch Fotos, Ablesungen und Wartungsverläufe. PC und iPad haben getrennte lokale Speicher; zum Übertragen dient die Projektdatei oder seit 0.48.0 der optionale Projektdienst.
 
 ## Internet & WLAN
 
@@ -16,7 +16,7 @@ Bei Rauchmeldern lassen sich Versorgung/Batterie, Installationsdatum, letzte Pr�
 
 ## Zähler & Verbrauch
 
-1. Zähler mit Art, Einheit, Nummer und Standort anlegen. Strom, Wasser, Gas, Wärme, Solarertrag und sonstige Zähler sind möglich.
+1. Vorhandenen, automatisch übernommenen Planzähler verwenden oder einen Zähler mit Art, Einheit, Nummer und Standort anlegen. Strom, Wasser, Gas, Wärme, Solarertrag und sonstige Zähler sind möglich. Bestehende Akten lassen sich bearbeiten und nachträglich mit passenden Planzählern verknüpfen.
 2. Zu jeder Ablesung Datum und kumulierten Zählerstand eintragen; pro Datum ist eine Ablesung möglich. Über **Korrigieren** lassen sich Werte berichtigen.
 3. Nach zwei Ablesungen zeigt die eigene Verbrauchsübersicht Differenz, tatsächlich erfasste Tage und Tagesmittel. Ein optionaler Rechenpreis liefert eine Kostenschätzung ohne Grundgebühren. Eine spätere Preisänderung gilt für die gesamte dargestellte Schätzung, nicht als historischer Tarifverlauf.
 4. Mit dem Zeitraumfilter vollständige Ableseintervalle auswählen. Es gibt keine Interpolation auf Monatsgrenzen. Strom, Gas, Wasser und Ertrag werden nicht zu einer unpassenden Gesamtsumme vermischt.

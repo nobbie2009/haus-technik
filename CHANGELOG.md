@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.49.0 · 21.09.2026
+
+- Umfangreiches deutsches Handbuch mit 31 Kapiteln und 25 vergrößerbaren Bildschirmbildern aus Beispielprojekten ergänzen. Einstieg, Grundriss, Technik, Garten, Hausakte, Baustelle, Geräteabgleich, Sicherung und Updates mit konkreten Schrittfolgen erklären.
+- Inhaltsverzeichnis, direkt verlinkbare Abschnitte, FAQ, alphabetisches Stichwortverzeichnis und lokale Volltextsuche mit Unterstützung für Umlaute und Umschreibungen bereitstellen. Responsive Darstellung für PC, iPad und iPhone; Inhalte auch ohne JavaScript lesbar halten.
+- Handbuch aus der oberen App-Leiste und der Tastaturhilfe öffnen. HTML bei Entwicklung und Build aus den redaktionellen Quellen erzeugen, Bilddateien und Kapitelverweise prüfen sowie aktuelle App-Version und Copyright anzeigen.
+- Veraltete Hinweise zu Geräteabgleich, Planzählern und Werkzeug-Seitenleisten in den eingebundenen Fachanleitungen aktualisieren.
+
 ## 0.48.0 · 21.09.2026
 
 - Wandansicht mit beiden Seiten, maßstäblichen Öffnungen und Montagepunkten ergänzen. Vorhandene Möbel und Elektroobjekte per Antippen oder genauer Eingabe von Abstand und Höhe setzen; den Grundriss und Ebenensperren berücksichtigen.

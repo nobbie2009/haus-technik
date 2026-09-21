@@ -46,8 +46,9 @@ Seriennummer, Hersteller und Modell stehen auch in der bestehenden Objektakte de
 
 Geräteumrisse erscheinen im PDF-/SVG-Plan. Materiallisten enthalten Abmessungen, Nennwerte,
 Jahresverbrauch und Seriennummer. Die Datenbank ist lokal; es gibt keinen externen Produktkatalog
-und keine automatische Synchronisierung zwischen Geräten. Projekt- oder Bibliotheksdateien dienen
-zum Austausch zwischen PC und iPad.
+und keinen automatischen Abgleich der browserübergreifenden Vorlagensammlung. Projekt- oder Bibliotheksdateien
+dienen zum Austausch zwischen PC und iPad. Seit 0.48.0 können Vorlagen außerdem in einem gemeinsamen
+Serverprojekt mitgeführt und im jeweiligen Browser projektübergreifend gemerkt werden.
 
 ## Datenmodell
 

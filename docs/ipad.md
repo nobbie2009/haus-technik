@@ -13,14 +13,16 @@ npm run start:lan
 ```
 
 Der Befehl baut die App und startet den Vorschau-Server auf Port 4173. Die ausgegebene
-**Network-Adresse** (etwa `http://192.168.178.20:4173`) in Safari auf dem iPad öffnen.
+**Network-Adresse** in Safari auf dem iPad öffnen.
 PC und iPad müssen im selben WLAN sein. Bei einer Windows-Firewall-Abfrage Zugriff im privaten
 Heimnetz zulassen. Der PC muss eingeschaltet bleiben. Beenden am PC mit Strg+C.
 Der Vorschau-Server ist für diesen lokalen Einsatz vorgesehen, nicht als öffentliches Hosting.
 
 Projekte liegen im Browserspeicher des jeweiligen Geräts und der verwendeten Adresse.
 Zum Übertragen am PC **JSON exportieren**, die Datei auf das iPad kopieren und dort **JSON importieren**.
-Es gibt noch keinen automatischen Geräteabgleich. JSON-Exporte dienen auch als unabhängige Sicherung.
+Alternativ steht seit 0.48.0 der optionale Projektdienst unter **Hausakte → Gemeinsame Projekte** bereit.
+Dieser muss auf dem Hausserver eingerichtet sein; der Vorschau-Server allein stellt ihn nicht bereit.
+JSON-Exporte dienen weiterhin als unabhängige Sicherung.
 Ein Kaltstart ohne Verbindung zum Server und eine installierbare Offline-App sind noch nicht umgesetzt.
 
 ## Ohne Tastatur arbeiten

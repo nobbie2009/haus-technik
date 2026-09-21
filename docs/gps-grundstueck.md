@@ -1,12 +1,12 @@
 # Grundstück per GPS aufnehmen
 
-Ab Version 0.35.0 unter **Grundstück → Per GPS erfassen**. Auf dem iPhone zuerst **Werkzeuge** öffnen.
+Ab Version 0.35.0 unter **Grundstück → Per GPS erfassen**. Auf dem iPhone das Menüband einblenden und bei Bedarf waagerecht zur Werkzeuggruppe verschieben.
 
 ## Vorbereitung
 
 - Home-Technik über eine vertrauenswürdige **HTTPS-Adresse** öffnen. Eine gewöhnliche HTTP-Adresse im Heimnetz reicht für die Standortfreigabe auf dem iPhone nicht aus.
 - Safari den Standortzugriff erlauben und auf dem Gerät die genaue Standortfreigabe aktivieren. Die tatsächliche Genauigkeit hängt von Gerät und Empfang ab.
-- Projekte liegen lokal im jeweiligen Browser. Für einen bereits vorhandenen Hausplan zuerst dessen JSON-Projektdatei auf dem iPhone importieren; anschließend die ergänzte Datei exportieren und auf dem anderen Gerät importieren. Es gibt keine automatische geräteübergreifende Synchronisierung.
+- Projekte liegen lokal im jeweiligen Browser. Für einen vorhandenen Hausplan dessen JSON-Datei auf dem iPhone importieren und später die ergänzte Datei zurückübertragen. Alternativ seit 0.48.0 **Hausakte → Gemeinsame Projekte** mit einem eingerichteten Projektdienst verwenden; Serveränderungen werden zur Übernahme angeboten und Konflikte nicht automatisch zusammengeführt.
 
 ## Referenz und Ausrichtung
 

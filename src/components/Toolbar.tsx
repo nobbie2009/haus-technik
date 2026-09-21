@@ -231,6 +231,9 @@ export function Toolbar() {
         <button className="subtle" aria-label="Tastaturhilfe" onClick={() => setHelp(true)}>
           <HelpCircle size={18} />
         </button>
+        <a href="./handbuch/index.html" target="_blank" rel="noopener" className="handbook-link">
+          Handbuch
+        </a>
         <input
           ref={fileInput}
           type="file"
@@ -271,6 +274,11 @@ export function Toolbar() {
       )}
       {help && (
         <Modal title="Schnell und präzise zeichnen" onClose={() => setHelp(false)}>
+          <p>
+            <a href="./handbuch/index.html" target="_blank" rel="noopener">
+              Ausführliches Handbuch mit Bildern, FAQ und Stichwortsuche öffnen
+            </a>
+          </p>
           <div className="help-grid">
             {[
               ["V / H", "Auswahl / Pan"],

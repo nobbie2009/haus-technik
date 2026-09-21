@@ -2,6 +2,15 @@
   width: min(1150px, 96vw);
   max-width: 96vw;
 }
+.handbook-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 10px;
+  color: #176451;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
 .construction-dialog {
   width: min(820px, 96vw);
 }

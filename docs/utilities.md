@@ -39,11 +39,11 @@ Bei unterschiedlichen Anschlusshöhen ist dies eine vereinfachte rechtwinklige H
 - Zum Duplizieren einer Leitung beide Anschlussobjekte mit auswählen. Raumvorlagen übernehmen Komponenten innerhalb des Raums und deren interne Leitungen.
 - Die Ebenen Wasser, Heizung und Gas lassen sich getrennt ausblenden oder sperren. Indirekte Geometrieänderungen an gesperrten Leitungen werden ebenfalls verhindert.
 - PDF und SVG enthalten die Rohrnetze im **Gesamtplan**; die Materialliste enthält Komponenten und Rohrlängen samt DN, Material und Dämmung.
-- Auf dem iPad erst **Werkzeuge** öffnen, den Bereich und das Werkzeug wählen, dann die Seitenleiste zum Zeichnen schließen. **Eigenschaften** öffnet die Bearbeitung.
+- Auf dem iPad im Menüband den Bereich und das Werkzeug wählen. Das Menüband kann anschließend eingeklappt werden. **Eigenschaften** öffnet die Bearbeitung.
 
 ## Modellgrenzen
 
 Dies ist eine Bestands- und Planungsdokumentation. Druck, Temperatur, Heizleistung und Ventilstellung sind gespeicherte Angaben, keine Simulationsergebnisse.
 Es gibt noch keine Berechnung von Durchfluss, Druckverlust, Wärmebedarf, hydraulischem Abgleich, Gasdimensionierung oder Normkonformität.
-Eine geschlossene Ventilstellung wird dargestellt, berechnet jedoch keine Versorgungsausfälle.
+Eine geschlossene Ventilstellung wird dargestellt. Die Dokumentationsanalyse unter **Verbindungen & Abschalten** berücksichtigt geschlossene Ventile und alternative Wege; dies ist keine hydraulische Simulation.
 Warmwasserzirkulation, Abwasser, Pumpenkennlinien und eine elektrische Kopplung von Wärmeerzeugern sind weitere Ausbaustufen.

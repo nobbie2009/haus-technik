@@ -1,0 +1,15 @@
+Home-Technik – bebildertes Handbuch
+
+1. Das ZIP-Paket vollständig entpacken.
+2. index.html im Browser öffnen.
+3. Den Ordner bilder neben index.html belassen.
+
+Inhaltsverzeichnis, FAQ, Stichwortverzeichnis und Suche funktionieren lokal.
+Für externe Quellenlinks wird eine Internetverbindung benötigt.
+Das Handbuch liest oder verändert keine Hausdaten.
+Die Hausplanungs-App selbst weiterhin an ihrer bisherigen Adresse öffnen.
+
+Die aktuelle Handbuchversion steht oben und im Footer. Bildschirmbilder zeigen
+Beispieldaten und sind mit ihrer Aufnahmeversion gekennzeichnet.
+
+Home-Technik · Copyright by nobbie2009
