@@ -21,6 +21,11 @@ export function NetworkPanel() {
     [cable, setCable] = useState("Cat 6A"),
     [label, setLabel] = useState("NET-01"),
     [allowance, setAllowance] = useState(0);
+  const [measurementName, setMeasurementName] = useState("Messpunkt"),
+    [sourceId, setSourceId] = useState(""),
+    [signalDbm, setSignalDbm] = useState(-60),
+    [measurementNotes, setMeasurementNotes] = useState("");
+  const wifiSources = book.networkNodes.filter((n) => ["router", "accessPoint", "repeater"].includes(n.kind));
   return (
     <section>
       <h3>Netzwerk und Portbelegung</h3>
@@ -122,6 +127,78 @@ export function NetworkPanel() {
                 updateBook("Netzwerkgerät samt Verbindungen löschen", (b) => {
                   b.networkNodes = b.networkNodes.filter((v) => v.id !== n.id);
                   b.networkLinks = b.networkLinks.filter((v) => v.from !== n.id && v.to !== n.id);
+                  b.wifiMeasurements = b.wifiMeasurements.filter((v) => v.sourceId !== n.id);
+                })
+              }
+            >
+              Löschen
+            </button>
+          </li>
+        ))}
+      </ul>
+      <h4>WLAN-Reichweite messen</h4>
+      <p>
+        Messpunkte an der letzten Planposition ablegen und dem sendenden Router, Access Point oder Repeater
+        zuordnen. Der Empfangswert wird in dBm gespeichert.
+      </p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateBook("WLAN-Messpunkt anlegen", (b) => {
+            b.wifiMeasurements.push({
+              id: newId(),
+              name: measurementName,
+              floorId: editor.floorId,
+              position: { ...editor.cursor },
+              sourceId,
+              signalDbm,
+              notes: measurementNotes,
+            });
+          });
+        }}
+      >
+        <div className="book-grid">
+          <Field label="Messpunktname">
+            <input required value={measurementName} onChange={(e) => setMeasurementName(e.target.value)} />
+          </Field>
+          <Field label="WLAN-Sender">
+            <select required value={sourceId} onChange={(e) => setSourceId(e.target.value)}>
+              <option value="">Wählen …</option>
+              {wifiSources.map((n) => (
+                <option key={n.id} value={n.id}>
+                  {n.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Signalstärke (dBm)">
+            <input
+              type="number"
+              min="-120"
+              max="0"
+              required
+              value={signalDbm}
+              onChange={(e) => setSignalDbm(Number(e.target.value))}
+            />
+          </Field>
+          <Field label="Notiz">
+            <input value={measurementNotes} onChange={(e) => setMeasurementNotes(e.target.value)} />
+          </Field>
+        </div>
+        <button disabled={!sourceId}>Messpunkt an letzter Planposition speichern</button>
+      </form>
+      <ul className="book-list">
+        {book.wifiMeasurements.map((m) => (
+          <li key={m.id}>
+            <span>
+              <strong>{m.name}</strong> ·{" "}
+              {book.networkNodes.find((n) => n.id === m.sourceId)?.name ?? "Sender gelöscht"} · {m.signalDbm}{" "}
+              dBm · {project.floors[m.floorId]?.name ?? "Etage gelöscht"}
+            </span>
+            <button
+              onClick={() =>
+                updateBook("WLAN-Messpunkt löschen", (b) => {
+                  b.wifiMeasurements = b.wifiMeasurements.filter((v) => v.id !== m.id);
                 })
               }
             >

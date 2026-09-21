@@ -76,6 +76,7 @@ export const projectSchema = z.strictObject({
     id,
     z.strictObject({
       ...opening,
+      type: z.enum(["hinged", "opening", "sliding"]).default("hinged"),
       openingDirection: z.strictObject({
         hinge: z.enum(["startSide", "endSide"]),
         swing: z.enum(["leftOfWall", "rightOfWall"]),

@@ -56,6 +56,21 @@ export function HousebookOverlay({
     y = (v: number) => viewport.originPx.y - v * viewport.scale;
   return (
     <>
+      {book.wifiMeasurements
+        .filter((m) => m.floorId === floorId)
+        .map((m) => {
+          const color = m.signalDbm >= -60 ? "#16835f" : m.signalDbm >= -75 ? "#b87916" : "#b33e35";
+          return (
+            <Text
+              key={m.id}
+              x={x(m.position.x)}
+              y={y(m.position.y)}
+              text={`WLAN ${m.name} · ${m.signalDbm} dBm`}
+              fontSize={12}
+              fill={color}
+            />
+          );
+        })}
       {book.networkLinks.map((link) => {
         const a = book.networkNodes.find((n) => n.id === link.from),
           b = book.networkNodes.find((n) => n.id === link.to);

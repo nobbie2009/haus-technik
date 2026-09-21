@@ -8,5 +8,7 @@ export const furnitureCatalog = [
   { type: "washingMachine", name: "Waschmaschine", width: 600, depth: 650, height: 850 },
   { type: "refrigerator", name: "Kühlschrank", width: 600, depth: 650, height: 1850 },
   { type: "serverRack", name: "Serverrack", width: 600, depth: 1000, height: 2000 },
+  { type: "straightStairs", name: "Gerade Treppe", width: 1000, depth: 4000, height: 2800 },
+  { type: "curvedStairs", name: "Treppe mit Kurve", width: 2200, depth: 2200, height: 2800 },
   { type: "custom", name: "Freies Objekt", width: 1000, depth: 1000, height: 1000 },
 ] as const;

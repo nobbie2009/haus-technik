@@ -190,6 +190,7 @@ describe("Öffnungen", () => {
       position: 1000,
       width: 900,
       height: 2100,
+      type: "hinged",
       openingDirection: { hinge: "startSide", swing: "leftOfWall" },
       metadata: {},
     };
@@ -206,7 +207,7 @@ describe("Öffnungen", () => {
   });
   it("beachtet Fensterbrüstung und Wandhöhe", () => {
     const { project, door } = fixture();
-    const { openingDirection: _openingDirection, ...base } = door;
+    const { openingDirection: _openingDirection, type: _type, ...base } = door;
     delete project.doors[door.id];
     project.windows[base.id] = { ...base, sillHeight: 1000, height: 1600 };
     expect(validateProject(project).success).toBe(false);

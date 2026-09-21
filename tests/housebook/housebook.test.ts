@@ -230,6 +230,17 @@ describe("Hausakte", () => {
       },
       c = { ...a, id: crypto.randomUUID(), name: "B" };
     b.networkNodes.push(a, c);
+    const router = { ...a, id: crypto.randomUUID(), name: "Router", kind: "router" as const };
+    b.networkNodes.push(router);
+    b.wifiMeasurements.push({
+      id: crypto.randomUUID(),
+      name: "Büro",
+      floorId,
+      position: { x: 1200, y: 800 },
+      sourceId: router.id,
+      signalDbm: -64,
+      notes: "Schreibtisch",
+    });
     b.networkLinks.push({
       id: crypto.randomUUID(),
       name: "LAN",
@@ -242,6 +253,7 @@ describe("Hausakte", () => {
     });
     setHousebook(p, b);
     parseProject(p);
+    expect(planSvg(p, floorId, 50, "all")).toContain("-64 dBm");
     b.networkLinks.push({ ...b.networkLinks[0]!, id: crypto.randomUUID() });
     setHousebook(p, b);
     expect(() => parseProject(p)).toThrow();

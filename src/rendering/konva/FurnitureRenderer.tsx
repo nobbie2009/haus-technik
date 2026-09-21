@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Group, Rect, Line, Text, Circle } from "react-konva";
+import { Group, Rect, Line, Text, Circle, Arc } from "react-konva";
 import type { Furniture } from "../../models/furniture";
 import type { Project } from "../../models/project";
 import type { Viewport } from "../../geometry/coordinates";
@@ -77,6 +77,66 @@ function FurnitureShape({
           />
         )}
         {item.type === "washingMachine" && <Circle radius={Math.min(w, h) * 0.32} stroke={stroke} />}
+        {item.type === "straightStairs" && (
+          <>
+            {Array.from({ length: 13 }, (_, index) => {
+              const y = -h / 2 + (index * h) / 12;
+              return <Line key={index} points={[-w / 2, y, w / 2, y]} stroke={stroke} strokeWidth={0.8} />;
+            })}
+            <Line
+              points={[0, h * 0.32, 0, -h * 0.3, -5, -h * 0.24, 0, -h * 0.3, 5, -h * 0.24]}
+              stroke={stroke}
+              strokeWidth={1.5}
+            />
+          </>
+        )}
+        {item.type === "curvedStairs" && (
+          <>
+            <Arc
+              x={-w / 2}
+              y={h / 2}
+              innerRadius={Math.min(w, h) * 0.32}
+              outerRadius={Math.min(w, h)}
+              angle={90}
+              rotation={270}
+              stroke={stroke}
+            />
+            {Array.from({ length: 13 }, (_, index) => {
+              const angle = -Math.PI / 2 + (index * Math.PI) / 24,
+                inner = Math.min(w, h) * 0.32,
+                outer = Math.min(w, h);
+              return (
+                <Line
+                  key={index}
+                  points={[
+                    -w / 2 + Math.cos(angle) * inner,
+                    h / 2 + Math.sin(angle) * inner,
+                    -w / 2 + Math.cos(angle) * outer,
+                    h / 2 + Math.sin(angle) * outer,
+                  ]}
+                  stroke={stroke}
+                  strokeWidth={0.8}
+                />
+              );
+            })}
+            <Line
+              points={[
+                -w * 0.28,
+                h * 0.28,
+                w * 0.18,
+                -h * 0.18,
+                w * 0.1,
+                -h * 0.16,
+                w * 0.18,
+                -h * 0.18,
+                w * 0.16,
+                -h * 0.1,
+              ]}
+              stroke={stroke}
+              strokeWidth={1.5}
+            />
+          </>
+        )}
         {selected && <Circle radius={3} fill={stroke} />}
       </Group>
       {w > 55 && h > 32 && (

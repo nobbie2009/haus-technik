@@ -71,7 +71,16 @@ export const bookSchema = z.strictObject({
         name,
         floorId: id,
         position: point,
-        kind: z.enum(["socket", "patchPanel", "switch", "router", "accessPoint", "repeater", "client"]),
+        kind: z.enum([
+          "socket",
+          "patchPanel",
+          "switch",
+          "router",
+          "accessPoint",
+          "repeater",
+          "server",
+          "client",
+        ]),
         details: z
           .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
           .optional(),
@@ -93,6 +102,20 @@ export const bookSchema = z.strictObject({
       }),
     )
     .max(2000),
+  wifiMeasurements: z
+    .array(
+      z.strictObject({
+        id,
+        name,
+        floorId: id,
+        position: point,
+        sourceId: id,
+        signalDbm: z.number().finite().min(-120).max(0),
+        notes: text,
+      }),
+    )
+    .max(2000)
+    .default([]),
   templates: z.array(z.strictObject({ id, name, project: z.string().max(8_000_000), roomId: id })).max(20),
 });
 export type Housebook = z.infer<typeof bookSchema>;
@@ -111,12 +134,21 @@ export const networkLabels = {
   router: "Router",
   accessPoint: "Access Point",
   repeater: "WLAN-Repeater",
+  server: "Server / NAS",
   client: "Netzwerkgerät / Client",
 };
 export function housebook(project: Project): Housebook {
   return project.metadata.housebook
     ? bookSchema.parse(project.metadata.housebook)
-    : { version: 1, backgrounds: {}, scenarios: [], networkNodes: [], networkLinks: [], templates: [] };
+    : {
+        version: 1,
+        backgrounds: {},
+        scenarios: [],
+        networkNodes: [],
+        networkLinks: [],
+        wifiMeasurements: [],
+        templates: [],
+      };
 }
 export function setHousebook(project: Project, book: Housebook) {
   project.metadata.housebook = bookSchema.parse(book) as unknown as JsonValue;

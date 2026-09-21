@@ -16,6 +16,15 @@ function fixture() {
 }
 
 describe("Möbelgeometrie und Modellaktionen", () => {
+  it.each([
+    ["straightStairs", "Gerade Treppe", 1000, 4000],
+    ["curvedStairs", "Treppe mit Kurve", 2200, 2200],
+  ])("platziert die Treppenvorlage %s mit Planmaßen", (type, name, width, depth) => {
+    const project = createProject();
+    const id = addFurniture(project, project.floorOrder[0]!, { x: 1500, y: 2000 }, type);
+    expect(project.furniture[id]).toMatchObject({ type, name, width, depth, height: 2800 });
+    expect(() => parseProject(project)).not.toThrow();
+  });
   it("rotiert um den Mittelpunkt und trifft auch schmale gedrehte Objekte exakt", () => {
     const { item } = fixture();
     item.rotation = Math.PI / 2;
