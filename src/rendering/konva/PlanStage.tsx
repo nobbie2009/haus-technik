@@ -1,4 +1,5 @@
 import { SiteRenderer } from "./SiteRenderer";
+import { WallDimensionEditor } from "../../components/WallDimensionEditor";
 import { NetworkRenderer } from "./NetworkRenderer";
 import { UtilityRenderer } from "./UtilityRenderer";
 import { CableRenderer } from "./CableRenderer";
@@ -139,6 +140,7 @@ export function PlanStage() {
           <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
         </Layer>
       </Stage>
+      <WallDimensionEditor />
       <SimulationPlanControls />
       <TouchDrawingControls />
       <div className="canvas-help">

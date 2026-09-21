@@ -99,6 +99,15 @@ GitHub-CI, Dependabot und Beitragsvorlagen sind vorbereitet: [GitHub-Anleitung](
 Einklappbare Seitenleisten, Hoch-/Querformat, Zwei-Finger-Zoom, Zeichenaktionen ohne Tastatur und WLAN-Start.
 Anleitung und Testgrenzen: [iPad](docs/ipad.md). Offene Schritte: [Roadmap](docs/roadmap.md).
 
+## Seit 0.42.0: Raummaße direkt ändern
+
+Seit **0.42.0** lassen sich im Bereich **Haus / Raum** bei aktivem Auswahlwerkzeug die angezeigten
+Wandachsmaße direkt anklicken oder antippen. Im Dialog die genaue Länge, beispielsweise `4,25 m`,
+eingeben und den festen Endpunkt wählen. **Maß übernehmen** verschiebt nur den anderen Endpunkt
+entlang der Wand; angeschlossene Wände folgen am gemeinsamen Punkt. Rückgängig stellt den vorherigen
+Zustand wieder her. Es handelt sich um Achsmaße, nicht um lichte Innenmaße. Frei platzierte Messlinien
+ohne Verbindung zu einer Wand ändern keine Raumgeometrie.
+
 ## Seit 0.41.0: Treppen zwischen Geschossen
 
 Seit **0.41.0** verbinden gerade und gebogene Treppen auch die Geschossansichten:

@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.42.0 · 21.09.2026
+
+- Angezeigte Wandachsmaße bestehender Räume im Auswahlmodus anklicken oder antippen und die genaue Länge direkt eingeben. Dezimalkomma und Einheiten mm, cm und m unterstützen; Anfangs- oder Endpunkt ausdrücklich festhalten und nur den anderen Punkt entlang der Wand verschieben.
+- Auch verbundene, ausgerichtete Wandbemaßungen bearbeiten. Eingabefokus und Tastaturbedienung, Touch-Treffflächen, Fehlermeldungen, Ebenensperren sowie Rückgängig berücksichtigen.
+
 ## 0.41.0 · 21.09.2026
 
 - Gerade und gebogene Treppen zusätzlich im nächsthöheren oder nächsttieferen Geschoss anzeigen. In den Treppeneigenschaften zwischen „Nach oben“, „Nach unten“ und „Nur auf dieser Etage“ wählen; vorhandene Treppen zeigen standardmäßig nach oben.

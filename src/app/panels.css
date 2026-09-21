@@ -359,6 +359,25 @@
 .cursor-pan {
   cursor: grab;
 }
+.editable-wall-dimension {
+  position: absolute;
+  width: 90px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  cursor: text;
+  touch-action: manipulation;
+}
+.editable-wall-dimension:hover,
+.editable-wall-dimension:focus-visible {
+  background: rgb(22 132 107 / 10%);
+  border-color: #16846b;
+  outline: 2px solid #16846b;
+  outline-offset: 1px;
+}
 .drawing-host:focus {
   outline: none;
 }

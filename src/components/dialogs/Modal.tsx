@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 import { X } from "lucide-react";
 
 function outsideDialog(dialog: HTMLDialogElement, x: number, y: number): boolean {
@@ -13,19 +13,22 @@ export function Modal({
   onClose,
   children,
   className = "",
+  initialFocusRef,
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
   className?: string;
+  initialFocusRef?: RefObject<HTMLElement | null>;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const startedOnBackdrop = useRef(false);
   useLayoutEffect(() => {
     const dialog = ref.current!;
     dialog.showModal();
+    initialFocusRef?.current?.focus();
     return () => dialog.close();
-  }, []);
+  }, [initialFocusRef]);
   return createPortal(
     <dialog
       ref={ref}
