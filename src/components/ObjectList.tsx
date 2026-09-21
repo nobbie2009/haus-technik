@@ -11,6 +11,7 @@ import { deviceAppearance } from "../rendering/deviceAppearance";
 import { cableOnFloor } from "../electrical/cables";
 
 const labels: Record<ObjectKind, string> = {
+  networkNodes: "Netzwerkgerät",
   utilityNodes: "Rohrnetz-Komponente",
   utilityPipes: "Rohrleitung",
   furniture: "M\u00f6bel",

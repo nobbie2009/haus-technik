@@ -1,3 +1,4 @@
+import { ensureNetworkLayer, type NetworkKind } from "../network/model";
 import type { Medium, UtilityKind } from "../utilities/model";
 import { create } from "zustand";
 import { categoryForTool } from "../editor/categories";
@@ -16,6 +17,7 @@ interface EditorState {
   cableStartId: UUID | null;
   connectionRequest: { startNodeId: string; endNodeId: string; cableId: string | null } | null;
   furnitureType: string;
+  networkKind: NetworkKind;
   electricalKind: import("../electrical/models").ElectricalKind;
   consumerEntryId: string | null;
   utilityMedium: Medium;
@@ -48,6 +50,8 @@ const emptyDraft = (): DrawingDraft => ({ points: [], cursor: null, input: "" })
 export const useEditorStore = create<EditorState>((set, get) => ({
   category: "building",
   setCategory(category) {
+    if (category === "network")
+      useProjectStore.getState().commit("Netzwerkebene bereitstellen", ensureNetworkLayer);
     set({
       category,
       consumerEntryId: null,
@@ -57,9 +61,11 @@ export const useEditorStore = create<EditorState>((set, get) => ({
           ? "select"
           : category === "furniture"
             ? "furniture"
-            : category === "utilities"
-              ? "select"
-              : "electrical",
+            : category === "network"
+              ? "network"
+              : category === "utilities"
+                ? "select"
+                : "electrical",
       draft: emptyDraft(),
       cableStartId: null,
       connectionRequest: null,
@@ -74,6 +80,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   utilityMedium: "cold",
   utilityKind: "source",
   furnitureType: "sofa",
+  networkKind: "router",
   electricalKind: "outlets",
   consumerEntryId: null,
   viewport: { scale: 0.07, originPx: { x: 120, y: 480 } },

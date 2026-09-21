@@ -1,3 +1,4 @@
+import { NetworkLibrary } from "./network/NetworkLibrary";
 import { UtilityLibrary } from "./utilities/UtilityLibrary";
 import {
   Armchair,
@@ -78,6 +79,7 @@ export function ToolPanel() {
               </button>
             ))}
         </nav>
+        {category === "network" && <NetworkLibrary />}
         {category === "utilities" && <UtilityLibrary />}
         {category === "furniture" && <FurnitureLibrary />}
         {category === "electrical" && <ElectricalLibrary />}

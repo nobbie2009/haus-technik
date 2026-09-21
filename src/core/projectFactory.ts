@@ -1,3 +1,4 @@
+import { ensureNetworkLayer } from "../network/model";
 import { newId } from "../utils/uuid";
 import { emptyElectrical } from "../electrical/models";
 import type { Floor } from "../models/floor";
@@ -44,7 +45,7 @@ export function createProject(name = "Mein Haus"): Project {
     kind: "electrical",
     name: "Elektrik",
   };
-  return parseProject({
+  const project = parseProject({
     id: newId(),
     schemaVersion: 10,
     electrical: emptyElectrical(),
@@ -71,4 +72,6 @@ export function createProject(name = "Mein Haus"): Project {
     createdAt: now,
     updatedAt: now,
   });
+  ensureNetworkLayer(project);
+  return project;
 }

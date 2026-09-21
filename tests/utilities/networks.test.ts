@@ -61,7 +61,7 @@ describe("Wasser, Heizung und Gas", () => {
     addUtilityPipe(p, boiler, b, "cold");
     addUtilityPipe(p, boiler, b, "hot");
     expect(new Set(Object.values(p.layers).map((l) => l.kind))).toEqual(
-      new Set(["floorPlan", "dimensions", "furniture", "electrical", "water", "heating", "gas"]),
+      new Set(["floorPlan", "dimensions", "furniture", "electrical", "network", "water", "heating", "gas"]),
     );
     expect(parseProject(JSON.parse(JSON.stringify(p)))).toEqual(p);
   });

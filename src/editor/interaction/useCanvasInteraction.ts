@@ -2,6 +2,7 @@ import { addUtilityNode } from "../../utilities/model";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
 import { confirmConnection } from "./connectionDrawing";
+import { addNetworkNode } from "../../network/model";
 import { addElectrical } from "../../electrical/actions";
 import { placeConsumer } from "../../electrical/placeConsumer";
 import { addFurniture } from "../../furniture/actions";
@@ -116,6 +117,17 @@ export function useCanvasInteraction() {
     }
     if (editor.tool === "cable") {
       confirmCable(updateCursor(world, event.shiftKey));
+      return;
+    }
+    if (editor.tool === "network") {
+      let id = "";
+      const position = updateCursor(world, false);
+      if (
+        useProjectStore.getState().commit("Netzwerkgerät platzieren", (draft) => {
+          id = addNetworkNode(draft, editor.floorId, position, editor.networkKind);
+        })
+      )
+        useEditorStore.setState({ selection: [{ kind: "networkNodes", id }], tool: "select" });
       return;
     }
     if (editor.tool === "electrical") {

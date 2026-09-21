@@ -11,7 +11,7 @@ describe("Projektmodell", () => {
     const project = createProject();
     expect(validateProject(project).success).toBe(true);
     expect(project.floorOrder).toHaveLength(1);
-    expect(project.layerOrder).toHaveLength(4);
+    expect(project.layerOrder).toHaveLength(5);
     expect(createProject().id).not.toBe(project.id);
   });
   it("übersteht einen JSON-Roundtrip inklusive Metadaten und Referenzen", () => {

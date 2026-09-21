@@ -1,3 +1,4 @@
+import { NetworkProperties } from "./network/NetworkProperties";
 import { UtilityProperties } from "./utilities/UtilityProperties";
 import { CableProperties } from "./electrical/CableProperties";
 import { useState } from "react";
@@ -17,6 +18,7 @@ import { DimensionProperties } from "./properties/DimensionProperties";
 import { SelectionActions } from "./properties/SelectionActions";
 
 const labels = {
+  networkNodes: "Netzwerkgerät",
   utilityNodes: "Rohrnetz-Komponente",
   utilityPipes: "Rohrleitung",
   furniture: "M\u00f6bel / Objekt",
@@ -73,6 +75,7 @@ export function PropertiesPanel() {
               {(selected.kind === "utilityNodes" || selected.kind === "utilityPipes") && (
                 <UtilityProperties id={selected.id} kind={selected.kind} />
               )}
+              {selected.kind === "networkNodes" && <NetworkProperties id={selected.id} />}
               {selected.kind === "cables" && <CableProperties id={selected.id} />}
               {selected.kind === "furniture" && <FurnitureProperties id={selected.id} />}
               {selected.kind === "walls" && <WallProperties id={selected.id} />}
@@ -84,7 +87,7 @@ export function PropertiesPanel() {
             </div>
           )}
           <SelectionActions locked={locked} />
-          {selected && entity && (
+          {selected && entity && selected.kind !== "networkNodes" && (
             <button onClick={() => setAssetOpen(true)}>Objektakte und Umbauzustand</button>
           )}
           {assetOpen && selected && entity && (
@@ -100,18 +103,22 @@ export function PropertiesPanel() {
                 ? "Raum für deine Ideen"
                 : category === "furniture"
                   ? "Möbel planen"
-                  : category === "utilities"
-                    ? "Rohrnetze planen"
-                    : "Elektrik planen"}
+                  : category === "network"
+                    ? "Netzwerk planen"
+                    : category === "utilities"
+                      ? "Rohrnetze planen"
+                      : "Elektrik planen"}
             </h2>
             <p>
               {category === "building"
                 ? "Zeichne deinen Grundriss oder wähle ein Objekt, um seine Maße präzise anzupassen."
                 : category === "furniture"
                   ? "Platziere eine Vorlage oder wähle ein Möbelstück, um Maße und Drehung anzupassen."
-                  : category === "utilities"
-                    ? "Wähle links ein Medium und eine Komponente. Verbinde passende Anschlüsse mit Rohrleitungen."
-                    : "Platziere Elektroobjekte, zeichne Leitungen oder wähle ein Objekt zum Bearbeiten."}
+                  : category === "network"
+                    ? "Wähle links Router, Switch oder ein anderes Netzwerkgerät und klicke auf seine Position im Plan."
+                    : category === "utilities"
+                      ? "Wähle links ein Medium und eine Komponente. Verbinde passende Anschlüsse mit Rohrleitungen."
+                      : "Platziere Elektroobjekte, zeichne Leitungen oder wähle ein Objekt zum Bearbeiten."}
             </p>
             {category !== "building" && (
               <p>Andere Bereiche bleiben sichtbar und können in diesem Tab nicht ausgewählt werden.</p>

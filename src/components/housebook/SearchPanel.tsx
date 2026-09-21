@@ -87,7 +87,9 @@ export function SearchPanel({
                 >
                   Im Plan: {r.title}
                 </button>
-                <button onClick={() => onAsset(r.target!)}>Objektakte: {r.title}</button>
+                {r.target.kind !== "networkNodes" && (
+                  <button onClick={() => onAsset(r.target!)}>Objektakte: {r.title}</button>
+                )}
               </>
             )}
             {r.section && <button onClick={() => onOpen(r.section!, r.id)}>Öffnen: {r.title}</button>}

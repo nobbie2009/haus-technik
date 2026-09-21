@@ -1,3 +1,5 @@
+import { deleteNetworkNodes } from "../../network/model";
+import { housebook, setHousebook } from "../../housebook/model";
 import { utilities, pipeFloorPath } from "../../utilities/model";
 import { newId } from "../../utils/uuid";
 import { cablePath } from "../../electrical/cables";
@@ -29,6 +31,13 @@ export function selectedPointIds(project: Project, selection: Selection[]): Set<
 
 export function moveSelection(project: Project, selection: Selection[], delta: Vec2): void {
   if (delta.x === 0 && delta.y === 0) return;
+  const networkIds = new Set(selection.filter((s) => s.kind === "networkNodes").map((s) => s.id));
+  if (networkIds.size) {
+    const book = housebook(project);
+    for (const node of book.networkNodes)
+      if (networkIds.has(node.id)) node.position = add(node.position, delta);
+    setHousebook(project, book);
+  }
   for (const selected of selection.filter((item) => item.kind === "cables")) {
     const cable = project.electrical.cables[selected.id]!;
     if (cable.riser) {
@@ -157,6 +166,7 @@ export function resizeRoom(project: Project, roomId: UUID, length: number, width
 
 /** Räume werden mit exklusiven Wänden gelöscht; gemeinsame Wände bleiben erhalten. */
 export function deleteSelection(project: Project, selection: Selection[]): void {
+  deleteNetworkNodes(project, new Set(selection.filter((s) => s.kind === "networkNodes").map((s) => s.id)));
   const wallIds = new Set(selection.filter((s) => s.kind === "walls").map((s) => s.id));
   const roomIds = new Set(selection.filter((s) => s.kind === "rooms").map((s) => s.id));
   for (const roomId of roomIds)
@@ -203,6 +213,19 @@ export function duplicateSelection(
   const pointMap = new Map<UUID, UUID>();
   const wallMap = new Map<UUID, UUID>();
   const output: Selection[] = [];
+  const book = housebook(project);
+  for (const selected of selection.filter((s) => s.kind === "networkNodes")) {
+    const original = book.networkNodes.find((n) => n.id === selected.id)!;
+    const id = newId();
+    book.networkNodes.push({
+      ...structuredClone(original),
+      id,
+      name: `${original.name} – Kopie`,
+      position: add(original.position, delta),
+    });
+    output.push({ kind: "networkNodes", id });
+  }
+  if (output.length) setHousebook(project, book);
   const net = utilities(project),
     utilityCopies = new Map<string, string>();
   for (const selected of selection.filter((s) => s.kind === "utilityNodes")) {

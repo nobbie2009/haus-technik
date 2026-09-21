@@ -1,3 +1,4 @@
+import { networkNodeTable } from "../../network/model";
 import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath, cableOnFloor } from "../../electrical/cables";
 import { layerInCategory } from "../categories";
@@ -23,6 +24,9 @@ export function hitTest(
     project.layers[item.layerId]?.visible &&
     (!category || layerInCategory(project.layers[item.layerId]!.kind, category));
   if (!onlyWalls) {
+    for (const node of Object.values(networkNodeTable(project)).reverse())
+      if (visible(node) && distance(node.position, point) * scale <= 20)
+        return { kind: "networkNodes", id: node.id };
     const net = utilities(project);
     for (const node of Object.values(net.nodes).reverse())
       if (visible(node) && (distance(node.position, point) * scale <= 16 || containsFurniture(node, point)))

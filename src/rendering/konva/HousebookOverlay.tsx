@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, Line, Text, Circle } from "react-konva";
+import { Image, Text, Circle } from "react-konva";
 import type { Project } from "../../models/project";
 import type { Viewport } from "../../geometry/coordinates";
 import { housebook, asset } from "../../housebook/model";
@@ -51,38 +51,10 @@ export function HousebookOverlay({
   floorId: string;
   viewport: Viewport;
 }) {
-  const book = housebook(project),
-    x = (v: number) => viewport.originPx.x + v * viewport.scale,
+  const x = (v: number) => viewport.originPx.x + v * viewport.scale,
     y = (v: number) => viewport.originPx.y - v * viewport.scale;
   return (
     <>
-      {book.wifiMeasurements
-        .filter((m) => m.floorId === floorId)
-        .map((m) => {
-          const color = m.signalDbm >= -60 ? "#16835f" : m.signalDbm >= -75 ? "#b87916" : "#b33e35";
-          return (
-            <Text
-              key={m.id}
-              x={x(m.position.x)}
-              y={y(m.position.y)}
-              text={`WLAN ${m.name} · ${m.signalDbm} dBm`}
-              fontSize={12}
-              fill={color}
-            />
-          );
-        })}
-      {book.networkLinks.map((link) => {
-        const a = book.networkNodes.find((n) => n.id === link.from),
-          b = book.networkNodes.find((n) => n.id === link.to);
-        return a?.floorId === floorId && b?.floorId === floorId ? (
-          <Line
-            key={link.id}
-            points={[x(a.position.x), y(a.position.y), x(b.position.x), y(b.position.y)]}
-            stroke="#7556a2"
-            dash={[5, 4]}
-          />
-        ) : null;
-      })}
       {homeBook(project)
         .items.filter((i) => i.floorId === floorId && i.position)
         .map((i) => (
@@ -94,18 +66,6 @@ export function HousebookOverlay({
             fontSize={12}
             fill="#21705f"
             listening={false}
-          />
-        ))}
-      {book.networkNodes
-        .filter((n) => n.floorId === floorId)
-        .map((n) => (
-          <Text
-            key={n.id}
-            x={x(n.position.x)}
-            y={y(n.position.y)}
-            text={`NET ${n.name}`}
-            fontSize={12}
-            fill="#7556a2"
           />
         ))}
       {Object.values(elementTables(project))

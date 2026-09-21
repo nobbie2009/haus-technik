@@ -1,3 +1,4 @@
+import { networkLayer } from "../network/model";
 import { utilities, media, pipeFloorPath, pipeLength, pipeCaptionPoint, nodeKinds } from "../utilities/model";
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
@@ -194,16 +195,20 @@ export function planPrimitives(
         text({ x: p.x + 140, y: p.y }, item.label || item.name, c, 110);
       }
     const book = housebook(project);
-    for (const measurement of book.wifiMeasurements.filter((m) => m.floorId === floorId))
+    for (const measurement of book.wifiMeasurements.filter(
+      (m) => m.floorId === floorId && networkLayer(project)?.visible !== false,
+    ))
       text(
         measurement.position,
         `WLAN ${measurement.name} · ${measurement.signalDbm} dBm`,
         measurement.signalDbm >= -60 ? "#16835f" : measurement.signalDbm >= -75 ? "#b87916" : "#b33e35",
         110,
       );
-    for (const node of book.networkNodes.filter((n) => n.floorId === floorId))
-      text(node.position, `NET ${node.name}`, "#7556a2", 120);
-    for (const link of book.networkLinks) {
+    for (const node of book.networkNodes.filter(
+      (n) => n.floorId === floorId && networkLayer(project)?.visible !== false,
+    ))
+      text(node.position, `${networkLabels[node.kind]}: ${node.name}`, "#7556a2", 120);
+    for (const link of networkLayer(project)?.visible === false ? [] : book.networkLinks) {
       const a = book.networkNodes.find((n) => n.id === link.from),
         b = book.networkNodes.find((n) => n.id === link.to);
       if (a?.floorId === floorId && b?.floorId === floorId) line([a.position, b.position], "#7556a2", 15);

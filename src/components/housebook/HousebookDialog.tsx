@@ -116,9 +116,9 @@ export function HousebookDialog({
       setBusy(false);
     }
   };
-  const targets = elementKinds.flatMap((kind) =>
-    Object.values(elementTables(project)[kind]).map((item) => ({ kind, item })),
-  );
+  const targets = elementKinds
+    .filter((kind) => kind !== "networkNodes")
+    .flatMap((kind) => Object.values(elementTables(project)[kind]).map((item) => ({ kind, item })));
   const jump = (target: Selection) => {
     if (focusObject(target)) onClose();
     else setMessage("Die Ebene ist ausgeblendet. Bitte zuerst im Editor einblenden.");
@@ -130,7 +130,7 @@ export function HousebookDialog({
       setMessage("Das Ziel dieses QR-Aufklebers wurde im Projekt nicht gefunden.");
       return;
     }
-    if (row.target) {
+    if (row.target && row.target.kind !== "networkNodes") {
       setSection("assets");
       setRecord(row.target);
     } else if (row.wallId) setPhoto({ wallId: row.wallId, photoId: row.photoId });

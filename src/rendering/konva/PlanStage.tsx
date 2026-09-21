@@ -1,3 +1,4 @@
+import { NetworkRenderer } from "./NetworkRenderer";
 import { UtilityRenderer } from "./UtilityRenderer";
 import { CableRenderer } from "./CableRenderer";
 import { TouchDrawingControls } from "../../components/TouchDrawingControls";
@@ -17,6 +18,7 @@ import { floorReference, orderedFloorIds } from "../../models/floor";
 import { Group } from "react-konva";
 
 const hints = {
+  network: "Gerät wählen und im Plan platzieren · danach ziehen oder rechts bearbeiten",
   utilityNode: "Komponente platzieren · Maße und Anschlüsse rechts bearbeiten",
   utilityPipe: "Startanschluss, Wegpunkte, Zielanschluss · Escape: abbrechen",
   connect: "Von einem Elektroobjekt zum anderen ziehen oder beide nacheinander anklicken. Escape: abbrechen.",
@@ -127,6 +129,7 @@ export function PlanStage() {
           <UtilityRenderer project={preview} />
           <SimulationOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
           <InteractionOverlay />
+          <NetworkRenderer project={preview} />
           <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
         </Layer>
       </Stage>

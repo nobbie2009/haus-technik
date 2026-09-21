@@ -6,6 +6,7 @@ import { useEditorStore } from "../stores/editorStore";
 import { focusElectrical } from "../editor/interaction/focusElectrical";
 import { utilities } from "../utilities/model";
 export function focusObject(target: Selection): boolean {
+  if (target.kind === "networkNodes") useEditorStore.getState().setCategory("network");
   const project = useProjectStore.getState().project,
     item = elementTables(project)[target.kind][target.id];
   if (!item || !project.layers[item.layerId]?.visible) return false;

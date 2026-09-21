@@ -816,3 +816,17 @@
 .cursor-utilityPipe {
   cursor: crosshair;
 }
+
+.layer-dot.network {
+  background: #7556a2;
+}
+.network-library {
+  padding: 12px;
+}
+.network-library button {
+  min-height: 44px;
+  margin-bottom: 8px;
+}
+.cursor-network {
+  cursor: crosshair;
+}

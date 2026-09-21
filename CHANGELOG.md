@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.32.0 · 21.09.2026
+
+- Neuer Planungsbereich „Netzwerk“ mit eigener sichtbarer und sperrbarer Ebene. Router, Switches, Netzwerkdosen, Patchpanel, Access Points, Repeater, Server/NAS und Clients direkt per Klick im Grundriss platzieren.
+- Netzwerkgeräte im Plan auswählen, verschieben, duplizieren und löschen; Name, Geräteart, Ports, Position und Netzwerkangaben rechts bearbeiten. Änderungen unterstützen Rückgängig/Wiederholen und lokale Speicherung.
+- Port-, Kabel- und WLAN-Verwaltung direkt aus dem Netzwerkbereich öffnen. Bestehende Hausakten-Geräte werden übernommen; Sichtbarkeit gilt auch für Planausgaben.
+
 ## 0.31.0 · 21.09.2026
 
 - Sicherungskasten um editierbare Vorlagen für LS B6–B32, dreipolige LS C16/C20/C32, FI, FI/LS sowie D01-, D02-, DII- und NH00-Schmelzsicherungen erweitert.

@@ -1,3 +1,5 @@
+import { networkLayer } from "../../network/model";
+import { housebook } from "../../housebook/model";
 import { utilities } from "../../utilities/model";
 import { syncMountings } from "../../housebook/mounting";
 import { electricalNodes } from "../../electrical/cables";
@@ -47,6 +49,16 @@ function geometrySignature(project: Project, entity: FloorElement): string {
 }
 
 function assertLocks(before: Project, after: Project): void {
+  if (networkLayer(before)?.locked) {
+    const previous = housebook(before),
+      next = housebook(after);
+    if (
+      (["networkNodes", "networkLinks", "wifiMeasurements"] as const).some(
+        (key) => JSON.stringify(previous[key]) !== JSON.stringify(next[key]),
+      )
+    )
+      throw new Error("Die Netzwerkebene ist gesperrt.");
+  }
   if (
     JSON.stringify(before.electrical.settings) !== JSON.stringify(after.electrical.settings) &&
     Object.values(before.layers).some((layer) => layer.kind === "electrical" && layer.locked)
@@ -71,18 +83,20 @@ function assertLocks(before: Project, after: Project): void {
         );
     }
   }
+  const beforeTables = elementTables(before),
+    afterTables = elementTables(after);
   for (const kind of elementKinds) {
-    for (const entity of Object.values(elementTables(before)[kind]))
+    for (const entity of Object.values(beforeTables[kind]))
       if (before.layers[entity.layerId]?.locked) {
-        const next = elementTables(after)[kind][entity.id];
+        const next = afterTables[kind][entity.id];
         if (!next || geometrySignature(before, entity) !== geometrySignature(after, next)) {
           throw new Error(
             "Die Änderung betrifft ein gesperrtes Objekt. Bitte zuerst die zugehörige Ebene entsperren.",
           );
         }
       }
-    for (const entity of Object.values(elementTables(after)[kind]))
-      if (!elementTables(before)[kind][entity.id] && before.layers[entity.layerId]?.locked) {
+    for (const entity of Object.values(afterTables[kind]))
+      if (!beforeTables[kind][entity.id] && before.layers[entity.layerId]?.locked) {
         throw new Error("Auf einer gesperrten Ebene können keine Objekte angelegt werden.");
       }
   }

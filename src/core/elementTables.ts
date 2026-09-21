@@ -1,9 +1,11 @@
+import { networkNodeTable } from "../network/model";
 import { utilities } from "../utilities/model";
 import type { Project } from "../models/project";
 
 /** Gemeinsamer Editorzugriff; Fachmodelle bleiben in ihren eigenen Modulen. */
 export function elementTables(project: Project) {
   return {
+    networkNodes: networkNodeTable(project),
     utilityNodes: utilities(project).nodes,
     utilityPipes: utilities(project).pipes,
     walls: project.walls,
@@ -25,6 +27,7 @@ export function elementTables(project: Project) {
   };
 }
 export const elementKinds = [
+  "networkNodes",
   "utilityNodes",
   "utilityPipes",
   "walls",

@@ -22,6 +22,7 @@ export type SearchResult = {
   position?: { x: number; y: number };
 };
 const labels: Record<Selection["kind"], string> = {
+  networkNodes: "Netzwerkgerät",
   utilityNodes: "Rohrkomponente",
   utilityPipes: "Rohrleitung",
   walls: "Wand",
@@ -47,7 +48,7 @@ export function searchEntries(p: Project): SearchResult[] {
   const rows: SearchResult[] = [],
     tables = elementTables(p),
     b = homeBook(p);
-  for (const kind of elementKinds)
+  for (const kind of elementKinds.filter((kind) => kind !== "networkNodes"))
     for (const i of Object.values(tables[kind]))
       rows.push({
         key: `${kind}:${i.id}`,
@@ -97,6 +98,7 @@ export function searchEntries(p: Project): SearchResult[] {
   for (const n of housebook(p).networkNodes)
     rows.push({
       key: `network:${n.id}`,
+      target: { kind: "networkNodes", id: n.id },
       title: n.name,
       category: networkLabels[n.kind],
       location: n.details?.location || p.floors[n.floorId]?.name || "",

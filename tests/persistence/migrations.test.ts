@@ -35,7 +35,7 @@ function version9Fixture() {
 function legacyFixture() {
   const { furniture: _furniture, electrical: _electrical, ...project } = rectangleFixture().project;
   for (const layer of Object.values(project.layers))
-    if (layer.kind === "furniture" || layer.kind === "electrical") {
+    if (layer.kind === "furniture" || layer.kind === "electrical" || layer.kind === "network") {
       delete project.layers[layer.id];
       project.layerOrder = project.layerOrder.filter((id) => id !== layer.id);
     }
@@ -45,6 +45,10 @@ function legacyFixture() {
 function version2Fixture() {
   const project = rectangleFixture().project;
   addFurniture(project, project.floorOrder[0]!, { x: 1000, y: 1000 }, "sofa");
+  for (const layer of Object.values(project.layers).filter((l) => l.kind === "network")) {
+    delete project.layers[layer.id];
+    project.layerOrder = project.layerOrder.filter((id) => id !== layer.id);
+  }
   const { electrical: _electrical, ...legacy } = project;
   const layer = Object.values(legacy.layers).find((item) => item.kind === "electrical")!;
   delete legacy.layers[layer.id];
