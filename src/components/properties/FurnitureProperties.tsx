@@ -11,6 +11,12 @@ export function FurnitureProperties({ id }: { id: string }) {
     });
   return (
     <>
+      {!locked && (
+        <p className="field-hint">
+          Im Auswahlmodus die Eck- oder Seitengriffe ziehen, um Breite und Tiefe zu ändern. Ziehen in der
+          Mitte verschiebt das Möbel.
+        </p>
+      )}
       <TextField
         label="Objektname"
         value={item.name}

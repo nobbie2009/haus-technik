@@ -43,6 +43,7 @@ interface EditorState {
   multiSelect: boolean;
   dragOffset: Vec2 | null;
   dragPointId: UUID | null;
+  dragResize: { id: string; handle: number; grid: number } | null;
   ready: boolean;
   message: string | null;
   setTool: (tool: Tool) => void;
@@ -79,6 +80,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       connectionRequest: null,
       snap: null,
       dragPointId: null,
+      dragResize: null,
       dragOffset: null,
     });
   },
@@ -111,6 +113,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   orthogonal: false,
   multiSelect: false,
   dragPointId: null,
+  dragResize: null,
   dragOffset: null,
   ready: false,
   message: null,
@@ -126,6 +129,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       connectionRequest: null,
       snap: null,
       dragPointId: null,
+      dragResize: null,
       dragOffset: null,
     });
   },
@@ -138,6 +142,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       connectionRequest: null,
       snap: null,
       dragPointId: null,
+      dragResize: null,
       dragOffset: null,
     });
   },
@@ -148,6 +153,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       connectionRequest: null,
       snap: null,
       dragPointId: null,
+      dragResize: null,
       dragOffset: null,
     });
   },

@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.39.0 · 21.09.2026
+
+- Einzelne Möbel im Auswahlmodus über acht Eck- und Seitengriffe direkt im Plan vergrößern und verkleinern. Gegenüberliegende Kanten festhalten, gedrehte Möbel entlang ihrer eigenen Achsen skalieren und aktuelle Breite/Tiefe an der Vorschau anzeigen.
+- Rasterfang für Maße, größere Touch-Treffbereiche, Ebenensperren und einen gemeinsamen Rückgängig-Schritt je Größenänderung unterstützen. Escape, abgebrochene Zeigergesten und Zwei-Finger-Navigation verwerfen die Vorschau.
+
 ## 0.38.1 · 21.09.2026
 
 - Popups beim Ziehen einer Textmarkierung über den Dialogrand offen halten. Schließen über den Hintergrund nur auslösen, wenn der Klick dort beginnt und endet; abgebrochene Zeigergesten verwerfen. Schließen-Schaltfläche und Escape bleiben unverändert bedienbar.

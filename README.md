@@ -186,6 +186,9 @@ zum passenden Tab. Speichern, Export und Undo/Redo gelten weiterhin für das ges
 7. **Möbel / Objekte** (M) wählen, eine Vorlage auswählen und den Mittelpunkt im Plan anklicken.
    Rechts lassen sich Maße und Drehung bearbeiten. „Freies Objekt“ dient als Vorlage für eigene Gegenstände.
    Das Möbelwerkzeug bleibt zum weiteren Platzieren aktiv. Escape oder V wechselt zur Auswahl.
+   Ein einzelnes ausgewähltes Möbel zeigt acht Größen-Griffe: Ecken ändern Breite und Tiefe, Seitengriffe
+   nur eine Abmessung. Die gegenüberliegende Kante bleibt fest, auch bei gedrehten Möbeln. Mit aktivem
+   Rasterfang rasten die Maße ein. Escape verwirft die Vorschau; Loslassen speichert einen Rückgängig-Schritt.
 8. **Elektrik** (E) wählen und zunächst einen **Verteiler** platzieren. Über **Stromkreise verwalten**
    einen Stromkreis und bei Bedarf ein Schutzgerät anlegen. Anschließend Steckdosen platzieren und zuordnen.
 9. **Verbraucher / Lampe** platzieren, Name und bekannte Typenschildwerte eingeben. Unter **Anschluss**

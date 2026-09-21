@@ -1,3 +1,4 @@
+import { furnitureHandle, resizeFurniture, resizeHandles } from "../../furniture/resize";
 import { addUtilityNode } from "../../utilities/model";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
@@ -23,7 +24,7 @@ import { moveSelection, movePoint } from "../actions/edit";
 import { createOpening, openingPosition } from "../actions/create";
 
 interface Gesture {
-  type: "pan" | "move" | "connect" | "point";
+  type: "pan" | "move" | "connect" | "point" | "resize";
   pointId?: string;
   screen: Vec2;
   world: Vec2;
@@ -70,7 +71,9 @@ export function useCanvasInteraction() {
   useEffect(() => {
     if (
       !editor.dragOffset &&
-      (gesture.current?.type === "move" || gesture.current?.type === "point") &&
+      (gesture.current?.type === "move" ||
+        gesture.current?.type === "point" ||
+        gesture.current?.type === "resize") &&
       gesture.current.moved
     )
       gesture.current = null;
@@ -78,10 +81,18 @@ export function useCanvasInteraction() {
   const preview = useMemo(() => {
     if (!editor.dragOffset) return project;
     const next = structuredClone(project);
-    if (editor.dragPointId) movePoint(next, editor.dragPointId, editor.dragOffset);
+    if (editor.dragResize)
+      resizeFurniture(
+        next,
+        editor.dragResize.id,
+        editor.dragResize.handle,
+        editor.dragOffset,
+        editor.dragResize.grid,
+      );
+    else if (editor.dragPointId) movePoint(next, editor.dragPointId, editor.dragOffset);
     else moveSelection(next, editor.selection, editor.dragOffset);
     return next;
-  }, [project, editor.selection, editor.dragOffset, editor.dragPointId]);
+  }, [project, editor.selection, editor.dragOffset, editor.dragPointId, editor.dragResize]);
   const pointer = (event: PointerEvent<HTMLDivElement>): Vec2 => {
     const rect = event.currentTarget.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -167,6 +178,38 @@ export function useCanvasInteraction() {
       return;
     }
     if (editor.tool === "select") {
+      const selected = editor.selection.length === 1 ? editor.selection[0] : null;
+      const item = selected?.kind === "furniture" ? project.furniture[selected.id] : null;
+      if (
+        item &&
+        editor.category === "furniture" &&
+        !event.shiftKey &&
+        !editor.multiSelect &&
+        item.floorId === editor.floorId &&
+        project.layers[item.layerId]?.visible &&
+        !project.layers[item.layerId]?.locked
+      ) {
+        const radius = (event.pointerType === "touch" ? 22 : 10) / editor.viewport.scale;
+        const nearest = resizeHandles
+          .map((_, handle) => {
+            const p = furnitureHandle(item, handle);
+            return { handle, distance: Math.hypot(p.x - world.x, p.y - world.y) };
+          })
+          .sort((a, b) => a.distance - b.distance)[0]!;
+        if (
+          nearest.distance <= radius &&
+          nearest.distance < Math.hypot(world.x - item.position.x, world.y - item.position.y)
+        ) {
+          useEditorStore.setState({
+            dragResize: { id: item.id, handle: nearest.handle, grid: editor.snapGrid ? editor.gridSize : 0 },
+            dragOffset: null,
+          });
+          event.currentTarget.setPointerCapture(event.pointerId);
+          gesture.current = { type: "resize", screen, world, selection: editor.selection, moved: false };
+          return;
+        }
+      }
+
       const pointHit =
         editor.category === "building" && !event.shiftKey && !editor.multiSelect
           ? hitWallPoint(
@@ -257,7 +300,7 @@ export function useCanvasInteraction() {
         navigating.current = true;
         pinch.current = { ...pair, viewport: useEditorStore.getState().viewport };
         gesture.current = null;
-        useEditorStore.setState({ dragPointId: null, dragOffset: null });
+        useEditorStore.setState({ dragPointId: null, dragResize: null, dragOffset: null });
       } else if (!navigating.current && (editor.tool === "select" || editor.tool === "pan"))
         performDown(event);
       return;
@@ -313,11 +356,15 @@ export function useCanvasInteraction() {
       gesture.current = null;
       return;
     }
-    if (active?.type === "move" || active?.type === "point") {
+    if (active?.type === "resize" && !current.dragResize) {
+      gesture.current = null;
+      return;
+    }
+    if (active?.type === "move" || active?.type === "point" || active?.type === "resize") {
       if (Math.hypot(screen.x - active.screen.x, screen.y - active.screen.y) < 3 && !active.moved) return;
       active.moved = true;
       const delta = subtract(world, active.world);
-      if (current.snapGrid) {
+      if (current.snapGrid && active.type !== "resize") {
         delta.x = Math.round(delta.x / current.gridSize) * current.gridSize;
         delta.y = Math.round(delta.y / current.gridSize) * current.gridSize;
       }
@@ -357,8 +404,16 @@ export function useCanvasInteraction() {
       useProjectStore
         .getState()
         .commit("Eckpunkt verschieben", (draft) => movePoint(draft, active.pointId!, offset));
+    if (active?.type === "resize" && active.moved && offset && current.dragResize) {
+      const resize = current.dragResize;
+      useProjectStore
+        .getState()
+        .commit("Möbelgröße ändern", (draft) =>
+          resizeFurniture(draft, resize.id, resize.handle, offset, resize.grid),
+        );
+    }
     gesture.current = null;
-    useEditorStore.setState({ dragPointId: null, dragOffset: null });
+    useEditorStore.setState({ dragPointId: null, dragResize: null, dragOffset: null });
   };
   const zoom = (factor: number) =>
     useEditorStore.setState({
@@ -376,7 +431,7 @@ export function useCanvasInteraction() {
     pinch.current = null;
     navigating.current = false;
     pen.current = null;
-    useEditorStore.setState({ dragPointId: null, dragOffset: null });
+    useEditorStore.setState({ dragPointId: null, dragResize: null, dragOffset: null });
   };
   return { host, project, editor, preview, down, move, up, cancel, zoom };
 }

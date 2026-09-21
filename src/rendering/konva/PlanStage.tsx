@@ -139,7 +139,11 @@ export function PlanStage() {
       </Stage>
       <SimulationPlanControls />
       <TouchDrawingControls />
-      <div className="canvas-help">{hints[editor.tool]}</div>
+      <div className="canvas-help">
+        {editor.tool === "select" && editor.category === "furniture"
+          ? "Möbel auswählen · Griffe ziehen: Größe ändern · Mitte ziehen: verschieben · Escape: abbrechen"
+          : hints[editor.tool]}
+      </div>
       <div className="canvas-controls">
         <button aria-label="Verkleinern" onClick={() => zoom(0.8)}>
           <Minus size={15} />

@@ -26,7 +26,7 @@ export function FurnitureLibrary() {
       <p>
         {preset.width} × {preset.depth} × {preset.height} mm
       </p>
-      <p>Auf den Mittelpunkt klicken. Maße, Name und Drehung anschließend rechts bearbeiten.</p>
+      <p>Platzieren, dann Auswahl (V): Größe an den Griffen ziehen. Name und Drehung rechts bearbeiten.</p>
     </div>
   );
 }

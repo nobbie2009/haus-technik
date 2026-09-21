@@ -1,3 +1,5 @@
+import { resizeHandles } from "../../furniture/resize";
+import { furnitureCorners } from "../../geometry/furniture";
 import { memo } from "react";
 import { Group, Rect, Line, Text, Circle, Arc } from "react-konva";
 import type { Furniture } from "../../models/furniture";
@@ -13,11 +15,13 @@ function FurnitureShape({
   viewport,
   selected,
   opacity = 1,
+  resizable = false,
 }: {
   item: Furniture;
   viewport: Viewport;
   selected: boolean;
   opacity?: number;
+  resizable?: boolean;
 }) {
   const p = worldToScreen(item.position, viewport);
   const w = item.width * viewport.scale,
@@ -138,6 +142,19 @@ function FurnitureShape({
           </>
         )}
         {selected && <Circle radius={3} fill={stroke} />}
+        {resizable &&
+          resizeHandles.map((handle, i) => (
+            <Rect
+              key={i}
+              x={(handle.x * w) / 2 - 5}
+              y={(-handle.y * h) / 2 - 5}
+              width={10}
+              height={10}
+              fill="white"
+              stroke="#087e68"
+              strokeWidth={2}
+            />
+          ))}
       </Group>
       {w > 55 && h > 32 && (
         <Text
@@ -150,6 +167,17 @@ function FurnitureShape({
           fill="#3c443e"
           ellipsis
           wrap="none"
+        />
+      )}
+      {resizable && (
+        <Text
+          x={p.x - 90}
+          y={Math.max(...furnitureCorners(item).map((corner) => worldToScreen(corner, viewport).y)) + 12}
+          width={180}
+          align="center"
+          text={`${Math.round(item.width)} × ${Math.round(item.depth)} mm`}
+          fontSize={12}
+          fill="#087e68"
         />
       )}
     </Group>
@@ -167,6 +195,7 @@ export const FurnitureRenderer = memo(function FurnitureRenderer({
   viewport: Viewport;
   selection: Selection[];
 }) {
+  const tool = useEditorStore((s) => s.tool);
   return (
     <>
       {Object.values(project.furniture)
@@ -178,6 +207,13 @@ export const FurnitureRenderer = memo(function FurnitureRenderer({
             viewport={viewport}
             selected={selection.some((s) => s.id === item.id)}
             opacity={project.layers[item.layerId]!.opacity}
+            resizable={
+              tool === "select" &&
+              selection.length === 1 &&
+              selection[0]?.kind === "furniture" &&
+              selection[0]?.id === item.id &&
+              !project.layers[item.layerId]?.locked
+            }
           />
         ))}
     </>

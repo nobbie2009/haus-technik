@@ -160,7 +160,7 @@ export function useKeyboard(): void {
       if (event.code === "Space") useEditorStore.setState({ spacePressed: false });
     };
     const blur = () => {
-      useEditorStore.setState({ spacePressed: false, dragOffset: null });
+      useEditorStore.setState({ spacePressed: false, dragOffset: null, dragResize: null });
     };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
