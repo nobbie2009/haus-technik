@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { useBackupLog, backupStatus } from "../../persistence/backupLog";
-import { homeBook, dueOverview, localDate } from "../../housebook/home";
+import { homeBook, meterKinds, dueOverview, localDate } from "../../housebook/home";
 import { life } from "../../housebook/life";
 import type { OpenSection } from "../../housebook/setup";
 export function HomeDashboard({ onOpen, issueCount }: { onOpen: OpenSection; issueCount: number }) {
@@ -56,7 +56,9 @@ export function HomeDashboard({ onOpen, issueCount }: { onOpen: OpenSection; iss
         const r = [...m.readings].sort((a, b) => b.date.localeCompare(a.date))[0];
         return (
           <article className="home-row" key={m.id}>
-            <strong>{m.name}</strong>
+            <strong>
+              {meterKinds[m.kind]} · {m.name}
+            </strong>
             <span>
               {r ? `${r.date}: ${r.value.toLocaleString("de-DE")} ${m.unit}` : "Erste Ablesung fehlt"}
             </span>

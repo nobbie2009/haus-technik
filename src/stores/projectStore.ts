@@ -1,3 +1,4 @@
+import { syncPlanMeters } from "../housebook/planMeters";
 import { create } from "zustand";
 import type { Project } from "../models/project";
 import type { ProjectMutation } from "../editor/types";
@@ -100,13 +101,15 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     });
   },
   replace(project, saved = false) {
+    const parsed = parseProject(project);
+    const migrated = syncPlanMeters(parsed);
     set({
-      project: parseProject(project),
+      project: parsed,
       past: [],
       future: [],
       error: null,
       saveError: null,
-      saveStatus: saved ? "saved" : "dirty",
+      saveStatus: saved && !migrated ? "saved" : "dirty",
     });
   },
 }));

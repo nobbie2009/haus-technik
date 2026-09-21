@@ -1,3 +1,4 @@
+import { syncPlanMeters } from "../../housebook/planMeters";
 import { networkLayer } from "../../network/model";
 import { housebook } from "../../housebook/model";
 import { utilities } from "../../utilities/model";
@@ -110,6 +111,7 @@ export function transact(before: Project, mutate: ProjectMutation): Project {
   syncMountings(before, draft);
   assignFurnitureRooms(draft);
   syncElectricalRelations(draft);
+  syncPlanMeters(draft, before);
   assertLocks(before, draft);
   if (JSON.stringify(before) === JSON.stringify(draft)) return before;
   draft.version = before.version + 1;

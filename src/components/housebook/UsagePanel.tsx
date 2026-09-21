@@ -1,10 +1,12 @@
+import { MeterTargetField } from "./MeterTargetField";
+import { planMeters, sameMeterTarget, compatibleMeterKind } from "../../housebook/planMeters";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { homeBook, meterKinds, consumption, localDate, type Meter, type Reading } from "../../housebook/home";
 import { newId } from "../../utils/uuid";
 import { download, csv } from "../../housebook/export";
 import { Field } from "./shared";
-import { TargetField, updateHome } from "./HomeShared";
+import { updateHome } from "./HomeShared";
 const freshMeter = (): Meter => ({
   id: newId(),
   name: "",
@@ -22,7 +24,7 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
   const p = useProjectStore((s) => s.project),
     b = homeBook(p);
   const [selected, setSelected] = useState(initialId ?? b.meters[0]?.id ?? ""),
-    [draft, setDraft] = useState<Meter>(freshMeter),
+    [draft, setDraft] = useState<Meter | null>(() => (b.meters.length ? null : freshMeter())),
     [reading, setReading] = useState<Reading>(freshReading),
     [from, setFrom] = useState(""),
     [to, setTo] = useState("");
@@ -32,12 +34,16 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
     total = valid.reduce((sum, i) => sum + i.value!, 0),
     days = valid.reduce((sum, i) => sum + i.days, 0),
     max = Math.max(1, ...valid.map((i) => i.value!));
+  const plans = planMeters(p),
+    linked = meter && plans.some((t) => sameMeterTarget(t.target, meter.target));
+  const draftLinked = draft && plans.some((t) => sameMeterTarget(t.target, draft.target));
   return (
     <section>
       <h3>Zählerstände & Verbräuche</h3>
       <p>
-        Eigene Ableseverläufe für Strom, Wasser, Gas, Wärme und Solarertrag. Preise dienen als Schätzung ohne
-        Grundgebühr; Gas wird nicht automatisch in kWh umgerechnet.
+        Platzierte Strom-, Wasser-, Gas- und Wärmezähler erscheinen hier automatisch. Zusätzliche Zähler
+        können auch ohne Planposition erfasst werden. Preise dienen als Schätzung ohne Grundgebühr; Gas wird
+        nicht automatisch in kWh umgerechnet.
       </p>
       <Field label="Zähler auswählen">
         <select
@@ -45,12 +51,13 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
           onChange={(e) => {
             setSelected(e.target.value);
             setReading(freshReading());
+            setDraft(null);
           }}
         >
           <option value="">Zähler wählen</option>
           {b.meters.map((m) => (
             <option key={m.id} value={m.id}>
-              {m.name} · {m.unit}
+              {meterKinds[m.kind]} · {m.name} · {m.unit} · {m.location || "Standort offen"}
             </option>
           ))}
         </select>
@@ -61,6 +68,10 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
           <>
             <button onClick={() => setDraft(structuredClone(meter))}>Zähler bearbeiten</button>
             <button
+              disabled={Boolean(linked)}
+              title={
+                linked ? "Zuerst den Zähler im Plan entfernen. Ablesungen bleiben dabei erhalten." : undefined
+              }
               onClick={() => {
                 if (
                   window.confirm(`Zähler „${meter.name}“ mit allen Ablesungen löschen?`) &&
@@ -69,7 +80,7 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
                   })
                 ) {
                   setSelected("");
-                  setDraft(freshMeter());
+                  setDraft(null);
                 }
               }}
             >
@@ -78,90 +89,120 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
           </>
         )}
       </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (
-            updateHome("Zähler speichern", (b) => {
-              const old = b.meters.find((m) => m.id === draft.id);
-              if (old) {
-                if (old.readings.length && old.unit !== draft.unit)
-                  throw new Error("Einheit bei vorhandenen Ablesungen nicht ändern.");
-                Object.assign(old, { ...draft, readings: old.readings });
-              } else b.meters.push(draft);
-            })
-          ) {
-            setSelected(draft.id);
-            setDraft(freshMeter());
-            setReading(freshReading());
-          }
-        }}
-      >
-        <h4>{b.meters.some((m) => m.id === draft.id) ? "Zählerdaten bearbeiten" : "Zähler anlegen"}</h4>
-        <div className="book-grid">
-          <Field label="Zählername">
-            <input
-              required
-              value={draft.name}
-              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+      {draft && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (
+              updateHome("Zähler speichern", (b) => {
+                if (draft.target) {
+                  const plan = plans.find((t) => sameMeterTarget(t.target, draft.target));
+                  if (!plan || !compatibleMeterKind(plan.kind, draft.kind))
+                    throw new Error(
+                      "Bitte einen passenden Planzähler wählen oder die Verknüpfung entfernen.",
+                    );
+                  if (b.meters.some((m) => m.id !== draft.id && sameMeterTarget(m.target, draft.target)))
+                    throw new Error(
+                      "Dieser Planzähler ist bereits erfasst. Bitte den vorhandenen Zähler bearbeiten.",
+                    );
+                }
+                const old = b.meters.find((m) => m.id === draft.id);
+                if (old) {
+                  if (old.readings.length && old.unit !== draft.unit)
+                    throw new Error("Einheit bei vorhandenen Ablesungen nicht ändern.");
+                  Object.assign(old, { ...draft, readings: old.readings });
+                } else b.meters.push(draft);
+              })
+            ) {
+              setSelected(draft.id);
+              setDraft(null);
+              setReading(freshReading());
+            }
+          }}
+        >
+          <h4>{b.meters.some((m) => m.id === draft.id) ? "Zählerdaten bearbeiten" : "Zähler anlegen"}</h4>
+          <div className="book-grid">
+            <Field label="Zählername">
+              <input
+                required
+                value={draft.name}
+                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              />
+            </Field>
+            <Field label="Zählerart">
+              <select
+                value={draft.kind}
+                disabled={Boolean(draftLinked) || draft.readings.length > 0}
+                onChange={(e) => {
+                  const kind = e.target.value as Meter["kind"];
+                  setDraft({
+                    ...draft,
+                    kind,
+                    target: null,
+                    unit: kind === "water" || kind === "gas" ? "m³" : "kWh",
+                  });
+                }}
+              >
+                {Object.entries(meterKinds).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Einheit">
+              <select
+                disabled={draft.readings.length > 0}
+                value={draft.unit}
+                onChange={(e) => setDraft({ ...draft, unit: e.target.value as Meter["unit"] })}
+              >
+                {["kWh", "m³", "l"].map((u) => (
+                  <option key={u}>{u}</option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Zählernummer">
+              <input value={draft.serial} onChange={(e) => setDraft({ ...draft, serial: e.target.value })} />
+            </Field>
+            <Field label="Zählerstandort">
+              <input
+                value={draft.location}
+                onChange={(e) => setDraft({ ...draft, location: e.target.value })}
+              />
+            </Field>
+            <Field label="Rechenpreis (€ je Einheit)">
+              <input
+                type="number"
+                step="any"
+                min="0"
+                value={draft.price ?? ""}
+                onChange={(e) =>
+                  setDraft({ ...draft, price: e.target.value === "" ? null : Number(e.target.value) })
+                }
+              />
+            </Field>
+            <MeterTargetField
+              meter={draft}
+              onChange={(target) => setDraft({ ...draft, target })}
+              onClose={onClose}
             />
-          </Field>
-          <Field label="Zählerart">
-            <select
-              value={draft.kind}
-              onChange={(e) => setDraft({ ...draft, kind: e.target.value as Meter["kind"] })}
-            >
-              {Object.entries(meterKinds).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Einheit">
-            <select
-              disabled={draft.readings.length > 0}
-              value={draft.unit}
-              onChange={(e) => setDraft({ ...draft, unit: e.target.value as Meter["unit"] })}
-            >
-              {["kWh", "m³", "l"].map((u) => (
-                <option key={u}>{u}</option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Zählernummer">
-            <input value={draft.serial} onChange={(e) => setDraft({ ...draft, serial: e.target.value })} />
-          </Field>
-          <Field label="Zählerstandort">
-            <input
-              value={draft.location}
-              onChange={(e) => setDraft({ ...draft, location: e.target.value })}
-            />
-          </Field>
-          <Field label="Rechenpreis (€ je Einheit)">
-            <input
-              type="number"
-              step="any"
-              min="0"
-              value={draft.price ?? ""}
-              onChange={(e) =>
-                setDraft({ ...draft, price: e.target.value === "" ? null : Number(e.target.value) })
-              }
-            />
-          </Field>
-          <TargetField
-            value={draft.target}
-            onChange={(target) => setDraft({ ...draft, target })}
-            onClose={onClose}
-          />
-        </div>
-        <div className="book-actions">
-          <button>Zähler speichern</button>
-        </div>
-      </form>
+          </div>
+          <div className="book-actions">
+            <button>Zähler speichern</button>
+          </div>
+        </form>
+      )}
+      {linked && (
+        <p className="field-hint">
+          Mit dem Plan verknüpft. Beim Entfernen des Planzählers bleiben Zählerdaten und Ablesungen in der
+          Hausakte erhalten.
+        </p>
+      )}
       {meter && (
         <>
-          <h4>{meter.name} · Ablesungen</h4>
+          <h4>
+            {meterKinds[meter.kind]} · {meter.name} · Ablesungen
+          </h4>
           <form
             onSubmit={(e) => {
               e.preventDefault();

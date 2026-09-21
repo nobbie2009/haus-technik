@@ -2,7 +2,7 @@ import type { Project } from "../models/project";
 import type { Selection } from "../editor/types";
 import { elementKinds, elementTables } from "../core/elementTables";
 import { asset, housebook, networkLabels } from "./model";
-import { homeBook, homeKinds } from "./home";
+import { homeBook, homeKinds, meterKinds } from "./home";
 import { solarPlants } from "./solar";
 import { wallPhotos } from "./wallPhotos";
 import type { GuideSection } from "./setup";
@@ -80,7 +80,7 @@ export function searchEntries(p: Project): SearchResult[] {
     rows.push({
       key: `meter:${m.id}`,
       title: m.name,
-      category: "Zähler / Verbrauch",
+      category: `${meterKinds[m.kind]} / Verbrauch`,
       location: m.location,
       description: [m.serial, m.unit, ...m.readings.map((r) => r.note)].filter(Boolean).join(" · "),
       section: "usage",

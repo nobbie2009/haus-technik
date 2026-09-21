@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.34.0 · 21.09.2026
+
+- Strom-, Wasser-, Gas- und Wärmezähler beim Platzieren im Plan automatisch in „Zähler & Verbrauch“ erfassen und verknüpfen. Bestehende Planzähler beim Laden nachtragen, vorhandene Verknüpfungen und Ablesungen erhalten.
+- Zählerauswahl mit Art, Name, Einheit und Standort beschriften. Planverknüpfungen auf passende, noch nicht zugeordnete Zähler begrenzen; Steckdosen und andere Komponenten nicht mehr anbieten.
+- Bei vorhandenen Zählern direkt die Ablesung anzeigen; zusätzliche Zähler ohne Planposition weiterhin manuell erfassen. Beim Entfernen eines Planzählers die Verbrauchshistorie erhalten, beim Duplizieren einen eigenen Verlauf beginnen.
+
 ## 0.33.0 · 21.09.2026
 
 - Neuer Planungsbereich „Grundstück“ mit Grundstücksgrenzen, Wegen mit einstellbarer Breite, Terrassen, Beeten und Referenzpunkten auf einer eigenen sichtbaren und sperrbaren Ebene.
