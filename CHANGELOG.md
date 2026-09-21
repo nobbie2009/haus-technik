@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.41.0 · 21.09.2026
+
+- Gerade und gebogene Treppen zusätzlich im nächsthöheren oder nächsttieferen Geschoss anzeigen. In den Treppeneigenschaften zwischen „Nach oben“, „Nach unten“ und „Nur auf dieser Etage“ wählen; vorhandene Treppen zeigen standardmäßig nach oben.
+- Geschosshöhen und Referenzpunktversatz berücksichtigen, Gegenrichtung und Zielgeschoss beschriften und die zusätzliche Ansicht in Planexport und „Alles anzeigen“ einbeziehen. Die Darstellung folgt dem Original ohne doppelte Möbel- oder Materialeinträge; Bearbeitung auf der Ursprungsetage.
+
 ## 0.40.0 · 21.09.2026
 
 - TV-/SAT-Geräte im Netzwerkbereich platzieren: SAT-Schüssel, LNB, Multischalter, terrestrische Antenne, Verstärker, Koax-Verteiler, Antennendose, Receiver und Fernseher. Modelle, Satellitenposition, LNB-Ausführung, Spiegelgröße und benannte Anschlüsse bearbeiten.

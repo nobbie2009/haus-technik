@@ -6,6 +6,7 @@ import { utilities, media, pipeFloorPath, pipeLength, pipeCaptionPoint, nodeKind
 import type { Project } from "../models/project";
 import type { Vec2 } from "../models/common";
 import { furnitureCorners } from "../geometry/furniture";
+import { furnitureOnFloor, stairLabel } from "../furniture/stairs";
 import { consumerShape } from "../electrical/consumerLibrary";
 import { cableFloorPath, cableLengths } from "../electrical/cables";
 import { electricalPlacementKinds } from "../electrical/models";
@@ -148,7 +149,7 @@ export function planPrimitives(
     );
   }
   if (mode !== "electrical")
-    for (const item of Object.values(project.furniture).filter(visible)) {
+    for (const item of furnitureOnFloor(project, floorId).filter((item) => visible({ ...item, floorId }))) {
       const corners = furnitureCorners(item);
       line([...corners, corners[0]!], colors[asset(item).status]);
       const local = (x: number, y: number) => ({
@@ -177,7 +178,7 @@ export function planPrimitives(
           );
         }
       }
-      text(item.position, item.name, colors[asset(item).status], 110);
+      text(item.position, stairLabel(project, item, floorId), colors[asset(item).status], 110);
     }
   for (const item of Object.values(project.dimensions).filter(visible)) {
     const g = dimensionGeometry(project, item);

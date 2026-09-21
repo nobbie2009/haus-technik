@@ -1,4 +1,5 @@
 import { resizeHandles } from "../../furniture/resize";
+import { furnitureOnFloor, stairLabel, isStair } from "../../furniture/stairs";
 import { furnitureCorners } from "../../geometry/furniture";
 import { memo } from "react";
 import { Group, Rect, Line, Text, Circle, Arc } from "react-konva";
@@ -158,15 +159,15 @@ function FurnitureShape({
       </Group>
       {w > 55 && h > 32 && (
         <Text
-          x={p.x - w / 2}
+          x={p.x - (isStair(item) ? Math.max(w, 240) : w) / 2}
           y={p.y + 4}
-          width={w}
+          width={isStair(item) ? Math.max(w, 240) : w}
           align="center"
           text={item.name}
           fontSize={11}
           fill="#3c443e"
           ellipsis
-          wrap="none"
+          wrap={isStair(item) ? "word" : "none"}
         />
       )}
       {resizable && (
@@ -198,17 +199,18 @@ export const FurnitureRenderer = memo(function FurnitureRenderer({
   const tool = useEditorStore((s) => s.tool);
   return (
     <>
-      {Object.values(project.furniture)
-        .filter((item) => item.floorId === floorId && project.layers[item.layerId]?.visible)
+      {furnitureOnFloor(project, floorId)
+        .filter((item) => project.layers[item.layerId]?.visible)
         .map((item) => (
           <FurnitureShape
             key={item.id}
-            item={item}
+            item={{ ...item, name: stairLabel(project, item, floorId) }}
             viewport={viewport}
-            selected={selection.some((s) => s.id === item.id)}
-            opacity={project.layers[item.layerId]!.opacity}
+            selected={item.floorId === floorId && selection.some((s) => s.id === item.id)}
+            opacity={project.layers[item.layerId]!.opacity * (item.floorId === floorId ? 1 : 0.65)}
             resizable={
               tool === "select" &&
+              item.floorId === floorId &&
               selection.length === 1 &&
               selection[0]?.kind === "furniture" &&
               selection[0]?.id === item.id &&

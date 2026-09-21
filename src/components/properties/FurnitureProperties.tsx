@@ -1,4 +1,5 @@
 import { TextField } from "../Fields";
+import { isStair, stairDirection, stairTarget } from "../../furniture/stairs";
 import { usePropertyFields } from "./usePropertyFields";
 
 export function FurnitureProperties({ id }: { id: string }) {
@@ -27,6 +28,34 @@ export function FurnitureProperties({ id }: { id: string }) {
           })
         }
       />
+      {isStair(item) && (
+        <>
+          <label>
+            Treppenrichtung
+            <select
+              aria-label="Treppenrichtung"
+              disabled={locked}
+              value={stairDirection(item)}
+              onChange={(event) =>
+                change((draft) => {
+                  draft.furniture[id]!.metadata.stairDirection = event.target.value;
+                })
+              }
+            >
+              <option value="up">Nach oben</option>
+              <option value="down">Nach unten</option>
+              <option value="none">Nur auf dieser Etage</option>
+            </select>
+          </label>
+          <p className="field-hint">
+            {stairDirection(item) === "none"
+              ? "Keine Darstellung auf einer weiteren Etage."
+              : stairTarget(project, item)
+                ? `Auch sichtbar in: ${stairTarget(project, item)!.name}. Bearbeitung auf dieser Ursprungsetage.`
+                : "In dieser Richtung fehlt eine Etage. Sobald sie angelegt ist, wird die Treppe dort ebenfalls angezeigt."}
+          </p>
+        </>
+      )}
       <TextField
         label="Objekttyp"
         value={item.type}

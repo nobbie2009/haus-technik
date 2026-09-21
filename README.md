@@ -99,6 +99,15 @@ GitHub-CI, Dependabot und Beitragsvorlagen sind vorbereitet: [GitHub-Anleitung](
 Einklappbare Seitenleisten, Hoch-/Querformat, Zwei-Finger-Zoom, Zeichenaktionen ohne Tastatur und WLAN-Start.
 Anleitung und Testgrenzen: [iPad](docs/ipad.md). Offene Schritte: [Roadmap](docs/roadmap.md).
 
+## Seit 0.41.0: Treppen zwischen Geschossen
+
+Seit **0.41.0** verbinden gerade und gebogene Treppen auch die Geschossansichten:
+Treppe auf ihrer Ursprungsetage auswählen und unter **Treppenrichtung** „Nach oben“, „Nach unten“
+oder „Nur auf dieser Etage“ wählen. Das nächste Geschoss wird anhand seiner Höhe bestimmt.
+Die zusätzliche Darstellung berücksichtigt die Geschossreferenzpunkte und folgt Änderungen am Original.
+Bearbeitet wird die Treppe auf der Ursprungsetage. Bestehende Treppen verwenden standardmäßig „Nach oben“;
+fehlt das Nachbargeschoss, erscheint ein Hinweis in den Eigenschaften.
+
 ## Seit 0.40.0: TV und SAT
 
 SAT-Schüssel, LNB, Multischalter, Antennendosen und weitere TV-Geräte im Netzwerkbereich platzieren,

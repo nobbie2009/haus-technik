@@ -4,6 +4,7 @@ import { cableFloorPath } from "../../electrical/cables";
 import { housebook } from "../../housebook/model";
 import { homeBook } from "../../housebook/home";
 import { furnitureCorners } from "../../geometry/furniture";
+import { furnitureOnFloor } from "../../furniture/stairs";
 import { consumerShape } from "../../electrical/consumerLibrary";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -78,8 +79,8 @@ export function fitView(): void {
       .map((i) => i.position!),
   );
   positions.push(
-    ...Object.values(project.furniture)
-      .filter((item) => item.floorId === editor.floorId)
+    ...furnitureOnFloor(project, editor.floorId)
+      .filter((item) => project.layers[item.layerId]?.visible)
       .flatMap(furnitureCorners),
   );
   positions.push(
