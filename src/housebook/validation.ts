@@ -1,4 +1,5 @@
 import { isTvKind } from "../network/tv";
+import { solarPlacementSchema } from "../electrical/solarPlan";
 import type { Project } from "../models/project";
 import { elementTables } from "../core/elementTables";
 import { assetSchema, bookSchema } from "./model";
@@ -10,6 +11,17 @@ import { solarSchema } from "./solar";
 import { lifeSchema } from "./life";
 export function housebookIssues(project: Project): { path: string; message: string }[] {
   const issues: { path: string; message: string }[] = [...homeIssues(project)];
+  for (const device of Object.values(project.electrical.devices)) {
+    if (device.metadata.solarPlacement === undefined) continue;
+    if (
+      !solarPlacementSchema.safeParse(device.metadata.solarPlacement).success ||
+      !consumerShapeSchema.safeParse(device.metadata.consumerShape).success
+    )
+      issues.push({
+        path: `${device.id}.solarPlacement`,
+        message: "Solarobjekt benötigt gültige Anlagenzuordnung und Planmaße.",
+      });
+  }
   for (const [key, schema] of [
     ["setupGuide", setupSchema],
     ["solarPlants", solarSchema],

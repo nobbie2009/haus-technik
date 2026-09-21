@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.46.0 · 21.09.2026
+
+- Balkonkraftwerk, einzelne Solarmodule, Wechselrichter und Batteriespeicher im Elektrik-Menüband auswählen und maßstäblich im Plan platzieren. Abmessungen und Drehung bearbeiten; Solarsymbole auch in Planexport und Materialliste berücksichtigen.
+- Planobjekte mit der Solarakte verbinden: vorhandene Anlagen und Module verwenden oder beim Platzieren eine neue Anlage anlegen. Leistung und Speicherkapazität zentral bearbeiten, die zugehörige Akte direkt öffnen und auch aus der Akte heraus platzieren. Ebenensperren, Rückgängig und lokale Speicherung berücksichtigen.
+
 ## 0.45.0 · 21.09.2026
 
 - Geschosse und Ebenen als feste Ribbon-Gruppen neben den Zeichenwerkzeugen und Vorlagen anzeigen. Die bisherigen zusätzlichen aufklappbaren Listen entfallen; die Schaltflächen oben springen zur jeweiligen Gruppe im horizontalen Menüband.

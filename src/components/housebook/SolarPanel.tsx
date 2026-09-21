@@ -1,3 +1,5 @@
+import { useEditorStore } from "../../stores/editorStore";
+import { solarKinds, type SolarKind } from "../../electrical/solarPlan";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { assetSchema, type Asset } from "../../housebook/model";
@@ -74,7 +76,7 @@ export function SolarPanel({
     power = modulePower(draft),
     intervals = meter?.kind === "solar" && meter.unit === "kWh" ? consumption(meter) : [],
     known = intervals.filter((i) => i.value !== null);
-  const save = (createMeter = false) => {
+  const save = (createMeter = false, afterSave?: () => void) => {
     let id = draft.meterId;
     const ok = useProjectStore.getState().commit("Balkonkraftwerk speichern", (p) => {
       const rows = solarPlants(p),
@@ -87,12 +89,34 @@ export function SolarPanel({
     if (ok) {
       setDraft(solarPlants(useProjectStore.getState().project).find((s) => s.id === draft.id)!);
       setSaved(true);
+      afterSave?.();
     }
     return ok ? id : null;
   };
   return (
     <section>
       <h3>Balkonkraftwerk</h3>
+      <div className="book-actions">
+        {Object.entries(solarKinds).map(([kind, preset]) => (
+          <button
+            key={kind}
+            disabled={busy}
+            onClick={() =>
+              save(false, () => {
+                useEditorStore.getState().setCategory("electrical");
+                useEditorStore.getState().setTool("electrical");
+                useEditorStore.setState({
+                  electricalKind: "devices",
+                  solarPlacement: { plantId: draft.id, kind: kind as SolarKind },
+                });
+                onClose();
+              })
+            }
+          >
+            Im Plan platzieren: {preset.name}
+          </button>
+        ))}
+      </div>
       <p>
         Module, Wechselrichter, optionalen Speicher, Anschluss und Unterlagen dokumentieren. Ertragsablesungen
         werden in der bestehenden Zähleransicht geführt.

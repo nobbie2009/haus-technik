@@ -1,4 +1,5 @@
 import { isTvKind, portName } from "../network/tv";
+import { solarPlacement, solarKinds, solarPlanDetails } from "../electrical/solarPlan";
 import { networkCableLength } from "../network/cables";
 import { site, siteClosed, siteSegments } from "../site/model";
 import { networkLayer } from "../network/model";
@@ -230,8 +231,13 @@ export function planPrimitives(
           c,
           20,
         );
-        text({ x: p.x - r / 2, y: p.y - 30 }, symbols[kind], c, 100);
-        text({ x: p.x + 140, y: p.y }, item.label || item.name, c, 110);
+        text(
+          { x: p.x - r / 2, y: p.y - 30 },
+          solarPlacement(item) ? solarKinds[solarPlacement(item)!.kind].symbol : symbols[kind],
+          c,
+          100,
+        );
+        text({ x: p.x + 140, y: p.y }, solarPlacement(item) ? item.name : item.label || item.name, c, 110);
       }
     const book = housebook(project);
     for (const measurement of book.wifiMeasurements.filter(
@@ -361,16 +367,18 @@ export function materialRows(project: Project): string[][] {
       const shape = kind === "devices" ? consumerShape(item) : null;
       const device = kind === "devices" ? project.electrical.devices[item.id] : null;
       rows.push([
-        kind,
+        solarPlacement(item) ? "Solar" : kind,
         item.label,
         item.name,
         project.floors[item.floorId]!.name,
         statusLabels[asset(item).status],
         "1",
         "Stück",
-        shape && device
-          ? `${shape.width} × ${shape.depth} × ${shape.height} mm; ${device.ratedVoltage ?? "?"} V; ${device.ratedPower ?? "?"} W; ${shape.annualEnergyKWh ?? "?"} kWh/Jahr; SN: ${asset(item).serial}`
-          : "",
+        solarPlacement(item)
+          ? solarPlanDetails(project, item)
+          : shape && device
+            ? `${shape.width} × ${shape.depth} × ${shape.height} mm; ${device.ratedVoltage ?? "?"} V; ${device.ratedPower ?? "?"} W; ${shape.annualEnergyKWh ?? "?"} kWh/Jahr; SN: ${asset(item).serial}`
+            : "",
       ]);
     }
   for (const cable of Object.values(project.electrical.cables))

@@ -1,4 +1,5 @@
 import { Circle, Group, Line, Rect, Text } from "react-konva";
+import { solarPlacement, solarKinds } from "../../electrical/solarPlan";
 import type { Project } from "../../models/project";
 import type { ElectricalKind } from "../../electrical/models";
 import type { Selection } from "../../editor/types";
@@ -100,6 +101,7 @@ export function ElectricalRenderer({
           .map((item) => {
             const p = worldToScreen(item.position, viewport);
             const shape = kind === "devices" ? consumerShape(item) : null;
+            const solar = solarPlacement(item);
             return (
               <Group key={item.id} x={p.x} y={p.y} opacity={project.layers[item.layerId]!.opacity}>
                 {shape && (
@@ -109,12 +111,47 @@ export function ElectricalRenderer({
                       y={(-shape.depth * viewport.scale) / 2}
                       width={shape.width * viewport.scale}
                       height={shape.depth * viewport.scale}
-                      fill="#fff7ee"
+                      fill={solar ? "#dae9ee" : "#fff7ee"}
                       stroke={selection.some((s) => s.id === item.id) ? "#087e68" : "#9b4b18"}
                     />
+                    {solar &&
+                      (solar.kind === "module" || solar.kind === "plant") &&
+                      [0.25, 0.5, 0.75].map((part) => (
+                        <Group key={part}>
+                          <Line
+                            points={[
+                              (-shape.width * viewport.scale) / 2,
+                              (part - 0.5) * shape.depth * viewport.scale,
+                              (shape.width * viewport.scale) / 2,
+                              (part - 0.5) * shape.depth * viewport.scale,
+                            ]}
+                            stroke="#427689"
+                          />
+                          <Line
+                            points={[
+                              (part - 0.5) * shape.width * viewport.scale,
+                              (-shape.depth * viewport.scale) / 2,
+                              (part - 0.5) * shape.width * viewport.scale,
+                              (shape.depth * viewport.scale) / 2,
+                            ]}
+                            stroke="#427689"
+                          />
+                        </Group>
+                      ))}
                   </Group>
                 )}
-                {kind === "devices" ? (
+                {solar ? (
+                  <Text
+                    text={solarKinds[solar.kind].symbol}
+                    x={-16}
+                    y={-7}
+                    width={32}
+                    align="center"
+                    fontStyle="bold"
+                    fill="#245c70"
+                    fontSize={13}
+                  />
+                ) : kind === "devices" ? (
                   <>
                     <DeviceSymbol
                       appearance={deviceAppearance(
@@ -140,9 +177,11 @@ export function ElectricalRenderer({
 export function ElectricalPreview() {
   const editor = useEditorStore();
   const project = useProjectStore((s) => s.project);
-  const entry = editor.consumerEntryId
-    ? consumerLibrary(project).find((e) => e.id === editor.consumerEntryId)
-    : null;
+  const entry = editor.solarPlacement
+    ? { ...solarKinds[editor.solarPlacement.kind], rotation: 0 }
+    : editor.consumerEntryId
+      ? consumerLibrary(project).find((e) => e.id === editor.consumerEntryId)
+      : null;
   if (editor.tool !== "electrical" || !editor.draft.cursor) return null;
   const p = worldToScreen(editor.draft.cursor, editor.viewport);
   return (
@@ -159,7 +198,18 @@ export function ElectricalPreview() {
           />
         </Group>
       )}
-      <ElectricalSymbol kind={editor.electricalKind} selected={false} />
+      {editor.solarPlacement ? (
+        <Text
+          text={solarKinds[editor.solarPlacement.kind].symbol}
+          x={-15}
+          y={-7}
+          width={30}
+          align="center"
+          fill="#245c70"
+        />
+      ) : (
+        <ElectricalSymbol kind={editor.electricalKind} selected={false} />
+      )}
     </Group>
   );
 }

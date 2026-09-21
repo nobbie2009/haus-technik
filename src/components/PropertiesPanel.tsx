@@ -1,4 +1,5 @@
 import { PlanMeterRecord } from "./housebook/PlanMeterRecord";
+import { solarPlacement } from "../electrical/solarPlan";
 import { SiteProperties } from "./site/SiteProperties";
 import { NetworkProperties } from "./network/NetworkProperties";
 import { UtilityProperties } from "./utilities/UtilityProperties";
@@ -49,6 +50,7 @@ export function PropertiesPanel() {
   const category = useEditorStore((s) => s.category);
   const selected = selection.length === 1 ? selection[0] : null;
   const entity = selected ? elementTables(project)[selected.kind][selected.id] : null;
+  const isSolar = selected?.kind === "devices" && entity && solarPlacement(entity);
   const locked = selection.some((item) => {
     const object = elementTables(project)[item.kind][item.id];
     return object && project.layers[object.layerId]?.locked;
@@ -59,7 +61,7 @@ export function PropertiesPanel() {
       {entity || selection.length > 1 ? (
         <>
           <h2 className="properties-title">
-            {selected ? labels[selected.kind] : `${selection.length} Objekte`}
+            {isSolar ? "Solarobjekt" : selected ? labels[selected.kind] : `${selection.length} Objekte`}
           </h2>
           {locked && <p className="locked-note">Ebene gesperrt</p>}
           {selected && entity && (

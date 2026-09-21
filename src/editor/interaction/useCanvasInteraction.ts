@@ -1,3 +1,4 @@
+import { placeSolar, solarPlacement } from "../../electrical/solarPlan";
 import { furnitureHandle, resizeFurniture, resizeHandles } from "../../furniture/resize";
 import { addUtilityNode } from "../../utilities/model";
 import { confirmPipe } from "../../utilities/drawing";
@@ -164,12 +165,31 @@ export function useCanvasInteraction() {
       const position = updateCursor(world, false);
       if (
         useProjectStore.getState().commit("Elektroobjekt platzieren", (draft) => {
-          id = editor.consumerEntryId
-            ? placeConsumer(draft, editor.floorId, position, editor.consumerEntryId)
-            : addElectrical(draft, editor.floorId, position, editor.electricalKind);
+          id = editor.solarPlacement
+            ? placeSolar(
+                draft,
+                editor.floorId,
+                position,
+                editor.solarPlacement.kind,
+                editor.solarPlacement.plantId,
+              )
+            : editor.consumerEntryId
+              ? placeConsumer(draft, editor.floorId, position, editor.consumerEntryId)
+              : addElectrical(draft, editor.floorId, position, editor.electricalKind);
         })
       )
-        useEditorStore.setState({ selection: [{ kind: editor.electricalKind, id }] });
+        useEditorStore.setState({
+          selection: [{ kind: editor.electricalKind, id }],
+          ...(editor.solarPlacement
+            ? {
+                solarPlacement: {
+                  ...editor.solarPlacement,
+                  plantId: solarPlacement(useProjectStore.getState().project.electrical.devices[id]!)!
+                    .plantId,
+                },
+              }
+            : {}),
+        });
       return;
     }
     if (editor.tool === "furniture") {

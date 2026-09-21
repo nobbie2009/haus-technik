@@ -1,3 +1,4 @@
+import { SolarLibrary } from "./SolarLibrary";
 import { useState } from "react";
 import { ConsumerLibraryDialog } from "./ConsumerLibraryDialog";
 import { ElectricalSettingsDialog } from "./ElectricalSettingsDialog";
@@ -39,6 +40,7 @@ export function ElectricalLibrary() {
         <option value="supplies">Stromeinspeisepunkt</option>
         <option value="meters">Stromzähler</option>
       </SelectField>
+      <SolarLibrary />
       <p>
         {tool === "connect"
           ? "Objekte verbinden: ziehen oder zwei Klicks. Danach Kontakte im Dialog wählen."

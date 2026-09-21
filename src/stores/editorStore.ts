@@ -24,6 +24,7 @@ interface EditorState {
   networkCableId: string | null;
   electricalKind: import("../electrical/models").ElectricalKind;
   consumerEntryId: string | null;
+  solarPlacement: { kind: import("../electrical/solarPlan").SolarKind; plantId: string | null } | null;
   utilityMedium: Medium;
   utilityKind: UtilityKind;
   viewport: Viewport;
@@ -63,6 +64,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set({
       category,
       consumerEntryId: null,
+      solarPlacement: null,
       selection: [],
       tool:
         category === "site"
@@ -99,6 +101,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   networkKind: "router",
   electricalKind: "outlets",
   consumerEntryId: null,
+  solarPlacement: null,
   viewport: { scale: 0.07, originPx: { x: 120, y: 480 } },
   size: { width: 800, height: 600 },
   selection: [],
@@ -125,6 +128,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set({
       tool,
       consumerEntryId: null,
+      solarPlacement: null,
       category,
       selection: category === get().category ? get().selection : [],
       draft: emptyDraft(),

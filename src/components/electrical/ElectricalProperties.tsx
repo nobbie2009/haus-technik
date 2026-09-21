@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { solarPlacement } from "../../electrical/solarPlan";
+import { SolarDeviceFields } from "./SolarDeviceFields";
 import type { ElectricalKind, ElectricalLabelMode } from "../../electrical/models";
 import { usePropertyFields } from "../properties/usePropertyFields";
 import { TextField } from "../Fields";
@@ -21,7 +23,9 @@ export function ElectricalProperties({ id, kind }: { id: string; kind: Electrica
   const [managedCircuit, setManagedCircuit] = useState<string | null>(null);
   return (
     <>
-      {(kind === "outlets" || kind === "devices") && <SupplySummary data={objectSupply(project, kind, id)} />}
+      {(kind === "outlets" || (kind === "devices" && !solarPlacement(item))) && (
+        <SupplySummary data={objectSupply(project, kind, id)} />
+      )}
       <TextField
         label="Elektro-Name"
         value={item.name}
@@ -158,7 +162,8 @@ export function ElectricalProperties({ id, kind }: { id: string; kind: Electrica
           </p>
         </>
       )}
-      {kind === "devices" && <DeviceFields id={id} />}
+      {kind === "devices" &&
+        (solarPlacement(item) ? <SolarDeviceFields id={id} /> : <DeviceFields id={id} />)}
       {kind === "switches" && <SwitchFields id={id} />}
       {kind === "controls" && <ControlFields id={id} />}
       {kind === "transformers" && <TransformerFields id={id} />}
