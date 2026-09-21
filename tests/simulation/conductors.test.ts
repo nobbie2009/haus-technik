@@ -138,4 +138,33 @@ describe("Expliziter Leitergraph", () => {
       status: "running",
     });
   });
+  it.each([6, 9, 12, 24])("führt den %s-V-Abgriff mit gemeinsamem Rückleiter", (voltage) => {
+    const { project, source, device, connect } = fixture();
+    project.electrical.cables = {};
+    const tx = addElectrical(project, project.floorOrder[0]!, { x: 1000, y: 1000 }, "transformers");
+    Object.assign(project.electrical.transformers[tx]!, {
+      secondaryVoltage: 6,
+      secondaryVoltages: [6, 9, 12, 24],
+    });
+    Object.assign(project.electrical.devices[device]!, { transformerId: tx, ratedVoltage: voltage });
+    connect(source, tx, [
+      ["L", "PRI_L"],
+      ["N", "PRI_N"],
+    ]);
+    connect(tx, device, [
+      [`SEC_${voltage}V`, "X1"],
+      ["SEC_0", "X2"],
+    ]);
+    expect(solveConductors(project, emptyScenario()).devices[0]).toMatchObject({
+      voltage,
+      status: "running",
+    });
+    const disabled = emptyScenario();
+    disabled.disabledNodeIds = [tx];
+    expect(solveConductors(project, disabled).devices[0]!.status).toBe("unpowered");
+    connect(tx, device, [[`SEC_${voltage === 6 ? 9 : 6}V`, "X1"]]);
+    const shorted = solveConductors(project, emptyScenario());
+    expect(shorted.issues.length).toBeGreaterThan(0);
+    expect(shorted.devices[0]!.status).toBe("unpowered");
+  });
 });

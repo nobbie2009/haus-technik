@@ -1,6 +1,30 @@
 import { newId } from "../utils/uuid";
 import type { Project } from "../models/project";
 import type { ProtectionDevice } from "./models";
+import { addElectrical } from "./actions";
+
+export function addBoardTransformer(project: Project, boardId: string): string {
+  const board = project.electrical.distributionBoards[boardId];
+  if (!board) throw new Error("Sicherungskasten fehlt.");
+  if (project.layers[board.layerId]?.locked) throw new Error("Ebene ist gesperrt.");
+  const count = Object.values(project.electrical.transformers).filter(
+    (t) => t.distributionBoardId === boardId,
+  ).length;
+  const id = addElectrical(
+    project,
+    board.floorId,
+    { x: board.position.x + 250, y: board.position.y + count * 250 },
+    "transformers",
+  );
+  Object.assign(project.electrical.transformers[id]!, {
+    distributionBoardId: boardId,
+    layerId: board.layerId,
+    secondaryVoltage: 6,
+    secondaryVoltages: [6, 9, 12, 24],
+    ratedVA: 24,
+  });
+  return id;
+}
 
 export function addProtectionDevice(
   project: Project,

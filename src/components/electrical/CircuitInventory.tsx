@@ -1,3 +1,4 @@
+import { transformerOutputLabel } from "../../electrical/transformers";
 import { circuitMembers } from "../../electrical/selectors";
 import { cableLengths } from "../../electrical/cables";
 import type { ElectricalTarget } from "../../editor/interaction/focusElectrical";
@@ -18,7 +19,7 @@ export function CircuitInventory({ id, onShow }: { id: string; onShow: (target: 
       item,
       kind: "transformers" as const,
       type: "Transformator",
-      detail: `${item.primaryVoltage} / ${item.secondaryVoltage} V · ${item.ratedVA} VA`,
+      detail: `${item.primaryVoltage} / ${transformerOutputLabel(item)} · ${item.ratedVA} VA`,
     })),
     ...members.switches.map((item) => ({
       item,

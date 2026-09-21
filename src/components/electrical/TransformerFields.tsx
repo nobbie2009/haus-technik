@@ -1,3 +1,4 @@
+import { transformerOutputLabel, transformerOutputs } from "../../electrical/transformers";
 import { usePropertyFields } from "../properties/usePropertyFields";
 import { NumberField, SelectField } from "./ElectricalFields";
 import { circuitOptionLabel } from "../../electrical/supply";
@@ -10,6 +11,43 @@ export function TransformerFields({ id }: { id: string }) {
   return (
     <>
       <SelectField
+        label="Trafo im Sicherungskasten"
+        value={item.distributionBoardId ?? ""}
+        disabled={locked}
+        onChange={(value) =>
+          change((draft) => {
+            draft.electrical.transformers[id]!.distributionBoardId = value || null;
+          })
+        }
+      >
+        <option value="">Separat im Plan</option>
+        {Object.values(project.electrical.distributionBoards)
+          .filter(
+            (b) =>
+              !item.circuitId || project.electrical.circuits[item.circuitId]?.distributionBoardId === b.id,
+          )
+          .map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.label} · {b.name}
+            </option>
+          ))}
+      </SelectField>
+      <p>Ausgänge: {transformerOutputLabel(item)}</p>
+      {!item.secondaryVoltages && (
+        <button
+          disabled={locked}
+          onClick={() =>
+            change((draft) => {
+              const t = draft.electrical.transformers[id]!;
+              t.secondaryVoltages = [6, 9, 12, 24];
+              t.secondaryVoltage = 6;
+            })
+          }
+        >
+          Ausgänge 6 / 9 / 12 / 24 V verwenden
+        </button>
+      )}
+      <SelectField
         label="Trafo-Primärstromkreis"
         value={item.circuitId ?? ""}
         disabled={locked || Object.values(project.electrical.devices).some((d) => d.transformerId === id)}
@@ -20,11 +58,13 @@ export function TransformerFields({ id }: { id: string }) {
         }
       >
         <option value="">Nicht zugeordnet</option>
-        {Object.values(project.electrical.circuits).map((c) => (
-          <option key={c.id} value={c.id}>
-            {circuitOptionLabel(project, c.id)}
-          </option>
-        ))}
+        {Object.values(project.electrical.circuits)
+          .filter((c) => !item.distributionBoardId || c.distributionBoardId === item.distributionBoardId)
+          .map((c) => (
+            <option key={c.id} value={c.id}>
+              {circuitOptionLabel(project, c.id)}
+            </option>
+          ))}
       </SelectField>
       {(
         [
@@ -32,34 +72,44 @@ export function TransformerFields({ id }: { id: string }) {
           ["secondaryVoltage", "Sekundär-Nennspannung (V)"],
           ["ratedVA", "Nennscheinleistung (VA)"],
         ] as const
-      ).map(([key, label]) => (
-        <NumberField
-          key={key}
-          label={label}
-          value={item[key]}
-          disabled={locked}
-          onCommit={(value) =>
-            change((draft) => {
-              if (value === null || value <= 0) throw new Error("Positiven Typenschildwert eingeben.");
-              draft.electrical.transformers[id]![key] = value;
-            })
-          }
-        />
-      ))}
-      <p>
-        Sekundär-Nennstrom:{" "}
-        {(item.ratedVA / item.secondaryVoltage).toLocaleString("de-DE", { maximumFractionDigits: 3 })} A
+      )
+        .filter(([key]) => key !== "secondaryVoltage" || !item.secondaryVoltages)
+        .map(([key, label]) => (
+          <NumberField
+            key={key}
+            label={label}
+            value={item[key]}
+            disabled={locked}
+            onCommit={(value) =>
+              change((draft) => {
+                if (value === null || value <= 0) throw new Error("Positiven Typenschildwert eingeben.");
+                draft.electrical.transformers[id]![key] = value;
+              })
+            }
+          />
+        ))}
+      <p className="field-hint">
+        Nennstrom bei alleiniger Nutzung eines Ausgangs:{" "}
+        {transformerOutputs(item)
+          .map((v) => `${v} V: ${(item.ratedVA / v).toLocaleString("de-DE", { maximumFractionDigits: 3 })} A`)
+          .join(" · ")}
       </p>
       <p className="field-hint">
-        Am Verbraucher unter „Transformator“ zuordnen. Beispiel Klingel: 230 V → 8 V. Berechnung als idealer
-        Wechselspannungstrafo ohne Verluste, Spannungsregelung oder automatische Abschaltung bei Überlast.
+        Am Verbraucher „Transformator“ und „Trafoausgang“ wählen. Die Nennscheinleistung gilt gemeinsam für
+        alle Ausgänge. Berechnung als idealer Wechselspannungstrafo ohne Verluste, Spannungsregelung oder
+        automatische Abschaltung bei Überlast. Vorlagenwerte für Primärspannung und VA am Typenschild
+        abgleichen.
       </p>
       {result && (
         <p role="status">
           Sekundärlast:{" "}
-          {result.maxCurrent === null
-            ? "unvollständig"
-            : `${result.maxCurrent.toLocaleString("de-DE", { maximumFractionDigits: 3 })} A`}{" "}
+          {item.secondaryVoltages
+            ? result.utilization === null
+              ? "unvollständig"
+              : `${result.utilization.toLocaleString("de-DE", { maximumFractionDigits: 1 })} % der gemeinsamen VA-Leistung`
+            : result.maxCurrent === null
+              ? "unvollständig"
+              : `${result.maxCurrent.toLocaleString("de-DE", { maximumFractionDigits: 3 })} A`}{" "}
           · {result.overload ? "ÜBERLAST" : "keine bekannte Überlast"}
         </p>
       )}

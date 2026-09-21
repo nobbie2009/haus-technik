@@ -20,6 +20,7 @@ export interface Outlet extends ElectricalPlacement {
 export interface ElectricalDevice extends ElectricalPlacement {
   controlId: UUID | null;
   transformerId: UUID | null;
+  transformerVoltage?: number | null | undefined;
   /** Einfacher Lichtschalter für einphasigen Festanschluss, sonst null. */
   switchId: UUID | null;
   type: string;
@@ -57,6 +58,8 @@ export interface SwitchingControl extends ElectricalPlacement {
   inverted: boolean;
 }
 export interface Transformer extends ElectricalPlacement {
+  distributionBoardId?: UUID | null | undefined;
+  secondaryVoltages?: number[] | undefined;
   circuitId: UUID | null;
   primaryVoltage: number;
   secondaryVoltage: number;

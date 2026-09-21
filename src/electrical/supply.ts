@@ -1,3 +1,4 @@
+import { transformerVoltage } from "./transformers";
 import type { Project } from "../models/project";
 import type { ProtectionDevice } from "./models";
 import { deviceCircuitId } from "./selectors";
@@ -128,9 +129,10 @@ export function objectSupply(project: Project, kind: "outlets" | "devices", id: 
   const device = kind === "devices" ? project.electrical.devices[id] : null;
   const transformer = device?.transformerId ? project.electrical.transformers[device.transformerId] : null;
   if (transformer) {
-    result.voltage = (result.voltage * transformer.secondaryVoltage) / transformer.primaryVoltage;
+    result.voltage =
+      (result.voltage * transformerVoltage(transformer, device ?? undefined)) / transformer.primaryVoltage;
     result.voltageOrigin = `${transformer.label} · idealer Trafo`;
-    result.planningCurrentLimit = transformer.ratedVA / transformer.secondaryVoltage;
+    result.planningCurrentLimit = transformer.ratedVA / transformerVoltage(transformer, device ?? undefined);
     result.routeLabels.push(transformer.label);
   }
   if (item.ratedVoltage !== null && item.ratedVoltage !== result.voltage)

@@ -195,6 +195,8 @@ export const electricalSchema = version9ElectricalSchema.extend({
       ...placement,
       circuitId: id.nullable(),
       primaryVoltage: finite.positive(),
+      distributionBoardId: id.nullable().optional(),
+      secondaryVoltages: z.array(finite.positive()).min(1).max(12).optional(),
       secondaryVoltage: finite.positive(),
       ratedVA: finite.positive(),
     }),
@@ -204,6 +206,7 @@ export const electricalSchema = version9ElectricalSchema.extend({
     version9ElectricalSchema.shape.devices.valueType.extend({
       controlId: id.nullable(),
       transformerId: id.nullable(),
+      transformerVoltage: finite.positive().nullable().optional(),
     }),
   ),
   cables: z.record(

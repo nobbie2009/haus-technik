@@ -1,3 +1,4 @@
+import { transformerOutputLabel } from "../../electrical/transformers";
 import { Group, Rect, Text } from "react-konva";
 import type { Project } from "../../models/project";
 import type { Viewport } from "../../geometry/coordinates";
@@ -46,7 +47,7 @@ export function SimulationOverlay({
                 ? value.overload
                   ? "Trafo: ÜBERLAST"
                   : value.availablePhases.length
-                    ? `${transformer.secondaryVoltage} V nominal · ${value.incompleteCount ? "Last unvollständig" : "versorgt"}`
+                    ? `${transformerOutputLabel(transformer)} nominal · ${value.incompleteCount ? "Last unvollständig" : "versorgt"}`
                     : "Trafo ohne Versorgung"
                 : lightSwitch
                   ? !(switchStates[item.id] ?? lightSwitch.closed)

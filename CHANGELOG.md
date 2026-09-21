@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.31.0 · 21.09.2026
+
+- Sicherungskasten um editierbare Vorlagen für LS B6–B32, dreipolige LS C16/C20/C32, FI, FI/LS sowie D01-, D02-, DII- und NH00-Schmelzsicherungen erweitert.
+- Klingeltrafo direkt im Sicherungskasten anlegen und dessen Primärstromkreis zuordnen. Mehrere Ausgänge mit 6, 9, 12 und 24 V lassen sich je Verbraucher auswählen.
+- Anschlussplan und Leitersimulation unterstützen getrennte Spannungsabgriffe mit gemeinsamem 0-V-Rückleiter. Die Lastsimulation berücksichtigt die gemeinsame VA-Leistung aller Trafoausgänge.
+- Sicherungskasten-Aushang zeigt Trafoausgänge und offene Primärzuordnungen. Bestehende Einzelausgangstrafos bleiben kompatibel.
+
 ## 0.30.0 · 21.09.2026
 
 - Gerade Treppen und Treppen mit Kurve stehen als maßhaltige, drehbare Grundrissobjekte zur Verfügung.

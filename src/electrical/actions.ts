@@ -201,6 +201,7 @@ export function deleteCircuit(project: Project, id: string): void {
       device.switchId = null;
       device.controlId = null;
       device.transformerId = null;
+      device.transformerVoltage = null;
     }
   for (const cable of Object.values(project.electrical.cables))
     if (cable.connectionAssignment === "switch" && !cable.circuitId) cable.connectionAssignment = "none";
@@ -222,6 +223,12 @@ export function detachDeletedElectricalReferences(project: Project): void {
     if (meter.supplyId && !project.electrical.supplies[meter.supplyId]) meter.supplyId = null;
   for (const board of Object.values(project.electrical.distributionBoards))
     if (board.supplyId && !project.electrical.supplies[board.supplyId]) board.supplyId = null;
+  for (const transformer of Object.values(project.electrical.transformers))
+    if (
+      transformer.distributionBoardId &&
+      !project.electrical.distributionBoards[transformer.distributionBoardId]
+    )
+      transformer.distributionBoardId = null;
   const nodes = electricalNodes(project);
   for (const cable of Object.values(project.electrical.cables))
     if (!nodes[cable.startNodeId] || !nodes[cable.endNodeId]) delete project.electrical.cables[cable.id];
@@ -239,6 +246,7 @@ export function detachDeletedElectricalReferences(project: Project): void {
     ) {
       device.controlId = null;
       device.transformerId = null;
+      device.transformerVoltage = null;
       device.circuitId = null;
       device.switchId = null;
     }

@@ -48,8 +48,19 @@ export function contactsFor(project: Project, id: string): Contact[] {
     return [
       { id: "PRI_L", label: "Primär L", role: "line" },
       { id: "PRI_N", label: "Primär N", role: "neutral" },
-      { id: "SEC_1", label: "Sekundär 1", role: "secondary" },
-      { id: "SEC_2", label: "Sekundär 2", role: "secondary" },
+      ...(project.electrical.transformers[id]!.secondaryVoltages
+        ? [
+            { id: "SEC_0", label: "Sekundär 0 V", role: "secondary" as const },
+            ...project.electrical.transformers[id]!.secondaryVoltages!.map((v): Contact => ({
+              id: `SEC_${v}V`,
+              label: `Sekundär ${v} V`,
+              role: "secondary",
+            })),
+          ]
+        : [
+            { id: "SEC_1", label: "Sekundär 1", role: "secondary" as const },
+            { id: "SEC_2", label: "Sekundär 2", role: "secondary" as const },
+          ]),
     ];
   if (project.electrical.controls[id]?.mode === "impulseRelay")
     return [

@@ -1,3 +1,4 @@
+import { transformerVoltage } from "../electrical/transformers";
 import type { Project } from "../models/project";
 import { buildSupplyGraph } from "./graph";
 import { calculateLoad } from "./load";
@@ -16,6 +17,7 @@ const currents = () => ({ L1: 0, L2: 0, L3: 0 });
 export function simulate(project: Project, scenario: SimulationScenario): SimulationResult {
   const graph = buildSupplyGraph(project);
   const result: SimulationResult = { graph, nodes: {}, devices: {}, issues: [] };
+  const transformerVA: Record<string, number> = {};
   const disabled = new Set(scenario.disabledNodeIds);
   const children: Record<string, string[]> = {};
   const feeds: Record<string, Feed> = {};
@@ -100,7 +102,7 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
       : null;
     const voltage =
       transformer && primaryVoltage !== null
-        ? (primaryVoltage * transformer.secondaryVoltage) / transformer.primaryVoltage
+        ? (primaryVoltage * transformerVoltage(transformer, device)) / transformer.primaryVoltage
         : primaryVoltage;
     const actualPhases =
       device.phases === 3 ? [...phases] : feed.configured.length === 1 ? [...feed.configured] : [];
@@ -148,6 +150,8 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
         item.issues.push("Phase fehlt: einphasigen Stromkreis L1, L2 oder L3 zuordnen.");
       item.status = item.issues.length ? "incomplete" : "running";
     }
+    if (transformer && item.status === "running" && item.current !== null && item.voltage !== null)
+      transformerVA[transformer.id] = (transformerVA[transformer.id] ?? 0) + item.current * item.voltage;
     result.devices[device.id] = item;
     const seen = new Set<string>();
     let ancestor: string | null = device.id;
@@ -169,7 +173,9 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
         for (const phase of item.phaseIds) {
           const current =
             item.current *
-            (primarySide && transformer ? transformer.secondaryVoltage / transformer.primaryVoltage : 1);
+            (primarySide && transformer
+              ? transformerVoltage(transformer, device) / transformer.primaryVoltage
+              : 1);
           re[ancestor]![phase] += current * item.powerFactor;
           im[ancestor]![phase] += current * Math.sqrt(Math.max(0, 1 - item.powerFactor ** 2));
         }
@@ -179,7 +185,10 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
   }
   for (const node of Object.values(result.nodes)) {
     const transformer = project.electrical.transformers[node.id];
-    if (transformer) node.ratedCurrent = transformer.ratedVA / transformer.secondaryVoltage;
+    if (transformer)
+      node.ratedCurrent = transformer.secondaryVoltages
+        ? null
+        : transformer.ratedVA / transformer.secondaryVoltage;
     for (const phase of phases)
       node.phaseCurrents[phase] = Math.hypot(re[node.id]![phase], im[node.id]![phase]);
     const knownMax = Math.max(...Object.values(node.phaseCurrents));
@@ -187,6 +196,11 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
     node.utilization =
       node.ratedCurrent && node.maxCurrent !== null ? (node.maxCurrent / node.ratedCurrent) * 100 : null;
     node.overload = node.ratedCurrent !== null && knownMax > node.ratedCurrent + 1e-9;
+    if (transformer) {
+      const va = transformerVA[transformer.id] ?? 0;
+      node.utilization = node.incompleteCount ? null : (va / transformer.ratedVA) * 100;
+      node.overload = va > transformer.ratedVA + 1e-9;
+    }
     if (!Number.isFinite(node.knownPower) || !Number.isFinite(knownMax)) {
       node.knownPower = 0;
       node.phaseCurrents = currents();

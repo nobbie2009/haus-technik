@@ -2,7 +2,14 @@ import { useState } from "react";
 import { usePropertyFields } from "../properties/usePropertyFields";
 import { SelectField } from "./ElectricalFields";
 import { ProtectionFields } from "./ProtectionFields";
-import { addProtectionDevice, assignCircuitProtection } from "../../electrical/boardActions";
+import { TransformerFields } from "./TransformerFields";
+import { protectionPresets, addProtectionPreset } from "../../electrical/protectionPresets";
+import { transformerOutputLabel } from "../../electrical/transformers";
+import {
+  addBoardTransformer,
+  addProtectionDevice,
+  assignCircuitProtection,
+} from "../../electrical/boardActions";
 import { useProjectStore } from "../../stores/projectStore";
 import { circuitMembers } from "../../electrical/selectors";
 import { canFeedBoard, distributionPath } from "../../electrical/distributionTopology";
@@ -11,6 +18,8 @@ import { circuitOptionLabel, circuitSupply } from "../../electrical/supply";
 export function BoardFields({ id, onCircuit }: { id: string; onCircuit: (id: string) => void }) {
   const { project, locked, change } = usePropertyFields({ kind: "distributionBoards", id });
   const [selectedProtection, setSelectedProtection] = useState<string | null>(null);
+  const [presetId, setPresetId] = useState("B10");
+  const [selectedTransformer, setSelectedTransformer] = useState<string | null>(null);
   const commit = useProjectStore((s) => s.commit);
   const board = project.electrical.distributionBoards[id]!;
   const { supply } = distributionPath(project, id);
@@ -96,8 +105,29 @@ export function BoardFields({ id, onCircuit }: { id: string; onCircuit: (id: str
           FI hinzufügen
         </button>
       </div>
+      <SelectField label="Sicherungsvorlage" value={presetId} disabled={locked} onChange={setPresetId}>
+        {protectionPresets.map((preset) => (
+          <option key={preset.id} value={preset.id}>
+            {preset.name}
+          </option>
+        ))}
+      </SelectField>
+      <button
+        disabled={locked}
+        onClick={() => {
+          let added = "";
+          if (
+            commit("Sicherung aus Vorlage anlegen", (draft) => {
+              added = addProtectionPreset(draft, id, presetId);
+            })
+          )
+            setSelectedProtection(added);
+        }}
+      >
+        Sicherung aus Vorlage hinzufügen
+      </button>
       <p className="field-hint">
-        B16 ist eine editierbare Vorlage. Technische Daten an die vorhandene Installation anpassen.
+        Vorlagen sind editierbar. Technische Daten an die vorhandene Installation anpassen.
       </p>
       <SelectField
         label="Schutzgerät im Kasten bearbeiten"
@@ -118,6 +148,44 @@ export function BoardFields({ id, onCircuit }: { id: string; onCircuit: (id: str
       {selectedProtection && project.electrical.protectionDevices[selectedProtection] && (
         <ProtectionFields id={selectedProtection} locked={locked} />
       )}
+      <h3>Klingeltransformatoren</h3>
+      <button
+        disabled={locked}
+        onClick={() => {
+          let added = "";
+          if (
+            commit("Klingeltrafo im Kasten anlegen", (draft) => {
+              added = addBoardTransformer(draft, id);
+            })
+          )
+            setSelectedTransformer(added);
+        }}
+      >
+        Klingeltrafo 6 / 9 / 12 / 24 V hinzufügen
+      </button>
+      <SelectField
+        label="Klingeltrafo im Kasten bearbeiten"
+        value={
+          selectedTransformer &&
+          project.electrical.transformers[selectedTransformer]?.distributionBoardId === id
+            ? selectedTransformer
+            : ""
+        }
+        onChange={(value) => setSelectedTransformer(value || null)}
+      >
+        <option value="">Klingeltrafo wählen</option>
+        {Object.values(project.electrical.transformers)
+          .filter((t) => t.distributionBoardId === id)
+          .map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.label} · {transformerOutputLabel(t)}
+            </option>
+          ))}
+      </SelectField>
+      {selectedTransformer &&
+        project.electrical.transformers[selectedTransformer]?.distributionBoardId === id && (
+          <TransformerFields id={selectedTransformer} />
+        )}
       <h3>Stromkreiszuordnung</h3>
       {!circuits.length && (
         <p className="field-hint">Über „Stromkreise verwalten“ Stromkreise für diesen Kasten anlegen.</p>

@@ -157,7 +157,9 @@ function solveConductorPass(project: Project, scenario: SimulationScenario): Con
   const singleFeed = (id: string, line: string, neutral: string) => {
     const a = contact(id, line),
       b = contact(id, neutral);
-    return a && b && a[0] === b[0] && /^L[123]$/.test(a[1]) && b[1] === "N" ? a[0] : null;
+    if (!a || !b || a[0] !== b[0] || b[1] !== "N") return null;
+    if (/^L[123]$/.test(a[1])) return a[0];
+    return /^V[0-9.]+$/.test(a[1]) && sources.has(`${a[0]}:${a[1]}`) ? `${a[0]}:${a[1]}` : null;
   };
   // Ideal isolated transformer secondaries are seeded only from a complete primary circuit.
   for (let pass = 0; pass < Object.keys(project.electrical.transformers).length; pass++)
@@ -167,8 +169,17 @@ function solveConductorPass(project: Project, scenario: SimulationScenario): Con
       if (!sourceId) continue;
       const voltage = (sources.get(sourceId)!.ln * tx.secondaryVoltage) / tx.primaryVoltage;
       sources.set(tx.id, { ln: voltage, ll: voltage });
-      seed(tx.id, "SEC_1", tx.id, "L1");
-      seed(tx.id, "SEC_2", tx.id, "N");
+      if (tx.secondaryVoltages) {
+        seed(tx.id, "SEC_0", tx.id, "N");
+        for (const output of tx.secondaryVoltages) {
+          const v = (sources.get(sourceId)!.ln * output) / tx.primaryVoltage;
+          sources.set(`${tx.id}:V${output}`, { ln: v, ll: v });
+          seed(tx.id, `SEC_${output}V`, tx.id, `V${output}`);
+        }
+      } else {
+        seed(tx.id, "SEC_1", tx.id, "L1");
+        seed(tx.id, "SEC_2", tx.id, "N");
+      }
     }
   const issues: string[] = [];
   for (const [component, set] of tokens)

@@ -1,4 +1,5 @@
 import { usePropertyFields } from "../properties/usePropertyFields";
+import { transformerOutputs, transformerOutputLabel } from "../../electrical/transformers";
 import { SelectField } from "./ElectricalFields";
 
 export function DeviceControlFields({ id }: { id: string }) {
@@ -34,6 +35,7 @@ export function DeviceControlFields({ id }: { id: string }) {
         onChange={(value) =>
           change((draft) => {
             draft.electrical.devices[id]!.transformerId = value || null;
+            draft.electrical.devices[id]!.transformerVoltage = null;
           })
         }
       >
@@ -42,10 +44,30 @@ export function DeviceControlFields({ id }: { id: string }) {
           .filter((t) => t.circuitId === item.circuitId && !!t.circuitId)
           .map((t) => (
             <option key={t.id} value={t.id}>
-              {t.label} · {t.name} · {t.secondaryVoltage} V
+              {t.label} · {t.name} · {transformerOutputLabel(t)}
             </option>
           ))}
       </SelectField>
+      {item.transformerId && project.electrical.transformers[item.transformerId] && (
+        <SelectField
+          label="Trafoausgang"
+          value={String(
+            item.transformerVoltage ?? project.electrical.transformers[item.transformerId]!.secondaryVoltage,
+          )}
+          disabled={locked}
+          onChange={(value) =>
+            change((draft) => {
+              draft.electrical.devices[id]!.transformerVoltage = Number(value);
+            })
+          }
+        >
+          {transformerOutputs(project.electrical.transformers[item.transformerId]!).map((voltage) => (
+            <option key={voltage} value={voltage}>
+              {voltage} V
+            </option>
+          ))}
+        </SelectField>
+      )}
     </>
   );
 }

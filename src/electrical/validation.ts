@@ -93,6 +93,27 @@ export function electricalIssues(project: Project): ValidationIssue[] {
         `${e.switches[item.id] ? "switches" : "outlets"}.${item.id}.wallId`,
         "Wand fehlt oder liegt auf einem anderen Geschoss.",
       );
+  for (const transformer of Object.values(e.transformers)) {
+    const outputs = transformer.secondaryVoltages;
+    if (
+      outputs &&
+      (new Set(outputs).size !== outputs.length || !outputs.includes(transformer.secondaryVoltage))
+    )
+      report(
+        `transformers.${transformer.id}`,
+        "Trafoausgänge müssen eindeutig sein und den Standardausgang enthalten.",
+      );
+    if (
+      transformer.distributionBoardId &&
+      (!e.distributionBoards[transformer.distributionBoardId] ||
+        (transformer.circuitId &&
+          e.circuits[transformer.circuitId]?.distributionBoardId !== transformer.distributionBoardId))
+    )
+      report(
+        `transformers.${transformer.id}`,
+        "Trafo und Primärstromkreis müssen zum selben Sicherungskasten gehören.",
+      );
+  }
   for (const item of Object.values(e.devices)) {
     if (item.controlId) {
       const control = e.controls[item.controlId];
@@ -111,6 +132,12 @@ export function electricalIssues(project: Project): ValidationIssue[] {
     }
     if (item.transformerId) {
       const transformer = e.transformers[item.transformerId];
+      if (
+        transformer &&
+        item.transformerVoltage != null &&
+        !(transformer.secondaryVoltages ?? [transformer.secondaryVoltage]).includes(item.transformerVoltage)
+      )
+        report(`devices.${item.id}.transformerVoltage`, "Der gewählte Trafoausgang ist nicht vorhanden.");
       if (
         !transformer ||
         !item.circuitId ||

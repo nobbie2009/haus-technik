@@ -1,3 +1,4 @@
+import { transformerOutputLabel } from "../electrical/transformers";
 import type { Project } from "../models/project";
 import type { ProtectionDevice, ElectricalPlacement } from "../electrical/models";
 import { circuitMembers } from "../electrical/selectors";
@@ -73,6 +74,10 @@ export function boardSchedule(p: Project, boardId: string) {
       lines.push(
         `Weitere: ${[...m.switches, ...m.controls, ...m.transformers].map((i) => i.label || i.name).join("; ")}`,
       );
+    if (m.transformers.length)
+      lines.push(
+        `Trafos: ${m.transformers.map((t) => `${t.label} · ${transformerOutputLabel(t)} · ${t.ratedVA} VA`).join("; ")}`,
+      );
     if (m.boards.length)
       lines.push(`Versorgt Unterverteilung: ${m.boards.map((b) => `${b.label} ${b.name}`).join("; ")}`);
     if (!members.length && !m.boards.length) lines.push("Keine Räume/Geräte erfasst");
@@ -95,6 +100,18 @@ export function boardSchedule(p: Project, boardId: string) {
       circuit: "Kein Stromkreis zugeordnet",
       areas: "Zuordnung offen – nicht automatisch Reserve",
       fi: fiText(protectionChain(p, d.id)),
+      phase: "Offen",
+      unassigned: true,
+    });
+  for (const t of Object.values(p.electrical.transformers).filter(
+    (t) => t.distributionBoardId === boardId && !t.circuitId,
+  ))
+    rows.push({
+      id: t.id,
+      protection: "Nicht zugeordnet",
+      circuit: `${t.label} · ${t.name}`,
+      areas: `${transformerOutputLabel(t)} · ${t.ratedVA} VA · Primärstromkreis offen`,
+      fi: "Nicht dokumentiert",
       phase: "Offen",
       unassigned: true,
     });
