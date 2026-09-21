@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.35.0 · 21.09.2026
+
+- Grundstücksgrenzen, Wege, Terrassen, Beete und Referenzpunkte auf iPhone/iPad per GPS-Groberfassung aufnehmen. Bekannten Planpunkt oder Planursprung als GPS-Referenz verwenden und die Nordrichtung einstellen.
+- Aktuelle Position mit Unsicherheitskreis prüfen und einzelne Punkte ausdrücklich übernehmen. Wegbreite, Punktentfernung, geometrische Prüfung und gemeinsame Speicherung mit Rückgängig unterstützen.
+- Standortfreigabe und HTTPS verständlich prüfen; veraltete Messungen sperren und größere Ungenauigkeit kennzeichnen. Ortung beim Schließen oder Wechsel in den Hintergrund beenden.
+- GPS-Referenz und ursprüngliche Messdaten samt Genauigkeit im lokalen Projekt speichern; bestehende Planpunkte weiterhin manuell korrigieren. Anleitung für Aufnahme und Projektübertragung ergänzen.
+
 ## 0.34.1 · 21.09.2026
 
 - Bestehende Zähler nachträglich bearbeiten und ihre Planverknüpfung ändern oder entfernen. Passende Planzähler auch dann anbieten, wenn bereits ein automatischer Hausakten-Eintrag vorhanden ist.

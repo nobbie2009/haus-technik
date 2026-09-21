@@ -1,3 +1,4 @@
+import { gpsSurveySchema } from "../../site/gps";
 import { useState } from "react";
 import { site, siteKinds, siteArea, siteLength, siteSegments } from "../../site/model";
 import { usePropertyFields } from "../properties/usePropertyFields";
@@ -12,9 +13,18 @@ export function SiteProperties({ id }: { id: string }) {
   const current = Math.min(index, item.vertices.length - 1),
     point = item.vertices[current]!,
     area = siteArea(item);
+  const survey = gpsSurveySchema.safeParse(item.metadata.gpsSurvey);
   return (
     <>
       <p>{siteKinds[item.kind]}</p>
+      {survey.success && (
+        <p className="field-hint">
+          GPS-Groberfassung: gemeldete Punktgenauigkeit bis ±
+          {Math.max(...survey.data.fixes.map((f) => f.accuracy)).toFixed(1)} m; Referenz ±
+          {survey.data.reference.fix.accuracy.toFixed(1)} m. Koordinaten können anschließend manuell
+          korrigiert worden sein.
+        </p>
+      )}
       <TextField
         label="Außenobjektname"
         value={item.name}

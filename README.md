@@ -3,6 +3,10 @@
 Ein modularer technischer Hausplaner mit **Grundrisseditor, Möbelplanung, Elektrikdokumentation und statischer Stromkreissimulation**.
 React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind unabhängig vom Canvas.
 
+## Grundstück per GPS erfassen
+
+Auf iPhone und iPad lassen sich Grundstücksgrenzen, Wege, Beete und Referenzpunkte per Standortaufnahme erfassen. Benötigt HTTPS und Standortfreigabe; GPS dient zur Groberfassung. [Anleitung](docs/gps-grundstueck.md).
+
 ## Auf Proxmox bereitstellen
 
 Der Codex-Skill [home-technik-proxmox-lxc](.agents/skills/home-technik-proxmox-lxc/SKILL.md)

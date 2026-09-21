@@ -844,3 +844,71 @@
 .cursor-site {
   cursor: crosshair;
 }
+
+.gps-dialog {
+  width: 660px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.gps-dialog p {
+  line-height: 1.55;
+}
+.gps-dialog button,
+.gps-dialog select,
+.gps-dialog input:not([type="checkbox"]),
+.gps-dialog summary {
+  min-height: 44px;
+}
+.gps-dialog input:not([type="checkbox"]),
+.gps-dialog select {
+  width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.gps-dialog .book-field {
+  margin: 12px 0;
+}
+.gps-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.gps-actions button {
+  flex: 1 1 190px;
+}
+.gps-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin: 12px 0;
+}
+.gps-check input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.gps-reference {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.gps-dialog summary {
+  cursor: pointer;
+  padding: 10px 0;
+  overflow-wrap: anywhere;
+}
+.gps-preview {
+  width: 100%;
+  max-height: 200px;
+  background: var(--accent-soft);
+  border-radius: 6px;
+}
+.gps-dialog li {
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}

@@ -1,3 +1,4 @@
+import { GpsSurveyDialog } from "./GpsSurveyDialog";
 import { useState } from "react";
 import { useEditorStore } from "../../stores/editorStore";
 import { useProjectStore } from "../../stores/projectStore";
@@ -8,6 +9,7 @@ import { LengthField } from "../Fields";
 export function SiteLibrary() {
   const editor = useEditorStore(),
     project = useProjectStore((s) => s.project);
+  const [gpsOpen, setGpsOpen] = useState(false);
   const [reference, setReference] = useState(""),
     [dx, setDx] = useState(0),
     [dy, setDy] = useState(0);
@@ -17,6 +19,16 @@ export function SiteLibrary() {
   const minimum = siteClosed(editor.siteKind) ? 3 : 2;
   return (
     <section className="site-library" aria-label="Grundstück planen">
+      <button className="full-width" onClick={() => setGpsOpen(true)}>
+        Per GPS erfassen
+      </button>
+      {gpsOpen && (
+        <GpsSurveyDialog
+          key={`${project.id}:${editor.floorId}`}
+          floorId={editor.floorId}
+          onClose={() => setGpsOpen(false)}
+        />
+      )}
       <SelectField
         label="Außenobjekt"
         value={editor.siteKind}
