@@ -1,5 +1,16 @@
 # Änderungen
 
+## 0.30.0 · 21.09.2026
+
+- Gerade Treppen und Treppen mit Kurve stehen als maßhaltige, drehbare Grundrissobjekte zur Verfügung.
+- Stufen und Laufrichtung sind im Editor sichtbar; die Stufenlinien werden auch in Planausgaben übernommen.
+
+## 0.29.0 · 21.09.2026
+
+- Türen können jetzt als Drehtür, Schiebetür oder offener Durchgang ohne Türblatt dargestellt werden.
+- Netzwerkplanung ergänzt Server/NAS und WLAN-Messpunkte mit Sender, Planposition und Signalstärke in dBm.
+- WLAN-Messwerte erscheinen farblich bewertet im Grundriss und in der Planausgabe; Netzwerkgeräte, Ports und Kabel bleiben gemeinsam dokumentiert.
+
 ## 0.28.0 · 20.09.2026
 
 - Etagenübergangsmarker folgen bei verschobenen Referenzpunkten jetzt auf beiden Geschossen der korrekten gemeinsamen Position.

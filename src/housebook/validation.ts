@@ -63,16 +63,25 @@ export function housebookIssues(project: Project): { path: string; message: stri
         })),
       );
     else {
-      const { networkNodes, networkLinks, scenarios, templates } = result.data;
+      const { networkNodes, networkLinks, wifiMeasurements, scenarios, templates } = result.data;
       if (
         networkNodes.some((n) => !project.floors[n.floorId]) ||
+        wifiMeasurements.some(
+          (m) =>
+            !project.floors[m.floorId] ||
+            !networkNodes.some(
+              (n) => n.id === m.sourceId && ["router", "accessPoint", "repeater"].includes(n.kind),
+            ),
+        ) ||
         Object.keys(result.data.backgrounds).some((id) => !project.floors[id])
       )
         issues.push({
           path: "metadata.housebook",
           message: "Eine Etage der Grundrissvorlage oder Netzwerkplanung fehlt.",
         });
-      const ids = [...networkNodes, ...networkLinks, ...scenarios, ...templates].map((n) => n.id);
+      const ids = [...networkNodes, ...networkLinks, ...wifiMeasurements, ...scenarios, ...templates].map(
+        (n) => n.id,
+      );
       if (new Set(ids).size !== ids.length)
         issues.push({ path: "metadata.housebook", message: "Doppelte ID in der Hausakte." });
       const used = new Set<string>();

@@ -59,6 +59,50 @@ export function OpeningShape({
         ))}
       </Group>
     );
+  if (opening.type === "opening")
+    return (
+      <Group opacity={project.layers[opening.layerId]!.opacity}>
+        <Line
+          points={[...transform(left), ...transform(right)]}
+          stroke="#f6f7f3"
+          strokeWidth={Math.max(4, wall.thickness * viewport.scale + 1)}
+        />
+        {[left, right].map((position) => (
+          <Line
+            key={position}
+            points={[...transform(position, -wall.thickness / 2), ...transform(position, wall.thickness / 2)]}
+            stroke={color}
+            strokeWidth={selected ? 2.5 : 1.5}
+          />
+        ))}
+      </Group>
+    );
+  if (opening.type === "sliding") {
+    const side = opening.openingDirection.swing === "leftOfWall" ? 1 : -1;
+    return (
+      <Group opacity={project.layers[opening.layerId]!.opacity}>
+        <Line
+          points={[...transform(left), ...transform(right)]}
+          stroke="#f6f7f3"
+          strokeWidth={Math.max(4, wall.thickness * viewport.scale + 1)}
+        />
+        <Line
+          points={[
+            ...transform(left, (wall.thickness / 2 + 35) * side),
+            ...transform(right, (wall.thickness / 2 + 35) * side),
+          ]}
+          stroke={color}
+          strokeWidth={selected ? 3 : 2}
+        />
+        <Line
+          points={[...transform(left), ...transform(right)]}
+          stroke={color}
+          strokeWidth={1}
+          dash={[5, 4]}
+        />
+      </Group>
+    );
+  }
   const hingeStart = opening.openingDirection.hinge === "startSide";
   const hinge = hingeStart ? left : right;
   const direction = hingeStart ? 1 : -1;

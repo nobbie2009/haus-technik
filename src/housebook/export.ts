@@ -60,7 +60,17 @@ export function planPrimitives(
     });
     const left = item.position - item.width / 2,
       right = item.position + item.width / 2;
-    if ("openingDirection" in item) {
+    if ("openingDirection" in item && item.type === "sliding") {
+      const side = item.openingDirection.swing === "leftOfWall" ? 1 : -1;
+      line(
+        [
+          transform(left, (wall.thickness / 2 + 35) * side),
+          transform(right, (wall.thickness / 2 + 35) * side),
+        ],
+        "#377f9a",
+        15,
+      );
+    } else if ("openingDirection" in item && item.type === "hinged") {
       const start = item.openingDirection.hinge === "startSide",
         hinge = start ? left : right,
         direction = start ? 1 : -1,
@@ -102,6 +112,32 @@ export function planPrimitives(
     for (const item of Object.values(project.furniture).filter(visible)) {
       const corners = furnitureCorners(item);
       line([...corners, corners[0]!], colors[asset(item).status]);
+      const local = (x: number, y: number) => ({
+        x: item.position.x + x * Math.cos(item.rotation) - y * Math.sin(item.rotation),
+        y: item.position.y + x * Math.sin(item.rotation) + y * Math.cos(item.rotation),
+      });
+      if (item.type === "straightStairs")
+        for (let index = 0; index <= 12; index++) {
+          const y = -item.depth / 2 + (index * item.depth) / 12;
+          line([local(-item.width / 2, y), local(item.width / 2, y)], "#797062", 8);
+        }
+      if (item.type === "curvedStairs") {
+        const radius = Math.min(item.width, item.depth);
+        for (let index = 0; index <= 12; index++) {
+          const angle = -Math.PI / 2 + (index * Math.PI) / 24;
+          line(
+            [
+              local(
+                -item.width / 2 + Math.cos(angle) * radius * 0.32,
+                item.depth / 2 + Math.sin(angle) * radius * 0.32,
+              ),
+              local(-item.width / 2 + Math.cos(angle) * radius, item.depth / 2 + Math.sin(angle) * radius),
+            ],
+            "#797062",
+            8,
+          );
+        }
+      }
       text(item.position, item.name, colors[asset(item).status], 110);
     }
   for (const item of Object.values(project.dimensions).filter(visible)) {
@@ -158,6 +194,13 @@ export function planPrimitives(
         text({ x: p.x + 140, y: p.y }, item.label || item.name, c, 110);
       }
     const book = housebook(project);
+    for (const measurement of book.wifiMeasurements.filter((m) => m.floorId === floorId))
+      text(
+        measurement.position,
+        `WLAN ${measurement.name} · ${measurement.signalDbm} dBm`,
+        measurement.signalDbm >= -60 ? "#16835f" : measurement.signalDbm >= -75 ? "#b87916" : "#b33e35",
+        110,
+      );
     for (const node of book.networkNodes.filter((n) => n.floorId === floorId))
       text(node.position, `NET ${node.name}`, "#7556a2", 120);
     for (const link of book.networkLinks) {

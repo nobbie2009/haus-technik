@@ -63,6 +63,7 @@ export function createOpening(
     project.doors[id] = {
       ...base,
       height: Math.min(2100, wall.height),
+      type: "hinged",
       openingDirection: { hinge: "startSide", swing: "leftOfWall" },
     };
   else

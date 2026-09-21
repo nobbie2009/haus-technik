@@ -23,38 +23,78 @@ export function OpeningProperties({ id, kind }: { id: string; kind: "doors" | "w
       ) : (
         <>
           <label className="field">
-            Türanschlag
+            Türart
             <select
-              aria-label="Türanschlag"
+              aria-label="Türart"
               disabled={locked}
-              value={opening.openingDirection.hinge}
+              value={opening.type}
               onChange={(event) =>
                 change((draft) => {
-                  draft.doors[id]!.openingDirection.hinge = event.target.value as "startSide" | "endSide";
+                  draft.doors[id]!.type = event.target.value as "hinged" | "opening" | "sliding";
                 })
               }
             >
-              <option value="startSide">Wandstartseite</option>
-              <option value="endSide">Wandendseite</option>
+              <option value="hinged">Drehtür</option>
+              <option value="opening">Durchgang ohne Türblatt</option>
+              <option value="sliding">Schiebetür</option>
             </select>
           </label>
-          <label className="field">
-            Öffnungsseite
-            <select
-              aria-label="Öffnungsseite"
-              disabled={locked}
-              value={opening.openingDirection.swing}
-              onChange={(event) =>
-                change((draft) => {
-                  draft.doors[id]!.openingDirection.swing = event.target.value as
-                    "leftOfWall" | "rightOfWall";
-                })
-              }
-            >
-              <option value="leftOfWall">Links der Wandrichtung</option>
-              <option value="rightOfWall">Rechts der Wandrichtung</option>
-            </select>
-          </label>
+          {opening.type === "hinged" && (
+            <>
+              <label className="field">
+                Türanschlag
+                <select
+                  aria-label="Türanschlag"
+                  disabled={locked}
+                  value={opening.openingDirection.hinge}
+                  onChange={(event) =>
+                    change((draft) => {
+                      draft.doors[id]!.openingDirection.hinge = event.target.value as "startSide" | "endSide";
+                    })
+                  }
+                >
+                  <option value="startSide">Wandstartseite</option>
+                  <option value="endSide">Wandendseite</option>
+                </select>
+              </label>
+              <label className="field">
+                Öffnungsseite
+                <select
+                  aria-label="Öffnungsseite"
+                  disabled={locked}
+                  value={opening.openingDirection.swing}
+                  onChange={(event) =>
+                    change((draft) => {
+                      draft.doors[id]!.openingDirection.swing = event.target.value as
+                        "leftOfWall" | "rightOfWall";
+                    })
+                  }
+                >
+                  <option value="leftOfWall">Links der Wandrichtung</option>
+                  <option value="rightOfWall">Rechts der Wandrichtung</option>
+                </select>
+              </label>
+            </>
+          )}
+          {opening.type === "sliding" && (
+            <label className="field">
+              Laufseite
+              <select
+                aria-label="Laufseite"
+                disabled={locked}
+                value={opening.openingDirection.swing}
+                onChange={(event) =>
+                  change((draft) => {
+                    draft.doors[id]!.openingDirection.swing = event.target.value as
+                      "leftOfWall" | "rightOfWall";
+                  })
+                }
+              >
+                <option value="leftOfWall">Links der Wandrichtung</option>
+                <option value="rightOfWall">Rechts der Wandrichtung</option>
+              </select>
+            </label>
+          )}
         </>
       )}
       <p className="field-hint">

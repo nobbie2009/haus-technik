@@ -9,6 +9,7 @@ export interface WallOpening extends FloorElement {
 }
 
 export interface Door extends WallOpening {
+  type: "hinged" | "opening" | "sliding";
   openingDirection: {
     hinge: "startSide" | "endSide";
     swing: "leftOfWall" | "rightOfWall";
