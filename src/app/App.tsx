@@ -16,7 +16,9 @@ import { initializePersistence } from "../persistence/autosave";
 
 export function App() {
   const [panel, setPanel] = useState<"properties" | null>(null);
-  const [toolsExpanded, setToolsExpanded] = useState(false);
+  const [toolsExpanded, setToolsExpanded] = useState(
+    () => !window.matchMedia("(max-width: 900px), (pointer: coarse)").matches,
+  );
   const project = useProjectStore((s) => s.project);
   const error = useProjectStore((s) => s.error);
   const saveError = useProjectStore((s) => s.saveError);

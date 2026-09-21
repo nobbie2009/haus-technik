@@ -13,7 +13,7 @@ test("Möbelgröße per Touch ziehen; Abbruch und zweiter Finger verwerfen die V
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Möbel", exact: true }).tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const surface = page.getByTestId("drawing-surface");
   const box = (await surface.boundingBox())!;
   await page.touchscreen.tap(box.x + 330, box.y + 270);

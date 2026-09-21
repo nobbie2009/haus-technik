@@ -16,12 +16,12 @@ async function exportProject(page: Page): Promise<Project> {
   return JSON.parse(Buffer.concat(chunks).toString());
 }
 async function tool(page: Page, name: string) {
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page
     .getByRole("navigation", { name: "Zeichenwerkzeuge" })
     .getByRole("button", { name: new RegExp(`^${name} `) })
     .tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
 }
 test.beforeEach(async ({ page }) => {
   // Same platform constraint as a LAN HTTP origin.
@@ -90,20 +90,20 @@ test("Wandfoto auf dem iPad mit Fingerpunkten und Zoom annotieren", async ({ pag
 });
 
 test("Rohrnetz auf dem iPad per Finger platzieren und verbinden", async ({ page }) => {
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.getByRole("tab", { name: "Wasser / Wärme / Gas", exact: true }).tap();
   await page.getByLabel("Komponentenart", { exact: true }).selectOption("source");
   await page.getByRole("button", { name: "Komponente platzieren", exact: true }).tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.touchscreen.tap(box.x + 250, box.y + 250);
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.getByLabel("Komponentenart", { exact: true }).selectOption("tap");
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.touchscreen.tap(box.x + 520, box.y + 400);
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.getByRole("button", { name: "Rohrleitung zeichnen", exact: true }).tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.touchscreen.tap(box.x + 250, box.y + 250);
   await page.touchscreen.tap(box.x + 250, box.y + 400);
   await page.touchscreen.tap(box.x + 520, box.y + 400);
@@ -119,7 +119,7 @@ test("Rohrnetz auf dem iPad per Finger platzieren und verbinden", async ({ page 
 });
 
 test("Verbraucherbibliothek auf dem iPad anlegen und per Finger platzieren", async ({ page }) => {
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).tap();
   await page.getByRole("button", { name: "Verbraucherdatenbank", exact: true }).tap();
   const dialog = page.getByRole("dialog", { name: "Verbraucherdatenbank", exact: true });
@@ -127,7 +127,7 @@ test("Verbraucherbibliothek auf dem iPad anlegen und per Finger platzieren", asy
   await dialog.getByLabel("Seriennummer", { exact: true }).fill("IPAD-TEST");
   await dialog.getByRole("button", { name: "Verbraucher speichern", exact: true }).tap();
   await dialog.getByRole("button", { name: "iPad-Kühlschrank platzieren", exact: true }).tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const surface = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.touchscreen.tap(surface.x + 350, surface.y + 240);
   await page.getByRole("button", { name: "Eigenschaften", exact: true }).tap();

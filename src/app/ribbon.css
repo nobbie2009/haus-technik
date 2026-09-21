@@ -45,7 +45,10 @@
   text-overflow: ellipsis;
 }
 .ribbon-toggle {
-  display: none;
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .ribbon-properties {
   display: none;
@@ -108,9 +111,13 @@
   margin: 0;
 }
 .ribbon-content {
+  display: none;
   overflow: auto;
   height: 136px;
   padding: 10px 16px;
+}
+.ribbon-expanded .ribbon-content {
+  display: block;
 }
 .ribbon [role="tabpanel"] {
   display: flex;
@@ -141,7 +148,7 @@
   min-width: 112px;
   min-height: 40px;
 }
-.ribbon [role="tabpanel"] > :not(.ribbon-tool-group) {
+.ribbon [role="tabpanel"] > :not(.ribbon-tool-group):not(.ribbon-common-group) {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: 44px 44px;
@@ -154,6 +161,54 @@
   border-left: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
+}
+.ribbon-common-group {
+  flex: 0 0 auto;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  padding-left: 16px;
+  gap: 4px;
+}
+.ribbon-common-group .panel-heading {
+  order: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  border: 0;
+  margin: auto 0 0;
+  min-height: 22px;
+}
+.ribbon-common-group .floor-list {
+  height: 62px;
+  overflow-y: auto;
+}
+.ribbon-common-group .floor-item {
+  min-height: 30px;
+  padding-block: 3px;
+}
+.ribbon-common-group .floor-reference-toggle {
+  margin: 0;
+  min-height: 22px;
+}
+.ribbon-common-group .floor-settings {
+  min-height: 30px;
+}
+.ribbon-common-group .panel-heading button {
+  min-height: 22px;
+  padding: 2px 6px;
+}
+.ribbon-layers {
+  width: auto;
+}
+.ribbon-common-group .layer-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 40px);
+  grid-auto-columns: 190px;
+  gap: 4px 8px;
 }
 .ribbon [role="tabpanel"] .field {
   margin: 0;
@@ -236,7 +291,7 @@
   .ribbon .tool {
     min-height: 44px;
   }
-  .ribbon [role="tabpanel"] > :not(.ribbon-tool-group) {
+  .ribbon [role="tabpanel"] > :not(.ribbon-tool-group):not(.ribbon-common-group) {
     grid-template-rows: 64px 64px;
   }
   .ribbon [role="tabpanel"] .field input,
@@ -246,6 +301,24 @@
   }
   .ribbon .utility-actions button {
     min-height: 44px;
+  }
+  .ribbon-common-group .floor-list {
+    height: 48px;
+  }
+  .ribbon-common-group .floor-item,
+  .ribbon-common-group .floor-settings,
+  .ribbon-common-group .floor-reference-toggle,
+  .ribbon-common-group .panel-heading button,
+  .ribbon-common-group .icon-button {
+    min-height: 44px;
+  }
+  .ribbon-common-group .icon-button,
+  .ribbon-common-group .floor-settings {
+    min-width: 44px;
+  }
+  .ribbon-common-group .layer-list {
+    grid-template-rows: repeat(2, 44px);
+    grid-auto-columns: 220px;
   }
 }
 @media (max-width: 500px) {

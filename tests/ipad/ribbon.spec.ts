@@ -9,7 +9,7 @@ test("Menüband per Touch auf iPhone sowie iPad im Hoch- und Querformat", async 
     { width: 1080, height: 810 },
   ]) {
     await page.setViewportSize(viewport);
-    const toggle = page.getByRole("button", { name: "Werkzeuge", exact: true });
+    const toggle = page.getByRole("button", { name: "Menüband", exact: true });
     const surface = page.getByTestId("drawing-surface");
     const closed = (await surface.boundingBox())!;
     expect(closed.height).toBeGreaterThan(300);
@@ -38,7 +38,7 @@ test("Menüband per Touch auf iPhone sowie iPad im Hoch- und Querformat", async 
     await layers.getByRole("button", { name: "Grundriss entsperren", exact: true }).tap();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `test-results/ribbon-inline-touch-${viewport.width}.png` });
-    await layers.getByRole("button", { name: "Ebenen einklappen", exact: true }).tap();
+    await toggle.tap();
     await page.screenshot({ path: `test-results/ribbon-touch-${viewport.width}.png` });
   }
 });

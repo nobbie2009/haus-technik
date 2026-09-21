@@ -46,7 +46,7 @@ async function setup(page: Page) {
   });
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).click();
+  await page.getByRole("button", { name: "Menüband", exact: true }).click();
   await page.getByRole("tab", { name: "Grundstück", exact: true }).click();
   await page.getByRole("button", { name: "Per GPS erfassen", exact: true }).click();
 }
@@ -102,7 +102,7 @@ test("GPS auf dem iPhone: Referenz, Grenze, Weg und Speicherung", async ({ page 
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { gpsTest: GpsTest }).gpsTest.count()))
     .toBe(0);
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).click();
+  await page.getByRole("button", { name: "Menüband", exact: true }).click();
   const saved = await exported(page),
     elements = Object.values(site(saved).elements);
   expect(elements).toHaveLength(3);

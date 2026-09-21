@@ -31,7 +31,7 @@ test("Koaxweg auf dem iPad per Finger setzen und speichern", async ({ page }) =>
   await page.getByRole("tab", { name: "Netzwerk", exact: true }).tap();
   await page.getByRole("button", { name: "TV / SAT & Koaxleitungen", exact: true }).tap();
   await page.getByRole("button", { name: "Leitungsweg zeichnen", exact: true }).tap();
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.touchscreen.tap(box.x + 250, box.y + 200);
   await page.touchscreen.tap(box.x + 450, box.y + 200);

@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.45.0 · 21.09.2026
+
+- Geschosse und Ebenen als feste Ribbon-Gruppen neben den Zeichenwerkzeugen und Vorlagen anzeigen. Die bisherigen zusätzlichen aufklappbaren Listen entfallen; die Schaltflächen oben springen zur jeweiligen Gruppe im horizontalen Menüband.
+- Das gesamte Ribbon mit „Menüband“ auch auf dem Desktop ein- und ausblenden. Die Bereichs-Tabs bleiben erreichbar; ein Tabwechsel öffnet die Werkzeugzeile wieder. Geschossformulare beim Ausblenden mit verbergen und ihre Eingaben erhalten.
+
 ## 0.44.0 · 21.09.2026
 
 - Home-Assistant-Adresse und Zugriffstoken automatisch lokal im Browser speichern und nach Dialogwechsel oder Neuladen wieder einsetzen. Verbindungseinstellungen getrennt vom Projekt halten; keine Zugangsdaten in Projektdateien oder Exporte übernehmen.

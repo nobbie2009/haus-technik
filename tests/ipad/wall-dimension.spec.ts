@@ -10,7 +10,7 @@ test("Raummaß per Touch eingeben", async ({ page }) => {
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(project)),
   });
-  await page.getByRole("button", { name: "Werkzeuge", exact: true }).tap();
+  await page.getByRole("button", { name: "Menüband", exact: true }).tap();
   const wall = walls[0]!;
   await page.locator(`.editable-wall-dimension[data-wall-id="${wall.id}"]`).tap();
   const dialog = page.getByRole("dialog", { name: "Wandmaß ändern" });

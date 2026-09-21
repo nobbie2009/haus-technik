@@ -28,33 +28,21 @@ test("Router im Netzwerkbereich platzieren, verschieben, sperren und wieder lade
   await page.locator(".object-list").getByRole("button", { name: "Router Flur", exact: true }).click();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Netzwerk sperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.getByLabel("Netzwerkname", { exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Netzwerk entsperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await page.getByLabel("Netzwerkgerät platzieren", { exact: true }).selectOption("switch");
   await page.mouse.click(box.x + 410, box.y + 340);
   await expect(page.getByLabel("Netzwerkname", { exact: true })).toHaveValue("Switch 1");
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Netzwerk ausblenden", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.locator(".object-list button")).toHaveCount(0);
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Netzwerk einblenden", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.locator(".object-list button")).toHaveCount(3);
   await page.locator(".object-list").getByRole("button", { name: "Router Flur", exact: true }).click();
   await page.locator(".left-panel").evaluate((el) => {

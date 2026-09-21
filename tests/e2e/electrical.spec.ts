@@ -80,10 +80,7 @@ test("Elektrik dokumentieren: Verteiler, Sicherung, Steckdose und Verbraucher", 
   await page.getByRole("button", { name: "Wiederholen", exact: true }).click();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik sperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.getByLabel("Nennleistung (W)", { exact: true })).toBeDisabled();
   await page
     .locator(".right-panel")
@@ -94,10 +91,7 @@ test("Elektrik dokumentieren: Verteiler, Sicherung, Steckdose und Verbraucher", 
   await dialog.getByRole("button", { name: "Dialog schließen", exact: true }).click();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik entsperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   const saved = await exported(page);
   await page.reload();

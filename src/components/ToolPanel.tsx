@@ -34,7 +34,6 @@ import { useProjectStore } from "../stores/projectStore";
 import type { Tool } from "../editor/types";
 import { fitView } from "../editor/interaction/commands";
 import { FloorDialog } from "./dialogs/FloorDialog";
-import { RibbonSection } from "./RibbonSection";
 import { orderedFloorIds } from "../models/floor";
 
 const tools = [
@@ -63,16 +62,24 @@ export function ToolPanel({
   expanded: boolean;
   onExpandedChange: (value: boolean) => void;
 }) {
-  const [viewDialog, setViewDialog] = useState<"floors" | "layers" | null>(null);
   const project = useProjectStore((s) => s.project);
   const tool = useEditorStore((s) => s.tool);
   const category = useEditorStore((s) => s.category);
   const contentRef = useRef<HTMLDivElement>(null);
-  const floorsButton = useRef<HTMLButtonElement>(null);
-  const layersButton = useRef<HTMLButtonElement>(null);
+  const floorsGroup = useRef<HTMLElement>(null);
+  const layersGroup = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     contentRef.current?.scrollTo({ left: 0, top: 0 });
   }, [category]);
+  const revealGroup = (group: "floors" | "layers") => {
+    onExpandedChange(true);
+    setFloorDialog(null);
+    requestAnimationFrame(() => {
+      const element = group === "floors" ? floorsGroup.current : layersGroup.current;
+      if (element && contentRef.current)
+        contentRef.current.scrollTo({ left: element.offsetLeft - contentRef.current.offsetLeft - 16 });
+    });
+  };
   const floorId = useEditorStore((s) => s.floorId);
   const [floorDialog, setFloorDialog] = useState<"new" | string | null>(null);
   const commit = useProjectStore((s) => s.commit);
@@ -90,30 +97,16 @@ export function ToolPanel({
           aria-expanded={expanded}
           aria-controls="tools-panel"
           onClick={() => onExpandedChange(!expanded)}
+          title={expanded ? "Menüband ausblenden" : "Menüband einblenden"}
         >
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />} Werkzeuge
+          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />} Menüband
         </button>
         <div className="ribbon-view">
-          <button
-            onClick={() => {
-              setFloorDialog(null);
-              setViewDialog("floors");
-            }}
-            title="Geschosse verwalten"
-            ref={floorsButton}
-            aria-expanded={viewDialog === "floors" || !!floorDialog}
-          >
+          <button onClick={() => revealGroup("floors")} title="Geschosse verwalten">
             <Layers size={16} />
             <span>{project.floors[floorId]?.name}</span>
           </button>
-          <button
-            onClick={() => {
-              setFloorDialog(null);
-              setViewDialog("layers");
-            }}
-            aria-expanded={viewDialog === "layers"}
-            ref={layersButton}
-          >
+          <button onClick={() => revealGroup("layers")}>
             <Eye size={16} />
             Ebenen
           </button>
@@ -156,122 +149,110 @@ export function ToolPanel({
           {category === "utilities" && <UtilityLibrary />}
           {category === "furniture" && <FurnitureLibrary />}
           {category === "electrical" && <ElectricalLibrary />}
-        </div>
-      </div>
-      {viewDialog === "floors" && (
-        <RibbonSection
-          title="Geschosse verwalten"
-          onClose={() => {
-            setViewDialog(null);
-            floorsButton.current?.focus();
-          }}
-        >
-          <div className="panel-heading section-line">
-            GESCHOSSE
-            <button
-              className="subtle icon-button"
-              aria-label="Etage erstellen"
-              onClick={() => {
-                setViewDialog(null);
-                setFloorDialog("new");
-              }}
-            >
-              <Plus size={15} />
-            </button>
-          </div>
-          <div className="floor-list">
-            {orderedFloors.map((id, index) => (
-              <div key={id} className="floor-row">
-                <button
-                  className={`floor-item ${floorId === id ? "active" : ""}`}
-                  aria-pressed={floorId === id}
-                  onClick={() => {
-                    useEditorStore.getState().setFloor(id);
-                    fitView();
-                  }}
-                >
-                  <Layers size={15} />
-                  <span>{project.floors[id]!.name}</span>
-                  <span className="floor-tag">{String(index + 1).padStart(2, "0")}</span>
-                </button>
-                <button
-                  className="subtle floor-settings"
-                  aria-label={`${project.floors[id]!.name} bearbeiten`}
-                  onClick={() => {
-                    setViewDialog(null);
-                    setFloorDialog(id);
-                  }}
-                >
-                  <Settings2 size={13} />
-                </button>
-              </div>
-            ))}
-          </div>
-          <label className="floor-reference-toggle">
-            <input
-              type="checkbox"
-              checked={showFloorReferences}
-              onChange={(event) => useEditorStore.setState({ showFloorReferences: event.target.checked })}
-            />
-            Etagenreferenzen anzeigen
-          </label>
-        </RibbonSection>
-      )}
-      {viewDialog === "layers" && (
-        <RibbonSection
-          title="Ebenen"
-          onClose={() => {
-            setViewDialog(null);
-            layersButton.current?.focus();
-          }}
-        >
-          <div className="layer-list">
-            {project.layerOrder.map((id) => {
-              const layer = project.layers[id]!;
-              return (
-                <div className="layer-row" key={id}>
-                  <span className={`layer-dot ${layer.kind}`} />
-                  <span>{layer.name}</span>
+          <section
+            className="ribbon-common-group ribbon-floors"
+            aria-label="Geschosse verwalten"
+            ref={floorsGroup}
+          >
+            <div className="panel-heading section-line">
+              GESCHOSSE
+              <button
+                className="subtle icon-button"
+                aria-label="Etage erstellen"
+                onClick={() => {
+                  setFloorDialog("new");
+                }}
+              >
+                <Plus size={15} />
+              </button>
+            </div>
+            <div className="floor-list">
+              {orderedFloors.map((id, index) => (
+                <div key={id} className="floor-row">
                   <button
-                    className="subtle icon-button"
-                    title={layer.visible ? "Ausblenden" : "Einblenden"}
-                    aria-label={`${layer.name} ${layer.visible ? "ausblenden" : "einblenden"}`}
-                    onClick={() =>
-                      commit("Ebenensichtbarkeit ändern", (draft) => {
-                        draft.layers[id]!.visible = !layer.visible;
-                      })
-                    }
+                    className={`floor-item ${floorId === id ? "active" : ""}`}
+                    aria-pressed={floorId === id}
+                    onClick={() => {
+                      useEditorStore.getState().setFloor(id);
+                      fitView();
+                    }}
                   >
-                    {layer.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+                    <Layers size={15} />
+                    <span>{project.floors[id]!.name}</span>
+                    <span className="floor-tag">{String(index + 1).padStart(2, "0")}</span>
                   </button>
                   <button
-                    className="subtle icon-button"
-                    aria-label={`${layer.name} ${layer.locked ? "entsperren" : "sperren"}`}
-                    onClick={() =>
-                      commit("Ebenensperre ändern", (draft) => {
-                        draft.layers[id]!.locked = !layer.locked;
-                      })
-                    }
+                    className="subtle floor-settings"
+                    aria-label={`${project.floors[id]!.name} bearbeiten`}
+                    onClick={() => {
+                      setFloorDialog(id);
+                    }}
                   >
-                    {layer.locked ? <Lock size={13} /> : <Unlock size={13} />}
+                    <Settings2 size={13} />
                   </button>
                 </div>
-              );
-            })}
-          </div>
-        </RibbonSection>
-      )}
-      {floorDialog && (
-        <FloorDialog
-          inline
-          key={floorDialog}
-          floorId={floorDialog === "new" ? null : floorDialog}
-          onClose={() => {
-            setFloorDialog(null);
-            setViewDialog("floors");
-          }}
-        />
-      )}
+              ))}
+            </div>
+            <label className="floor-reference-toggle">
+              <input
+                type="checkbox"
+                checked={showFloorReferences}
+                onChange={(event) => useEditorStore.setState({ showFloorReferences: event.target.checked })}
+              />
+              Etagenreferenzen anzeigen
+            </label>
+          </section>
+          <section className="ribbon-common-group ribbon-layers" aria-label="Ebenen" ref={layersGroup}>
+            <div className="panel-heading">EBENEN</div>
+            <div className="layer-list">
+              {project.layerOrder.map((id) => {
+                const layer = project.layers[id]!;
+                return (
+                  <div className="layer-row" key={id}>
+                    <span className={`layer-dot ${layer.kind}`} />
+                    <span>{layer.name}</span>
+                    <button
+                      className="subtle icon-button"
+                      title={layer.visible ? "Ausblenden" : "Einblenden"}
+                      aria-label={`${layer.name} ${layer.visible ? "ausblenden" : "einblenden"}`}
+                      onClick={() =>
+                        commit("Ebenensichtbarkeit ändern", (draft) => {
+                          draft.layers[id]!.visible = !layer.visible;
+                        })
+                      }
+                    >
+                      {layer.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+                    </button>
+                    <button
+                      className="subtle icon-button"
+                      aria-label={`${layer.name} ${layer.locked ? "entsperren" : "sperren"}`}
+                      onClick={() =>
+                        commit("Ebenensperre ändern", (draft) => {
+                          draft.layers[id]!.locked = !layer.locked;
+                        })
+                      }
+                    >
+                      {layer.locked ? <Lock size={13} /> : <Unlock size={13} />}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+      </div>
+      <div hidden={!expanded}>
+        {floorDialog && (
+          <FloorDialog
+            inline
+            key={floorDialog}
+            floorId={floorDialog === "new" ? null : floorDialog}
+            onClose={() => {
+              setFloorDialog(null);
+            }}
+          />
+        )}
+      </div>
     </aside>
   );
 }

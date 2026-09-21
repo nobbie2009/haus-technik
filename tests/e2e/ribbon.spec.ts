@@ -22,6 +22,10 @@ test("Menüband liegt über dem Plan und bedient Tabs, Geschosse und Ebenen", as
   const floor = page.getByRole("region", { name: "Etage erstellen", exact: true });
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await floor.getByLabel("Name", { exact: true }).fill("Garten");
+  await page.getByRole("button", { name: "Menüband", exact: true }).click();
+  await expect(floor).not.toBeVisible();
+  await page.getByRole("button", { name: "Menüband", exact: true }).click();
+  await expect(floor.getByLabel("Name", { exact: true })).toHaveValue("Garten");
   await floor.getByRole("button", { name: "Etage erstellen", exact: true }).click();
   await expect(page.getByTitle("Geschosse verwalten", { exact: true })).toContainText("Garten");
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
@@ -33,15 +37,23 @@ test("Menüband liegt über dem Plan und bedient Tabs, Geschosse und Ebenen", as
   await page.screenshot({ path: "test-results/ribbon-inline-desktop.png" });
   await layers.getByRole("button", { name: "Grundriss sperren", exact: true }).click();
   await expect(layers.getByRole("button", { name: "Grundriss entsperren", exact: true })).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("button", { name: "Ebenen", exact: true })).toBeFocused();
+  const tools = (await page.getByRole("navigation", { name: "Zeichenwerkzeuge" }).boundingBox())!;
+  expect(Math.abs(section.y - tools.y)).toBeLessThan(10);
+  const toggle = page.getByRole("button", { name: "Men\u00fcband", exact: true });
+  const openHeight = (await surface.boundingBox())!.height;
+  await toggle.click();
+  await expect(layers).not.toBeVisible();
+  await expect(page.getByRole("region", { name: "Geschosse verwalten", exact: true })).not.toBeVisible();
+  expect((await surface.boundingBox())!.height).toBeGreaterThan(openHeight);
+  await toggle.click();
+  await expect(layers).toBeVisible();
   await page.screenshot({ path: "test-results/ribbon-desktop.png" });
 });
 
 test("Schmales Menüband bleibt einklappbar und alle Tabs erreichbar", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: "Werkzeuge", exact: true });
+  const toggle = page.getByRole("button", { name: "Menüband", exact: true });
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   const before = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.getByRole("tab", { name: "Wasser / Wärme / Gas", exact: true }).click();

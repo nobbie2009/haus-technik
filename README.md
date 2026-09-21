@@ -193,11 +193,11 @@ Der Vorschau-Server verwendet standardmäßig Port 4173 und damit einen anderen 
 ## Schnell ausprobieren
 
 Die Tabs oben bestimmen den Bearbeitungsbereich. Darunter zeigt das Menüband die passenden Werkzeuge und
-Vorlagen. Über den Geschossnamen und **Ebenen** rechts im Menüband öffnen sich seit **0.43.0** aufklappbare
-Bereiche direkt oberhalb des Plans. Dort lassen sich Etagen wechseln, anlegen und bearbeiten sowie
-Ebenen einblenden, ausblenden und sperren. Der Plan bleibt bedienbar; die Bereiche lassen sich über den
-Pfeil nach oben einklappen. Auf iPad und iPhone klappt **Werkzeuge** die Zeichenwerkzeuge ein oder aus;
-ein Tabwechsel öffnet es. Breite Werkzeuggruppen lassen sich horizontal verschieben.
+Vorlagen. Seit **0.45.0** stehen **Geschosse** und **Ebenen** als feste Gruppen in derselben Ribbon-Zeile.
+Dort lassen sich Etagen wechseln, anlegen und bearbeiten sowie Ebenen einblenden, ausblenden und sperren.
+Der Geschossname und **Ebenen** oben springen direkt zur jeweiligen Gruppe. **Menüband** blendet die
+gesamte Werkzeugzeile auf Desktop, iPad und iPhone ein oder aus; die Bereichs-Tabs bleiben sichtbar.
+Ein Tabwechsel öffnet sie wieder. Breite Werkzeuggruppen lassen sich horizontal verschieben.
 Andere Bereiche bleiben sichtbar, lassen sich aber nicht
 auswählen, verschieben oder über die Objektliste bearbeiten. Ein Tabwechsel hebt die Auswahl auf und verwirft
 unfertige Zeichenwege. Auswahl (V) und Pan (H) bleiben im aktuellen Bereich; Fachwerkzeugkürzel wechseln automatisch

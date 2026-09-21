@@ -108,19 +108,13 @@ test("Einspeisung, Stromzähler, Sicherungskasten und Steckdose übernehmen Vorg
   await page.screenshot({ path: "test-results/supply-outlet-compact.png" });
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik sperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await page.getByRole("button", { name: "Elektrik-Projektstandard", exact: true }).click();
   await expect(page.getByLabel("Standardspannung L–N (V)", { exact: true })).toBeDisabled();
   await dialog.getByRole("button", { name: "Dialog schließen", exact: true }).click();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik entsperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   // Der ausgewählte Kasten muss neue Stromkreise erhalten, nicht immer der erste Kasten.
   await page.setViewportSize({ width: 1440, height: 1000 });
   await place("distributionBoards", 620);

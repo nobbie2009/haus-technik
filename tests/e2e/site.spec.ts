@@ -62,17 +62,11 @@ test("Grundstück und Weg zeichnen, Referenzpunkt setzen und Router daran ausric
   expect(path.vertices).toHaveLength(3);
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundstück sperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await expect(page.getByLabel("Punkt X", { exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundstück entsperren", exact: true }).click();
-  await page
-    .getByRole("region", { name: "Ebenen", exact: true })
-    .getByRole("button", { name: "Ebenen einklappen", exact: true })
-    .click();
+
   await page.getByRole("button", { name: "Löschen", exact: true }).click();
   await page.getByRole("button", { name: "Rückgängig", exact: true }).click();
   expect(Object.values(site(await exported(page)).elements).some((e) => e.id === path.id)).toBe(true);
