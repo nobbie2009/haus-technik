@@ -1,6 +1,6 @@
 ---
 name: home-technik-proxmox-lxc
-description: Home-Technik aus nobbie2009/haus-technik in einem Proxmox-LXC im Heimnetz bereitstellen, aktualisieren und auf einen vorherigen App-Stand zurücksetzen. Verwenden für Deployment, LXC-Einrichtung und Betriebsprüfung dieses Projekts.
+description: Home-Technik aus nobbie2009/haus-technik in einem Proxmox-LXC im Heimnetz bereitstellen, aktualisieren und auf einen vorherigen App-Stand zurücksetzen. Verwenden für Deployment, LXC-Einrichtung, Betriebsprüfung und die Pflege der Benutzeranleitung bei Home-Technik-Updates.
 ---
 
 # Home-Technik auf Proxmox LXC
@@ -44,6 +44,37 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
 - Bei HTTPS einen vorhandenen Home-Assistant-Zugriff gesondert prüfen: HTTP-Endpunkte können durch
   Mixed-Content blockiert sein. Keine Tokens in die statischen Dateien einbauen.
 
+## Benutzeranleitung bei jedem Update mitpflegen
+
+Die Anleitung ist Bestandteil jedes Home-Technik-Updates. Bei der Vorbereitung einer Änderung
+die betroffenen Bedienabläufe mit dem tatsächlichen Code und der Oberfläche abgleichen und die
+Dokumentation im selben Änderungsstand aktualisieren:
+
+- Hauptquelle: `docs/handbuch.md`; eingebundene Fachtexte unter `docs/` ebenfalls berichtigen.
+  Neue Funktionen, geänderte Schaltflächen, Arbeitsschritte, Voraussetzungen und Grenzen erklären.
+  Überholte Aussagen entfernen. Bei rein internen Änderungen ohne Bedienauswirkung genügt eine
+  Prüfung; keine künstlichen Anleitungstexte hinzufügen.
+- Betroffene FAQ-Antworten, Suchbegriffe, A–Z-Verweise und Kapitelverknüpfungen mitführen.
+  Stabile Kapitelkennungen erhalten, damit bestehende Links weiter funktionieren.
+- Bildschirmbilder unter `public/handbuch/bilder/` bei relevanten sichtbaren Änderungen erneuern
+  beziehungsweise ergänzen. Nur fiktive Beispieldaten verwenden. Bildunterschriften und tatsächliche
+  Aufnahmeversion konsistent halten; ältere unverändert passende Bilder dürfen gekennzeichnet bleiben.
+  Die Versionskennzeichnung der Bilder wird auch in `scripts/build-handbook.mjs` erzeugt.
+- `npm run handbook:build` ausführen und anschließend mit `npm run build` das Handbuch im Release
+  erzeugen. `public/handbuch/index.html` ist eine generierte, nicht einzucheckende Datei.
+  Kapitelverweise und Bilddateien werden beim Erzeugen geprüft. Bei Änderungen an Navigation, Suche,
+  Bildern oder Layout passende Handbuch-Browsertests aus `tests/e2e/handbook.spec.ts` und
+  `tests/ipad/handbook.spec.ts` ausführen; geänderte Abbildungen visuell kontrollieren.
+- Kapitel-/Bildanzahlen in README, Handbuchtests und Begleittexten bei Umfangsänderungen anpassen.
+  Ein mitgeliefertes Offline-ZIP nach Änderungen neu erzeugen. Die Build-Version kommt aus
+  `package.json`; Versionsnummern und deutsches Changelog nach den Projektregeln pflegen.
+
+Bei der reinen Installation eines bereits veröffentlichten Releases die mitgelieferte Anleitung
+auf Erreichbarkeit und passende Version prüfen. Fehlende Korrekturen im Repository und einem
+neuen Release nachführen, statt die produktive Anleitung unabhängig vom Release zu verändern.
+Zum Abschluss kurz nennen, welche Anleitungsteile aktualisiert wurden oder dass die Prüfung
+keinen inhaltlichen Anpassungsbedarf ergeben hat.
+
 ## Ablauf
 
 Für neue Installationen bevorzugt das interaktive [install.sh](scripts/install.sh) auf dem Proxmox-Host
@@ -72,11 +103,13 @@ Vorhandene Sites und Reverse Proxies gezielt integrieren; fremde Konfiguration n
 1. Zielsystem inventarisieren und endgültige Adresse bestimmen. Für einen reinen Webserver sind
    1 vCPU, 512 MB RAM und 4 GB Disk ein Ausgangspunkt; an Template und vorhandene Ressourcen anpassen.
    Kein privilegierter Container, Docker, Nesting oder Host-Mount nötig.
-2. Eindeutigen Git-Commit bauen und prüfen. Nur `dist/` und die Nginx-Konfiguration übertragen.
+2. Anleitung gemäß obigem Abschnitt prüfen und gegebenenfalls aktualisieren. Eindeutigen Git-Commit
+   bauen und prüfen. Nur `dist/` und die Nginx-Konfiguration übertragen.
 3. Release in eigenes Verzeichnis installieren, Konfiguration mit `nginx -t` prüfen, dann aktivieren.
    Vorherigen Release-Pfad und vorhandene Konfiguration für Rollback erhalten.
 4. HTTP, JavaScript/MIME-Typen, PDF-Worker, Schrift und fehlende Dateien prüfen. Anschließend im WLAN
-   Hausakte, JSON-Import/-Export, PDF-Ausgabe und QR-Ziel testen, möglichst in Safari auf dem iPad.
+   Hausakte, JSON-Import/-Export, PDF-Ausgabe, QR-Ziel und `handbuch/index.html` testen,
+   möglichst in Safari auf dem iPad. Im Handbuch Version, Bilder und eine Stichwortsuche prüfen.
 5. Bei Fehlern alten Release aktivieren und Ursache untersuchen. Keine Browserdaten löschen.
    Ein App-Rollback macht zwischenzeitliche Projektdatenänderungen oder Schema-Migrationen nicht rückgängig.
 

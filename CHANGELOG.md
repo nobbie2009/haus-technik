@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.49.1 · 21.09.2026
+
+- Anleitungspflege fest in den Update-Skill aufnehmen: betroffene Kapitel, Fachtexte, FAQ, Stichwörter und Bilder gemeinsam mit Änderungen aktualisieren, Handbuch erzeugen und passende Prüfungen ausführen. Bei Installation veröffentlichter Releases die mitgelieferte Anleitung und Version kontrollieren.
+
 ## 0.49.0 · 21.09.2026
 
 - Umfangreiches deutsches Handbuch mit 31 Kapiteln und 25 vergrößerbaren Bildschirmbildern aus Beispielprojekten ergänzen. Einstieg, Grundriss, Technik, Garten, Hausakte, Baustelle, Geräteabgleich, Sicherung und Updates mit konkreten Schrittfolgen erklären.
