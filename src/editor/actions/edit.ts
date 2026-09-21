@@ -30,6 +30,12 @@ export function selectedPointIds(project: Project, selection: Selection[]): Set<
   return result;
 }
 
+export function movePoint(project: Project, pointId: UUID, delta: Vec2): void {
+  const point = project.points[pointId];
+  if (!point) throw new Error("Wandpunkt fehlt.");
+  point.position = add(point.position, delta);
+}
+
 export function moveSelection(project: Project, selection: Selection[], delta: Vec2): void {
   if (delta.x === 0 && delta.y === 0) return;
   for (const s of selection.filter((s) => s.kind === "siteElements")) {

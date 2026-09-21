@@ -81,6 +81,7 @@ export function PlanStage() {
             floorId={editor.floorId}
             viewport={editor.viewport}
             selection={editor.selection}
+            editPoints={editor.category === "building" && editor.tool === "select"}
             measurements={editor.showMeasurements}
             width={editor.size.width}
             height={editor.size.height}

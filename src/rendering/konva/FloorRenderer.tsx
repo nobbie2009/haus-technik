@@ -22,6 +22,7 @@ export const FloorRenderer = memo(function FloorRenderer({
   width,
   height,
   offset = { x: 0, y: 0 },
+  editPoints = false,
 }: {
   project: Project;
   floorId: string;
@@ -31,6 +32,7 @@ export const FloorRenderer = memo(function FloorRenderer({
   width: number;
   height: number;
   offset?: Vec2;
+  editPoints?: boolean;
 }) {
   const screen = (p: Vec2) => worldToScreen({ x: p.x + offset.x, y: p.y + offset.y }, viewport);
   const flatten = (points: Vec2[]) =>
@@ -158,6 +160,21 @@ export const FloorRenderer = memo(function FloorRenderer({
           </Group>
         );
       })}
+      {editPoints &&
+        [...new Set(walls.flatMap((w) => [w.startPointId, w.endPointId]))].map((id) => {
+          const p = screen(project.points[id]!.position);
+          return (
+            <Circle
+              key={`handle-${id}`}
+              x={p.x}
+              y={p.y}
+              radius={5.5}
+              fill="white"
+              stroke="#16846b"
+              strokeWidth={2}
+            />
+          );
+        })}
       {Object.values(project.dimensions)
         .filter(visible)
         .map((dimension) => {

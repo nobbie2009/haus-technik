@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.36.0 · 21.09.2026
+
+- Raum- und Wandendpunkte im Auswahlmodus über eigene runde Griffe einzeln verschieben. Nur der gewählte Punkt bewegt sich; angeschlossene Wände ändern Länge und Richtung, alle übrigen Punkte bleiben stehen.
+- Größere Treffbereiche für die Punktbearbeitung per Touch ergänzen. Ganze Wände und Räume weiterhin über Wandfläche beziehungsweise Rauminneres verschieben.
+- Raumecken einzeln auswählen und ihre X-/Y-Koordinaten genau bearbeiten. Bestehende Geometrieprüfung, Ebenensperren und Rückgängig auch beim Verschieben einzelner Punkte beachten.
+
 ## 0.35.0 · 21.09.2026
 
 - Grundstücksgrenzen, Wege, Terrassen, Beete und Referenzpunkte auf iPhone/iPad per GPS-Groberfassung aufnehmen. Bekannten Planpunkt oder Planursprung als GPS-Referenz verwenden und die Nordrichtung einstellen.

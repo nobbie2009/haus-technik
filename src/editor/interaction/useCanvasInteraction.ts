@@ -17,13 +17,14 @@ import { subtract } from "../../geometry/vector";
 import type { Vec2 } from "../../models/common";
 import type { Selection } from "../types";
 import { toolLabels } from "../types";
-import { hitTest } from "./hitTest";
+import { hitTest, hitWallPoint } from "./hitTest";
 import { updateCursor, confirmDrawing } from "./drawing";
-import { moveSelection } from "../actions/edit";
+import { moveSelection, movePoint } from "../actions/edit";
 import { createOpening, openingPosition } from "../actions/create";
 
 interface Gesture {
-  type: "pan" | "move" | "connect";
+  type: "pan" | "move" | "connect" | "point";
+  pointId?: string;
   screen: Vec2;
   world: Vec2;
   selection: Selection[];
@@ -67,15 +68,20 @@ export function useCanvasInteraction() {
     };
   }, []);
   useEffect(() => {
-    if (!editor.dragOffset && gesture.current?.type === "move" && gesture.current.moved)
+    if (
+      !editor.dragOffset &&
+      (gesture.current?.type === "move" || gesture.current?.type === "point") &&
+      gesture.current.moved
+    )
       gesture.current = null;
   }, [editor.dragOffset]);
   const preview = useMemo(() => {
     if (!editor.dragOffset) return project;
     const next = structuredClone(project);
-    moveSelection(next, editor.selection, editor.dragOffset);
+    if (editor.dragPointId) movePoint(next, editor.dragPointId, editor.dragOffset);
+    else moveSelection(next, editor.selection, editor.dragOffset);
     return next;
-  }, [project, editor.selection, editor.dragOffset]);
+  }, [project, editor.selection, editor.dragOffset, editor.dragPointId]);
   const pointer = (event: PointerEvent<HTMLDivElement>): Vec2 => {
     const rect = event.currentTarget.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -161,6 +167,34 @@ export function useCanvasInteraction() {
       return;
     }
     if (editor.tool === "select") {
+      const pointHit =
+        editor.category === "building" && !event.shiftKey && !editor.multiSelect
+          ? hitWallPoint(
+              project,
+              editor.floorId,
+              world,
+              editor.viewport.scale,
+              event.pointerType === "touch" ? 22 : 12,
+            )
+          : null;
+      if (pointHit) {
+        const room = editor.selection.find(
+          (s) => s.kind === "rooms" && project.rooms[s.id]?.polygon.pointIds.includes(pointHit.pointId),
+        );
+        const selection: Selection[] = room ? [room] : [{ kind: "walls", id: pointHit.wallId }];
+        useEditorStore.setState({ selection, dragPointId: pointHit.pointId, dragOffset: null });
+        event.currentTarget.setPointerCapture(event.pointerId);
+        gesture.current = {
+          type: "point",
+          pointId: pointHit.pointId,
+          screen,
+          world,
+          selection,
+          moved: false,
+        };
+        return;
+      }
+
       const hit = hitTest(project, editor.floorId, world, editor.viewport.scale, false, editor.category);
       let selection: Selection[] = [];
       if (hit) {
@@ -223,7 +257,7 @@ export function useCanvasInteraction() {
         navigating.current = true;
         pinch.current = { ...pair, viewport: useEditorStore.getState().viewport };
         gesture.current = null;
-        useEditorStore.setState({ dragOffset: null });
+        useEditorStore.setState({ dragPointId: null, dragOffset: null });
       } else if (!navigating.current && (editor.tool === "select" || editor.tool === "pan"))
         performDown(event);
       return;
@@ -275,7 +309,11 @@ export function useCanvasInteraction() {
       active.screen = screen;
       return;
     }
-    if (active?.type === "move") {
+    if (active?.type === "point" && current.dragPointId !== active.pointId) {
+      gesture.current = null;
+      return;
+    }
+    if (active?.type === "move" || active?.type === "point") {
       if (Math.hypot(screen.x - active.screen.x, screen.y - active.screen.y) < 3 && !active.moved) return;
       active.moved = true;
       const delta = subtract(world, active.world);
@@ -315,8 +353,12 @@ export function useCanvasInteraction() {
       useProjectStore
         .getState()
         .commit("Auswahl verschieben", (draft) => moveSelection(draft, active.selection, offset));
+    if (active?.type === "point" && active.moved && offset && active.pointId)
+      useProjectStore
+        .getState()
+        .commit("Eckpunkt verschieben", (draft) => movePoint(draft, active.pointId!, offset));
     gesture.current = null;
-    useEditorStore.setState({ dragOffset: null });
+    useEditorStore.setState({ dragPointId: null, dragOffset: null });
   };
   const zoom = (factor: number) =>
     useEditorStore.setState({
@@ -334,7 +376,7 @@ export function useCanvasInteraction() {
     pinch.current = null;
     navigating.current = false;
     pen.current = null;
-    useEditorStore.setState({ dragOffset: null });
+    useEditorStore.setState({ dragPointId: null, dragOffset: null });
   };
   return { host, project, editor, preview, down, move, up, cancel, zoom };
 }

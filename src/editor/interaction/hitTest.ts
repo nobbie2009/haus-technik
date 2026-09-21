@@ -130,3 +130,17 @@ export function hitTest(
         return { kind: "rooms", id: room.id };
   return null;
 }
+
+/** Endpoints take priority over wall bodies when editing the building. */
+export function hitWallPoint(project: Project, floorId: UUID, point: Vec2, scale: number, radiusPx = 12) {
+  let closest: { pointId: UUID; wallId: UUID; distance: number } | null = null;
+  for (const wall of Object.values(project.walls)) {
+    if (wall.floorId !== floorId || !project.layers[wall.layerId]?.visible) continue;
+    for (const pointId of [wall.startPointId, wall.endPointId]) {
+      const d = distance(project.points[pointId]!.position, point) * scale;
+      if (d <= radiusPx && (!closest || d < closest.distance))
+        closest = { pointId, wallId: wall.id, distance: d };
+    }
+  }
+  return closest;
+}

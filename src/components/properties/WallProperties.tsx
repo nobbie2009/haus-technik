@@ -68,8 +68,9 @@ export function WallProperties({ id }: { id: string }) {
           })}
         </div>
         <p className="field-hint">
-          Verbundene Wände folgen gemeinsamen Punkten. Beim Löschen entfallen auch zugehörige Raumdefinitionen
-          und Öffnungen.
+          Runde Endpunktgriffe einzeln ziehen, um Länge und Richtung zu ändern. Der andere Endpunkt bleibt
+          stehen; angeschlossene Wände folgen nur am gemeinsamen Punkt. Beim Löschen entfallen auch zugehörige
+          Raumdefinitionen und Öffnungen.
         </p>
       </div>
     </>
