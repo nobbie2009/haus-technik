@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.38.0 · 21.09.2026
+
+- Bereichs-Tabs und Zeichenwerkzeuge aus der linken Seitenleiste in ein horizontales Menüband oberhalb des Plans verlagern. Je Bereich die passenden Vorlagen und Aktionen anzeigen; die bisherige linke Spalte steht dem Plan zur Verfügung.
+- Geschossverwaltung und Ebenensichtbarkeit/-sperren über eigene Schaltflächen oben öffnen. Abstandspunkte für das Grundstück in einem eigenen Dialog erfassen.
+- Menüband auf iPad und iPhone ein- und ausklappen; Tabs und Ansichtssteuerung erreichbar halten. Breite Werkzeuggruppen horizontal verschieben und bei Bereichswechsel an ihren Anfang zurücksetzen.
+- Tastaturbedienung und Fokusrückgabe beim Schließen von Dialogen verbessern; Bedienungsanleitung aktualisieren.
+
 ## 0.37.0 · 21.09.2026
 
 - Zählernummern zwischen Planzählern und verknüpften Hausakten-Einträgen in beide Richtungen abgleichen. Bereits in der Hausakte vorhandene Nummern beim Laden in leere Planfelder übernehmen; widersprüchliche Altwerte zur bewussten Korrektur anzeigen.

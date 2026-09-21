@@ -25,7 +25,11 @@ Ein Kaltstart ohne Verbindung zum Server und eine installierbare Offline-App sin
 
 ## Ohne Tastatur arbeiten
 
-- **Werkzeuge** und **Eigenschaften** öffnen die jeweilige Seitenleiste; derselbe Knopf schließt sie.
+- Die Bereichs-Tabs liegen oberhalb des Plans. **Werkzeuge** klappt das Menüband darunter ein und aus;
+  ein Tabwechsel öffnet es. Die Werkzeuggruppen lassen sich bei Bedarf waagerecht verschieben.
+- Der Geschossname öffnet die Etagenverwaltung, **Ebenen** die Sichtbarkeit und Sperren.
+- **Eigenschaften** öffnet die rechte Seitenleiste; derselbe Knopf schließt sie. Auf dem iPhone ist dies
+  die Schaltfläche mit dem Schieberegler-Symbol neben **Ebenen**.
 - Mit einem Finger Punkte setzen oder Objekte auswählen und verschieben. Platzierungen erfolgen beim Loslassen.
 - Zwei Finger auf dem Plan zoomen und verschieben die Ansicht. Die Geste erzeugt keine neuen Objekte.
 - **Raum schließen**, **Wandzug beenden**, **Abbrechen** und **Letzten Punkt entfernen** ersetzen Zeichenkürzel.

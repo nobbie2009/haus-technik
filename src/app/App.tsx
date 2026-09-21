@@ -15,7 +15,8 @@ import { useKeyboard } from "../editor/interaction/keyboard";
 import { initializePersistence } from "../persistence/autosave";
 
 export function App() {
-  const [panel, setPanel] = useState<"tools" | "properties" | null>(null);
+  const [panel, setPanel] = useState<"properties" | null>(null);
+  const [toolsExpanded, setToolsExpanded] = useState(false);
   const project = useProjectStore((s) => s.project);
   const error = useProjectStore((s) => s.error);
   const saveError = useProjectStore((s) => s.saveError);
@@ -46,23 +47,12 @@ export function App() {
     <div className="app-shell">
       <Toolbar />
       <SimulationBanner />
-      <nav className="tablet-navigation" aria-label="Planbereiche">
-        <button
-          aria-expanded={panel === "tools"}
-          aria-controls="tools-panel"
-          onClick={() => setPanel(panel === "tools" ? null : "tools")}
-        >
-          Werkzeuge
-        </button>
-        <span>Mit zwei Fingern zoomen und verschieben</span>
-        <button
-          aria-expanded={panel === "properties"}
-          aria-controls="properties-panel"
-          onClick={() => setPanel(panel === "properties" ? null : "properties")}
-        >
-          Eigenschaften
-        </button>
-      </nav>
+      <ToolPanel
+        expanded={toolsExpanded}
+        onExpandedChange={setToolsExpanded}
+        propertiesOpen={panel === "properties"}
+        onPropertiesToggle={() => setPanel(panel === "properties" ? null : "properties")}
+      />
       <div className="workspace">
         {panel && (
           <button
@@ -71,9 +61,6 @@ export function App() {
             onClick={() => setPanel(null)}
           />
         )}
-        <div id="tools-panel" className={`panel-slot tools-slot ${panel === "tools" ? "panel-open" : ""}`}>
-          <ToolPanel />
-        </div>
         <PlanStage />
         <div
           id="properties-panel"

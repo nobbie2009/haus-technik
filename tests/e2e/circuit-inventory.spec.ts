@@ -64,10 +64,7 @@ test("Stromkreisbestand zeigt Leitungen und navigiert etagenübergreifend ohne D
   await page.screenshot({ path: "test-results/circuit-inventory-compact.png" });
   await inventory.getByRole("button", { name: "SD-01 im Plan anzeigen", exact: true }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.locator(".floor-item").filter({ hasText: "Obergeschoss" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(page.getByTitle("Geschosse verwalten", { exact: true })).toContainText("Obergeschoss");
   await expect(page.getByRole("tab", { name: "Elektrik", exact: true })).toHaveAttribute(
     "aria-selected",
     "true",
@@ -78,13 +75,23 @@ test("Stromkreisbestand zeigt Leitungen und navigiert etagenübergreifend ohne D
   await open();
   await inventory.getByRole("button", { name: "L-01 im Plan anzeigen", exact: true }).click();
   await expect(page.getByLabel("Leitungskennzeichnung", { exact: true })).toHaveValue("L-01");
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik sperren", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await open();
   await expect(inventory.getByText("Ebene gesperrt · nur ansehen")).toHaveCount(3);
   await inventory.getByRole("button", { name: "VG-01 im Plan anzeigen", exact: true }).click();
   await expect(page.getByLabel("Nennleistung (W)", { exact: true })).toHaveValue("600");
   await expect(page.getByLabel("Nennleistung (W)", { exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik ausblenden", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await open();
   await expect(inventory.getByRole("button", { name: "SD-01 im Plan anzeigen", exact: true })).toBeDisabled();
   await expect(inventory.getByText("1 Leitungen · 8,250 m Gesamtlänge", { exact: true })).toBeVisible();

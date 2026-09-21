@@ -39,6 +39,7 @@ test("Etagenleitung per Anschlussauswahl erstellen und Steigpunkt bearbeiten", a
     pipe = Object.values(utilities(saved).pipes)[0]!;
   expect(pipe.riser).toEqual({ x: 1000, y: 0 });
   expect(pipeLength(saved, pipe)).toBe(5800);
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.getByRole("button", { name: "Obergeschoss", exact: true }).click();
   await page.getByText("Objekte im aktiven Bereich").click();
   await page.getByRole("button", { name: "KW-1", exact: true }).click();
@@ -80,9 +81,9 @@ test("Wasser, Heizung und Gas platzieren, verbinden, bearbeiten und wieder laden
     await page.mouse.click(box.x + 270, box.y + (medium === "flow" ? 460 : 550));
     await page.mouse.click(box.x + 400, box.y + 500);
   }
-  await place("source", "gas", 120, 660, "Gasanschluss");
+  await place("source", "gas", 120, box.height - 45, "Gasanschluss");
   await page.getByRole("button", { name: "Rohrleitung zeichnen", exact: true }).click();
-  await page.mouse.click(box.x + 120, box.y + 660);
+  await page.mouse.click(box.x + 120, box.y + box.height - 45);
   await page.mouse.click(box.x + 120, box.y + 500);
   const p = await exported(page),
     net = utilities(p);

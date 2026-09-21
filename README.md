@@ -168,7 +168,11 @@ Der Vorschau-Server verwendet standardmäßig Port 4173 und damit einen anderen 
 
 ## Schnell ausprobieren
 
-Die Tabs links bestimmen den Bearbeitungsbereich. Andere Bereiche bleiben sichtbar, lassen sich aber nicht
+Die Tabs oben bestimmen den Bearbeitungsbereich. Darunter zeigt das Menüband die passenden Werkzeuge und
+Vorlagen. Über den Geschossnamen und **Ebenen** rechts im Menüband lassen sich Etagen verwalten sowie
+Ebenen einblenden, ausblenden und sperren. Auf iPad und iPhone klappt **Werkzeuge** das Menüband ein oder aus;
+ein Tabwechsel öffnet es. Breite Werkzeuggruppen lassen sich horizontal verschieben.
+Andere Bereiche bleiben sichtbar, lassen sich aber nicht
 auswählen, verschieben oder über die Objektliste bearbeiten. Ein Tabwechsel hebt die Auswahl auf und verwirft
 unfertige Zeichenwege. Auswahl (V) und Pan (H) bleiben im aktuellen Bereich; Fachwerkzeugkürzel wechseln automatisch
 zum passenden Tab. Speichern, Export und Undo/Redo gelten weiterhin für das gesamte Projekt.

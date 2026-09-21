@@ -70,6 +70,7 @@ test("Stromkreis simulieren: Lasten, Überlast, Sicherung, Phase und unveränder
   await page.screenshot({ path: "test-results/simulation-compact.png" });
   await dialog.getByRole("button", { name: "Ergebnis im Plan ansehen", exact: true }).click();
   await expect(page.getByText("Simulation aktiv", { exact: true })).toBeVisible();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.screenshot({ path: "test-results/simulation-plan.png" });
   expect(await exported(page)).toEqual(before);

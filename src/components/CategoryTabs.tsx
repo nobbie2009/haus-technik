@@ -1,7 +1,7 @@
 import { categories } from "../editor/categories";
 import { useEditorStore } from "../stores/editorStore";
 
-export function CategoryTabs() {
+export function CategoryTabs({ onActivate }: { onActivate?: () => void }) {
   const active = useEditorStore((s) => s.category);
   const setCategory = useEditorStore((s) => s.setCategory);
   return (
@@ -14,7 +14,10 @@ export function CategoryTabs() {
           aria-selected={active === category.id}
           aria-controls={`tools-${category.id}`}
           tabIndex={active === category.id ? 0 : -1}
-          onClick={() => setCategory(category.id)}
+          onClick={() => {
+            setCategory(category.id);
+            onActivate?.();
+          }}
           onKeyDown={(event) => {
             const offset = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
             if (!offset && event.key !== "Home" && event.key !== "End") return;
@@ -27,6 +30,7 @@ export function CategoryTabs() {
                   ? categories.length - 1
                   : (index + offset + categories.length) % categories.length;
             setCategory(categories[next]!.id);
+            onActivate?.();
             event.currentTarget.parentElement
               ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
               [next]?.focus();

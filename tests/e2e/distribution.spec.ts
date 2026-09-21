@@ -33,6 +33,7 @@ test("Unterverteilung zuordnen, vorgeschaltete Sicherung ändern und Zuleitung w
   });
   await expect(page.getByText("„Haupt- und Unterverteilung“ wurde importiert.")).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await selectObject(page, "Etagenverteiler");
   const input = page.getByLabel("Versorgung des Sicherungskastens", { exact: true });

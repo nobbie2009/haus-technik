@@ -30,6 +30,7 @@ test("Grundstück und Weg zeichnen, Referenzpunkt setzen und Router daran ausric
   await expect(page.getByLabel("Außenobjektname", { exact: true })).toHaveValue("Grundstücksgrenze 1");
   const boundary = Object.values(site(await exported(page)).elements)[0]!;
   expect(boundary.vertices).toHaveLength(4);
+  await page.getByRole("button", { name: "Abstand zu Bezugspunkt", exact: true }).click();
   await page.getByLabel("Bezugspunkt", { exact: true }).selectOption(`${boundary.id}:0`);
   await page.getByLabel("Versatz X", { exact: true }).fill("1 m");
   await page.getByLabel("Versatz X", { exact: true }).press("Enter");
@@ -59,9 +60,19 @@ test("Grundstück und Weg zeichnen, Referenzpunkt setzen und Router daran ausric
   const path = Object.values(site(await exported(page)).elements).find((e) => e.kind === "path")!;
   expect(path.width).toBe(1200);
   expect(path.vertices).toHaveLength(3);
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundstück sperren", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await expect(page.getByLabel("Punkt X", { exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Grundstück entsperren", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await page.getByRole("button", { name: "Löschen", exact: true }).click();
   await page.getByRole("button", { name: "Rückgängig", exact: true }).click();
   expect(Object.values(site(await exported(page)).elements).some((e) => e.id === path.id)).toBe(true);

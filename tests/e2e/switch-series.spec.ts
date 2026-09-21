@@ -42,6 +42,7 @@ test("Drei Schalter in Reihe zuordnen und direkt im Plan gemeinsam eine Lampe st
   });
   await expect(page.getByText("„Haupt- und Unterverteilung“ wurde importiert.")).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.locator(".object-list > summary").click();
   for (let i = 1; i < 3; i++) {

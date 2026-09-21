@@ -32,6 +32,7 @@ test("Klingeltrafo zuordnen und eine Leitung vom EG ins OG zeichnen", async ({ p
     .getByRole("button", { name: "Klingeltransformator", exact: true })
     .click();
   await page.getByLabel("Trafo-Primärstromkreis", { exact: true }).selectOption(terminal);
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.locator(".object-list").getByRole("button", { name: "Klingel OG", exact: true }).click();
   await page.getByLabel("Transformator", { exact: true }).selectOption(transformer);
@@ -44,6 +45,7 @@ test("Klingeltrafo zuordnen und eine Leitung vom EG ins OG zeichnen", async ({ p
   await expect(page.locator(".circuit-summary").filter({ hasText: "Planlänge:" })).toContainText("3,000 m");
   await page.getByRole("button", { name: "Alles anzeigen", exact: true }).click();
   await page.screenshot({ path: "test-results/cable-og.png" });
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Erdgeschoss" }).click();
   await page.locator(".object-list").getByRole("button", { name: "Leitung", exact: true }).click();
   await expect(page.getByText("Geschossübergang", { exact: true })).toBeVisible();
@@ -58,12 +60,14 @@ test("Klingeltrafo zuordnen und eine Leitung vom EG ins OG zeichnen", async ({ p
     .getByRole("button", { name: "Klingeltransformator", exact: true })
     .click();
   await expect(page.getByRole("status").filter({ hasText: "Sekundärlast:" })).toContainText("0,5 A");
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await expect(page.getByLabel("VG-01 Betriebsanzeige", { exact: true })).toHaveText("In Betrieb");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.locator(".object-list > summary").click();
   await page.locator(".object-list").getByRole("button", { name: "Leitung", exact: true }).click();

@@ -41,6 +41,7 @@ test("Schalter direkt im Plan: Lampen leuchten, Verbraucher zeigen Betrieb und f
   });
   await expect(page.getByText("„Haupt- und Unterverteilung“ wurde importiert.")).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   const before = await exported(page);
   await page.getByRole("button", { name: "Stromkreis simulieren", exact: true }).click();

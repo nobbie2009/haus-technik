@@ -78,7 +78,12 @@ test("Elektrik dokumentieren: Verteiler, Sicherung, Steckdose und Verbraucher", 
   expect(device.position.x - Object.values(withDevice.electrical.devices)[0]!.position.x).toBe(500);
   await page.getByRole("button", { name: "Rückgängig", exact: true }).click();
   await page.getByRole("button", { name: "Wiederholen", exact: true }).click();
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik sperren", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await expect(page.getByLabel("Nennleistung (W)", { exact: true })).toBeDisabled();
   await page
     .locator(".right-panel")
@@ -87,7 +92,12 @@ test("Elektrik dokumentieren: Verteiler, Sicherung, Steckdose und Verbraucher", 
   await expect(dialog.getByLabel("Stromkreisname", { exact: true })).toBeDisabled();
   await expect(dialog.getByLabel("Bemessungsstrom (A)", { exact: true })).toBeDisabled();
   await dialog.getByRole("button", { name: "Dialog schließen", exact: true }).click();
+  await page.getByRole("button", { name: "Ebenen", exact: true }).click();
   await page.getByRole("button", { name: "Elektrik entsperren", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Ebenen", exact: true })
+    .getByRole("button", { name: "Dialog schließen", exact: true })
+    .click();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   const saved = await exported(page);
   await page.reload();

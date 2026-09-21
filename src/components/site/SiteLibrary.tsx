@@ -1,3 +1,4 @@
+import { Modal } from "../dialogs/Modal";
 import { GpsSurveyDialog } from "./GpsSurveyDialog";
 import { useState } from "react";
 import { useEditorStore } from "../../stores/editorStore";
@@ -9,6 +10,7 @@ import { LengthField } from "../Fields";
 export function SiteLibrary() {
   const editor = useEditorStore(),
     project = useProjectStore((s) => s.project);
+  const [offsetOpen, setOffsetOpen] = useState(false);
   const [gpsOpen, setGpsOpen] = useState(false);
   const [reference, setReference] = useState(""),
     [dx, setDx] = useState(0),
@@ -75,58 +77,63 @@ export function SiteLibrary() {
           Zeichnung abschließen
         </button>
       )}
-      <h3>Abstand zu einem Bezugspunkt</h3>
-      <SelectField label="Bezugspunkt" value={reference} onChange={setReference}>
-        <option value="">Punkt wählen</option>
-        {points.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.name}
-          </option>
-        ))}
-      </SelectField>
-      <LengthField
-        label="Versatz X"
-        value={dx}
-        unit={project.units.display}
-        onCommit={(v) => {
-          setDx(v);
-          return true;
-        }}
-      />
-      <LengthField
-        label="Versatz Y"
-        value={dy}
-        unit={project.units.display}
-        onCommit={(v) => {
-          setDy(v);
-          return true;
-        }}
-      />
-      <button
-        className="full-width"
-        disabled={!points.some((p) => p.id === reference)}
-        onClick={() => {
-          const source = points.find((p) => p.id === reference);
-          if (!source) return;
-          let id = "";
-          if (
-            useProjectStore.getState().commit("Referenzpunkt mit Abstand setzen", (p) => {
-              id = addSiteElement(p, editor.floorId, "reference", [
-                { x: source.p.x + dx, y: source.p.y + dy },
-              ]);
-            })
-          ) {
-            editor.cancel();
-            useEditorStore.setState({ selection: [{ kind: "siteElements", id }], tool: "select" });
-          }
-        }}
-      >
-        Referenzpunkt mit Abstand setzen
-      </button>
-      <p className="field-hint">
-        X nach rechts, Y nach oben. Mit aktivem Punktfang lassen sich Geräte und Leitungswegpunkte genau
-        darauf platzieren.
-      </p>
+      <button onClick={() => setOffsetOpen(true)}>Abstand zu Bezugspunkt</button>
+      {offsetOpen && (
+        <Modal title="Abstand zu einem Bezugspunkt" onClose={() => setOffsetOpen(false)}>
+          <SelectField label="Bezugspunkt" value={reference} onChange={setReference}>
+            <option value="">Punkt wählen</option>
+            {points.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </SelectField>
+          <LengthField
+            label="Versatz X"
+            value={dx}
+            unit={project.units.display}
+            onCommit={(v) => {
+              setDx(v);
+              return true;
+            }}
+          />
+          <LengthField
+            label="Versatz Y"
+            value={dy}
+            unit={project.units.display}
+            onCommit={(v) => {
+              setDy(v);
+              return true;
+            }}
+          />
+          <button
+            className="full-width"
+            disabled={!points.some((p) => p.id === reference)}
+            onClick={() => {
+              const source = points.find((p) => p.id === reference);
+              if (!source) return;
+              let id = "";
+              if (
+                useProjectStore.getState().commit("Referenzpunkt mit Abstand setzen", (p) => {
+                  id = addSiteElement(p, editor.floorId, "reference", [
+                    { x: source.p.x + dx, y: source.p.y + dy },
+                  ]);
+                })
+              ) {
+                setOffsetOpen(false);
+                editor.cancel();
+                useEditorStore.setState({ selection: [{ kind: "siteElements", id }], tool: "select" });
+              }
+            }}
+          >
+            Referenzpunkt mit Abstand setzen
+          </button>
+          <p className="field-hint">
+            X nach rechts, Y nach oben. Mit aktivem Punktfang lassen sich Geräte und Leitungswegpunkte genau
+            darauf platzieren.
+          </p>
+        </Modal>
+      )}
     </section>
   );
 }

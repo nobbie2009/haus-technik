@@ -20,6 +20,7 @@ test("Sicherungsvorlagen und Mehrfach-Klingeltrafo im Kasten speichern", async (
     buffer: Buffer.from(JSON.stringify(project)),
   });
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.locator(".object-list > summary").click();
   await page.locator(".object-list").getByRole("button", { name: "Etagenverteiler", exact: true }).click();
@@ -55,6 +56,7 @@ test("Sicherungsvorlagen und Mehrfach-Klingeltrafo im Kasten speichern", async (
   await page.reload();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByTitle("Geschosse verwalten", { exact: true }).click();
   await page.locator(".floor-item").filter({ hasText: "Obergeschoss" }).click();
   await page.locator(".object-list > summary").click();
   await page.locator(".object-list").getByRole("button", { name: "Klingel", exact: true }).click();
