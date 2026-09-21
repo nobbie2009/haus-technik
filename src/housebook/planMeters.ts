@@ -30,6 +30,24 @@ export function planMeters(p: Project) {
       }),
   ];
 }
+type PlanMeter = ReturnType<typeof planMeters>[number];
+export function planMeterSerial(plan: PlanMeter): string {
+  return "serialNumber" in plan.item
+    ? plan.item.serialNumber || asset(plan.item).serial
+    : asset(plan.item).serial;
+}
+function writePlanSerial(plan: PlanMeter, serial: string): boolean {
+  let changed = false;
+  if ("serialNumber" in plan.item && plan.item.serialNumber !== serial) {
+    plan.item.serialNumber = serial;
+    changed = true;
+  }
+  if (asset(plan.item).serial !== serial) {
+    plan.item.metadata.asset = { ...asset(plan.item), serial };
+    changed = true;
+  }
+  return changed;
+}
 export function sameMeterTarget(a: Meter["target"], b: Meter["target"]) {
   return Boolean(a && b && a.kind === b.kind && a.id === b.id);
 }
@@ -43,6 +61,8 @@ export function syncPlanMeters(p: Project, before?: Project): boolean {
   const book = homeBook(p),
     original = JSON.stringify(book);
   const previous = before ? planMeters(before) : [];
+  const previousBook = before ? homeBook(before) : null;
+  let planChanged = false;
   for (const plan of plans) {
     let linked = book.meters.find((m) => sameMeterTarget(m.target, plan.target));
     if (linked && !compatibleMeterKind(plan.kind, linked.kind)) {
@@ -58,25 +78,45 @@ export function syncPlanMeters(p: Project, before?: Project): boolean {
       const old = previous.find((m) => sameMeterTarget(m.target, plan.target));
       if (old) {
         if (linked.name === old.item.name) linked.name = plan.item.name;
-        if (linked.serial === asset(old.item).serial) linked.serial = asset(plan.item).serial;
+
         if (linked.location === before?.floors[old.item.floorId]?.name)
           linked.location = p.floors[plan.item.floorId]?.name ?? "";
       }
+      const oldRecord = previousBook?.meters.find((m) => m.id === linked.id);
+      let serial: string | undefined;
+      if (oldRecord && oldRecord.serial !== linked.serial) serial = linked.serial;
+      else if (
+        old &&
+        "serialNumber" in plan.item &&
+        "serialNumber" in old.item &&
+        plan.item.serialNumber !== old.item.serialNumber
+      )
+        serial = plan.item.serialNumber;
+      else if (old && asset(plan.item).serial !== asset(old.item).serial) serial = asset(plan.item).serial;
+      else if (!planMeterSerial(plan) && linked.serial) serial = linked.serial;
+      else if (!linked.serial && planMeterSerial(plan)) serial = planMeterSerial(plan);
+      else if (linked.serial === planMeterSerial(plan)) serial = linked.serial;
+      if (serial !== undefined) {
+        linked.serial = serial;
+        planChanged = writePlanSerial(plan, serial) || planChanged;
+      }
       continue;
     }
+    const serial = planMeterSerial(plan);
+    planChanged = writePlanSerial(plan, serial) || planChanged;
     book.meters.push({
       id: newId(),
       name: plan.item.name,
       kind: plan.kind,
       unit: plan.unit,
-      serial: asset(plan.item).serial,
+      serial,
       location: p.floors[plan.item.floorId]?.name ?? "",
       target: plan.target,
       price: null,
       readings: [],
     });
   }
-  if (JSON.stringify(book) === original) return false;
+  if (JSON.stringify(book) === original) return planChanged;
   setHomeBook(p, book);
   return true;
 }
@@ -103,7 +143,7 @@ export function saveMeter(p: Project, draft: Meter) {
         other.kind === plan.kind &&
         other.unit === plan.unit &&
         other.name === plan.item.name &&
-        other.serial === asset(plan.item).serial &&
+        other.serial === planMeterSerial(plan) &&
         other.location === (p.floors[plan.item.floorId]?.name ?? "") &&
         !solarPlants(p).some((plant) => plant.meterId === other.id);
       if (untouched) book.meters = book.meters.filter((m) => m.id !== other.id);
@@ -111,6 +151,11 @@ export function saveMeter(p: Project, draft: Meter) {
     }
   }
   const value = { ...draft, readings: old?.readings ?? draft.readings };
+  if (plan) {
+    if (!value.serial && !sameMeterTarget(old?.target ?? null, draft.target))
+      value.serial = planMeterSerial(plan);
+    writePlanSerial(plan, value.serial);
+  }
   if (old) Object.assign(old, value);
   else book.meters.push(value);
   setHomeBook(p, book);

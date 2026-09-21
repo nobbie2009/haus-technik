@@ -1,3 +1,4 @@
+import { asset } from "../../housebook/model";
 import {
   utilities,
   nodeMedia,
@@ -35,6 +36,18 @@ export function UtilityProperties({ id, kind }: { id: string; kind: "utilityNode
       />
       {node && (
         <>
+          {node.kind === "meter" && (
+            <TextField
+              label="Zählernummer"
+              value={asset(node).serial}
+              onCommit={(serial) =>
+                change((p) => {
+                  const n = utilities(p).nodes[id]!;
+                  n.metadata.asset = { ...asset(n), serial };
+                })
+              }
+            />
+          )}
           <p>
             {nodeKinds[node.kind]} ·{" "}
             {nodeMedia(node)

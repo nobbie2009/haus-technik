@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.37.0 · 21.09.2026
+
+- Zählernummern zwischen Planzählern und verknüpften Hausakten-Einträgen in beide Richtungen abgleichen. Bereits in der Hausakte vorhandene Nummern beim Laden in leere Planfelder übernehmen; widersprüchliche Altwerte zur bewussten Korrektur anzeigen.
+- Bei ausgewählten Strom-, Wasser-, Gas- und Wärmezählern die letzte datierte Ablesung anzeigen und direkt den passenden Eintrag unter „Zähler & Verbrauch“ öffnen.
+- Ablesungen zentral mit Datum in der Hausakte führen. Alte undatierte Stromzählerstände bleiben als bisheriger Planstand sichtbar, solange noch keine datierte Ablesung existiert.
+
 ## 0.36.0 · 21.09.2026
 
 - Raum- und Wandendpunkte im Auswahlmodus über eigene runde Griffe einzeln verschieben. Nur der gewählte Punkt bewegt sich; angeschlossene Wände ändern Länge und Richtung, alle übrigen Punkte bleiben stehen.

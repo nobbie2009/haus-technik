@@ -169,6 +169,7 @@ describe("Einspeisung, Zähler und Schutzzuordnung", () => {
     const { project, source, meter, board, outlet } = fixture();
     const cable = addCable(project, source, meter, []);
     useProjectStore.getState().replace(project);
+    const loadedElectrical = structuredClone(useProjectStore.getState().project.electrical);
     expect(
       useProjectStore
         .getState()
@@ -178,7 +179,7 @@ describe("Einspeisung, Zähler und Schutzzuordnung", () => {
     expect(objectSupply(useProjectStore.getState().project, "outlets", outlet).supply).toBeUndefined();
     expect(useProjectStore.getState().project.electrical.distributionBoards[board]!.meterId).toBeNull();
     useProjectStore.getState().undo();
-    expect(useProjectStore.getState().project.electrical).toEqual(project.electrical);
+    expect(useProjectStore.getState().project.electrical).toEqual(loadedElectrical);
   });
   it("kopiert Quellen, Zähler und Kasten referenztreu mit neuen IDs", () => {
     const { project, source, meter, board } = fixture();

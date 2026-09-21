@@ -10,6 +10,47 @@ import { useProjectStore } from "../../src/stores/projectStore";
 import { newId } from "../../src/utils/uuid";
 
 describe("Automatische Planzähler", () => {
+  it("übernimmt vorhandene Nummern in leere Planfelder und synchronisiert Änderungen in beide Richtungen", () => {
+    const p = transact(createProject(), (d) => {
+      addElectrical(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meters");
+    });
+    const b = homeBook(p),
+      record = b.meters[0]!,
+      id = record.target!.id;
+    record.serial = "ALT-123";
+    setHomeBook(p, b);
+    useProjectStore.getState().replace(p, true);
+    const loaded = useProjectStore.getState().project;
+    expect(loaded.electrical.meters[id]!.serialNumber).toBe("ALT-123");
+    expect(useProjectStore.getState().saveStatus).toBe("dirty");
+    const fromPlan = transact(loaded, (d) => {
+      d.electrical.meters[id]!.serialNumber = "PLAN-456";
+    });
+    expect(homeBook(fromPlan).meters[0]!.serial).toBe("PLAN-456");
+    const fromBook = transact(fromPlan, (d) =>
+      saveMeter(d, { ...homeBook(d).meters[0]!, serial: "AKTE-789" }),
+    );
+    expect(fromBook.electrical.meters[id]!.serialNumber).toBe("AKTE-789");
+    const cleared = transact(fromBook, (d) => {
+      d.electrical.meters[id]!.serialNumber = "";
+    });
+    expect(homeBook(cleared).meters[0]!.serial).toBe("");
+  });
+  it("synchronisiert Wasserzählernummern und bewahrt widersprüchliche Altdaten bis zur Bearbeitung", () => {
+    const p = transact(createProject(), (d) => {
+      addUtilityNode(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meter", "cold");
+    });
+    const record = homeBook(p).meters[0]!,
+      id = record.target!.id;
+    const next = transact(p, (d) => saveMeter(d, { ...record, serial: "W-123" }));
+    expect(utilities(next).nodes[id]!.metadata.asset).toMatchObject({ serial: "W-123" });
+    const b = homeBook(next);
+    b.meters[0]!.serial = "Abweichender Altwert";
+    setHomeBook(next, b);
+    syncPlanMeters(next);
+    expect(homeBook(next).meters[0]!.serial).toBe("Abweichender Altwert");
+    expect(utilities(next).nodes[id]!.metadata.asset).toMatchObject({ serial: "W-123" });
+  });
   it("verknüpft einen bestehenden Verlauf mit einem automatisch erfassten Planzähler", () => {
     const p = transact(createProject(), (d) => {
       addUtilityNode(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meter", "cold");

@@ -1,3 +1,4 @@
+import { PlanMeterRecord } from "./housebook/PlanMeterRecord";
 import { SiteProperties } from "./site/SiteProperties";
 import { NetworkProperties } from "./network/NetworkProperties";
 import { UtilityProperties } from "./utilities/UtilityProperties";
@@ -63,6 +64,9 @@ export function PropertiesPanel() {
           {locked && <p className="locked-note">Ebene gesperrt</p>}
           {selected && entity && (
             <div key={selected.id}>
+              {(selected.kind === "meters" || selected.kind === "utilityNodes") && (
+                <PlanMeterRecord target={selected} />
+              )}
               {(selected.kind === "outlets" ||
                 selected.kind === "devices" ||
                 selected.kind === "distributionBoards" ||

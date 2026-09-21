@@ -1,6 +1,6 @@
 import { usePropertyFields } from "../properties/usePropertyFields";
 import { TextField } from "../Fields";
-import { NumberField, SelectField } from "./ElectricalFields";
+import { SelectField } from "./ElectricalFields";
 
 export function MeterFields({ id }: { id: string }) {
   const { project, locked, change } = usePropertyFields({ kind: "meters", id });
@@ -32,17 +32,6 @@ export function MeterFields({ id }: { id: string }) {
         onCommit={(value) =>
           change((draft) => {
             draft.electrical.meters[id]!.serialNumber = value;
-          })
-        }
-      />
-      <NumberField
-        label="Zählerstand (kWh)"
-        value={meter.readingKWh}
-        disabled={locked}
-        hint="Manuell abgelesener Energiezählerstand, keine automatische Verbrauchsberechnung."
-        onCommit={(value) =>
-          change((draft) => {
-            draft.electrical.meters[id]!.readingKWh = value;
           })
         }
       />

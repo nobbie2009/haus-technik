@@ -74,16 +74,18 @@ const sections = {
 export function HousebookDialog({
   onClose,
   qrTarget,
+  initialMeterId,
 }: {
   onClose: () => void;
+  initialMeterId?: string;
   qrTarget?: { projectId: string; key: string } | null | undefined;
 }) {
   const project = useProjectStore((s) => s.project),
     globalError = useProjectStore((s) => s.error),
     floorId = useEditorStore((s) => s.floorId);
-  const [section, setSection] = useState<keyof typeof sections>("overview"),
+  const [section, setSection] = useState<keyof typeof sections>(initialMeterId ? "usage" : "overview"),
     [record, setRecord] = useState<Selection | null>(null);
-  const [entryId, setEntryId] = useState<string | undefined>(),
+  const [entryId, setEntryId] = useState<string | undefined>(initialMeterId),
     [fromSetup, setFromSetup] = useState(false),
     [photo, setPhoto] = useState<{ wallId: string; photoId?: string | undefined } | null>(null);
   const openSection: OpenSection = (section, id) => {

@@ -1,3 +1,4 @@
+import { homeBook } from "../../src/housebook/home";
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import type { Project } from "../../src/models/project";
@@ -48,7 +49,12 @@ test("Einspeisung, Stromzähler, Sicherungskasten und Steckdose übernehmen Vorg
     .getByLabel("Einspeisepunkt des Zählers", { exact: true })
     .selectOption({ label: "NETZ-01 · Stromeinspeisung" });
   await field(page, "Zählernummer", "1-ABC-987654");
-  await field(page, "Zählerstand (kWh)", "12345,67");
+  await page.getByRole("button", { name: "Zählerstände / Hausakte öffnen", exact: true }).click();
+  await page.getByLabel("Ablesedatum", { exact: true }).fill("2026-09-21");
+  await page.getByLabel("Zählerstand (kWh)", { exact: true }).fill("12345.67");
+  await page.getByRole("button", { name: "Ablesung speichern", exact: true }).click();
+  await page.getByRole("button", { name: "Dialog schließen", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Verknüpfte Zählerakte" })).toContainText("12.345,67 kWh");
   await page.screenshot({ path: "test-results/meter-desktop.png" });
   await place("distributionBoards", 360);
   await page
@@ -127,7 +133,7 @@ test("Einspeisung, Stromzähler, Sicherungskasten und Steckdose übernehmen Vorg
   await page.getByRole("button", { name: "Rückgängig", exact: true }).click();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   const saved = await exported(page);
-  expect(Object.values(saved.electrical.meters)[0]!.readingKWh).toBe(12345.67);
+  expect(homeBook(saved).meters[0]!.readings[0]!.value).toBe(12345.67);
   await page.reload();
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   expect(await exported(page)).toEqual(saved);
