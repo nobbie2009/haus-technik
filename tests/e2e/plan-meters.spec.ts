@@ -1,3 +1,8 @@
+import { createProject } from "../../src/core/projectFactory";
+import { addUtilityNode } from "../../src/utilities/model";
+import { homeBook, setHomeBook } from "../../src/housebook/home";
+import { syncPlanMeters } from "../../src/housebook/planMeters";
+import { newId } from "../../src/utils/uuid";
 import { test, expect } from "@playwright/test";
 test("Planzähler erscheinen automatisch nach Art und behalten Ablesungen", async ({ page }) => {
   const errors: string[] = [];
@@ -56,4 +61,53 @@ test("Planzähler erscheinen automatisch nach Art und behalten Ablesungen", asyn
   await expect(list.locator("option")).toHaveCount(4);
   await expect(page.getByText("2026-09-21: 123 m³", { exact: false })).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test("Vorhandenen Zähler bearbeiten und nachträglich mit einem Planzähler verknüpfen", async ({ page }) => {
+  const p = createProject(),
+    floor = p.floorOrder[0]!;
+  const planId = addUtilityNode(p, floor, { x: 0, y: 0 }, "meter", "cold");
+  addUtilityNode(p, floor, { x: 2000, y: 0 }, "meter", "gas");
+  syncPlanMeters(p);
+  const b = homeBook(p),
+    manual = {
+      ...b.meters[0]!,
+      id: newId(),
+      name: "Gartenwasser",
+      target: null,
+      readings: [{ id: newId(), date: "2026-09-01", value: 42, reset: false, note: "" }],
+    };
+  b.meters.push(manual);
+  setHomeBook(p, b);
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "Hausakte", exact: true })).toBeEnabled();
+  await page.getByLabel("Projektdatei importieren").setInputFiles({
+    name: "zaehler.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(p)),
+  });
+  await page.getByRole("button", { name: "Hausakte", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Bereiche der Hausakte" })
+    .getByRole("button", { name: "Zähler & Verbrauch", exact: true })
+    .click();
+  const list = page.getByLabel("Zähler auswählen", { exact: true });
+  await list.selectOption(manual.id);
+  await page.getByRole("button", { name: "Zähler bearbeiten", exact: true }).click();
+  await page.getByLabel("Zählernummer", { exact: true }).fill("GARTEN-42");
+  const link = page.getByLabel("Verknüpfter Planzähler", { exact: true });
+  await expect(link).toBeEnabled();
+  await expect(link.locator("option")).toHaveCount(2);
+  await link.selectOption(`utilityNodes:${planId}`);
+  await page.getByRole("button", { name: "Zähler speichern", exact: true }).click();
+  await expect(list.locator("option")).toHaveCount(3);
+  await expect(page.getByText("2026-09-01: 42 m³", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Zähler bearbeiten", exact: true }).click();
+  await expect(link).toBeEnabled();
+  await expect(link).toHaveValue(`utilityNodes:${planId}`);
+  await expect(page.getByLabel("Zählernummer", { exact: true })).toHaveValue("GARTEN-42");
+  await link.selectOption("");
+  await page.getByRole("button", { name: "Bearbeitung abbrechen", exact: true }).click();
+  await page.getByRole("button", { name: "Zähler bearbeiten", exact: true }).click();
+  await expect(link).toHaveValue(`utilityNodes:${planId}`);
 });

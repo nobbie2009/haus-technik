@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.34.1 · 21.09.2026
+
+- Bestehende Zähler nachträglich bearbeiten und ihre Planverknüpfung ändern oder entfernen. Passende Planzähler auch dann anbieten, wenn bereits ein automatischer Hausakten-Eintrag vorhanden ist.
+- Bei neuer Zuordnung unveränderte automatische Einträge ersetzen; eigene Daten und Ablesungen bisher zugeordneter Einträge ohne Planverknüpfung erhalten. Historische Zähler auch nach Entfernen des Planobjekts weiter bearbeiten.
+- Bearbeitung ausdrücklich abbrechen können, ohne Änderungen zu speichern.
+
 ## 0.34.0 · 21.09.2026
 
 - Strom-, Wasser-, Gas- und Wärmezähler beim Platzieren im Plan automatisch in „Zähler & Verbrauch“ erfassen und verknüpfen. Bestehende Planzähler beim Laden nachtragen, vorhandene Verknüpfungen und Ablesungen erhalten.

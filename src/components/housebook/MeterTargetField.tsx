@@ -16,21 +16,15 @@ export function MeterTargetField({
     book = homeBook(p);
   const plans = planMeters(p),
     current = plans.find((t) => sameMeterTarget(t.target, meter.target));
-  const fixed = Boolean(
-    current && book.meters.some((m) => m.id === meter.id && sameMeterTarget(m.target, meter.target)),
-  );
-  const options = plans.filter(
-    (t) =>
-      compatibleMeterKind(t.kind, meter.kind) &&
-      !book.meters.some((m) => m.id !== meter.id && sameMeterTarget(m.target, t.target)),
-  );
+  const options = plans.filter((t) => compatibleMeterKind(t.kind, meter.kind));
+  const assigned =
+    current && book.meters.filter((m) => m.id !== meter.id && sameMeterTarget(m.target, current.target));
   const key = meter.target ? `${meter.target.kind}:${meter.target.id}` : "";
   return (
     <>
       <Field label="Verknüpfter Planzähler">
         <select
           value={key}
-          disabled={fixed}
           onChange={(e) =>
             onChange(
               options.find((t) => `${t.target.kind}:${t.target.id}` === e.target.value)?.target ?? null,
@@ -49,9 +43,16 @@ export function MeterTargetField({
         </select>
       </Field>
       <p className="field-hint">
-        Planzähler erscheinen automatisch in der Zählerauswahl. Zusätzliche Zähler ohne Planposition lassen
-        sich hier manuell erfassen.
+        Die Verknüpfung lässt sich ändern oder entfernen. Jeder Planzähler bleibt automatisch in der Hausakte
+        erfasst.
       </p>
+      {assigned && assigned.length > 0 && (
+        <p className="field-hint" role="status">
+          Beim Speichern wird dieser Planzähler dem bearbeiteten Zähler zugeordnet. Unveränderte automatische
+          Einträge werden ersetzt; andere Einträge bleiben mit ihren Daten und Ablesungen ohne Planverknüpfung
+          erhalten.
+        </p>
+      )}
       {current && (
         <button
           type="button"

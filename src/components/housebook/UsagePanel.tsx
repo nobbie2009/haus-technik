@@ -1,5 +1,5 @@
 import { MeterTargetField } from "./MeterTargetField";
-import { planMeters, sameMeterTarget, compatibleMeterKind } from "../../housebook/planMeters";
+import { planMeters, sameMeterTarget, saveMeter } from "../../housebook/planMeters";
 import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { homeBook, meterKinds, consumption, localDate, type Meter, type Reading } from "../../housebook/home";
@@ -36,7 +36,6 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
     max = Math.max(1, ...valid.map((i) => i.value!));
   const plans = planMeters(p),
     linked = meter && plans.some((t) => sameMeterTarget(t.target, meter.target));
-  const draftLinked = draft && plans.some((t) => sameMeterTarget(t.target, draft.target));
   return (
     <section>
       <h3>Zählerstände & Verbräuche</h3>
@@ -94,25 +93,7 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
           onSubmit={(e) => {
             e.preventDefault();
             if (
-              updateHome("Zähler speichern", (b) => {
-                if (draft.target) {
-                  const plan = plans.find((t) => sameMeterTarget(t.target, draft.target));
-                  if (!plan || !compatibleMeterKind(plan.kind, draft.kind))
-                    throw new Error(
-                      "Bitte einen passenden Planzähler wählen oder die Verknüpfung entfernen.",
-                    );
-                  if (b.meters.some((m) => m.id !== draft.id && sameMeterTarget(m.target, draft.target)))
-                    throw new Error(
-                      "Dieser Planzähler ist bereits erfasst. Bitte den vorhandenen Zähler bearbeiten.",
-                    );
-                }
-                const old = b.meters.find((m) => m.id === draft.id);
-                if (old) {
-                  if (old.readings.length && old.unit !== draft.unit)
-                    throw new Error("Einheit bei vorhandenen Ablesungen nicht ändern.");
-                  Object.assign(old, { ...draft, readings: old.readings });
-                } else b.meters.push(draft);
-              })
+              useProjectStore.getState().commit("Zähler speichern", (project) => saveMeter(project, draft))
             ) {
               setSelected(draft.id);
               setDraft(null);
@@ -132,7 +113,7 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
             <Field label="Zählerart">
               <select
                 value={draft.kind}
-                disabled={Boolean(draftLinked) || draft.readings.length > 0}
+                disabled={draft.readings.length > 0}
                 onChange={(e) => {
                   const kind = e.target.value as Meter["kind"];
                   setDraft({
@@ -189,6 +170,9 @@ export function UsagePanel({ onClose, initialId }: { onClose: () => void; initia
           </div>
           <div className="book-actions">
             <button>Zähler speichern</button>
+            <button type="button" onClick={() => setDraft(null)}>
+              Bearbeitung abbrechen
+            </button>
           </div>
         </form>
       )}

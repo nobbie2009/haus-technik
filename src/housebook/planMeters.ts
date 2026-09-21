@@ -2,6 +2,7 @@ import type { Project } from "../models/project";
 import { utilities, media } from "../utilities/model";
 import { homeBook, setHomeBook, meterKinds, type Meter } from "./home";
 import { asset } from "./model";
+import { solarPlants } from "./solar";
 import { newId } from "../utils/uuid";
 
 export function planMeters(p: Project) {
@@ -78,4 +79,39 @@ export function syncPlanMeters(p: Project, before?: Project): boolean {
   if (JSON.stringify(book) === original) return false;
   setHomeBook(p, book);
   return true;
+}
+
+/** Save an edited meter without discarding either meter's readings during reassignment. */
+export function saveMeter(p: Project, draft: Meter) {
+  const book = homeBook(p),
+    old = book.meters.find((m) => m.id === draft.id);
+  if (old?.readings.length && (old.unit !== draft.unit || old.kind !== draft.kind))
+    throw new Error("Zählerart und Einheit bei vorhandenen Ablesungen nicht ändern.");
+  const plan = planMeters(p).find((t) => sameMeterTarget(t.target, draft.target));
+  if (
+    draft.target &&
+    (!plan || !compatibleMeterKind(plan.kind, draft.kind)) &&
+    !(old && sameMeterTarget(old.target, draft.target) && old.kind === draft.kind && !plan)
+  )
+    throw new Error("Bitte einen passenden Planzähler wählen oder die Verknüpfung entfernen.");
+  if (plan) {
+    const others = book.meters.filter((m) => m.id !== draft.id && sameMeterTarget(m.target, draft.target));
+    for (const other of others) {
+      const untouched =
+        !other.readings.length &&
+        other.price === null &&
+        other.kind === plan.kind &&
+        other.unit === plan.unit &&
+        other.name === plan.item.name &&
+        other.serial === asset(plan.item).serial &&
+        other.location === (p.floors[plan.item.floorId]?.name ?? "") &&
+        !solarPlants(p).some((plant) => plant.meterId === other.id);
+      if (untouched) book.meters = book.meters.filter((m) => m.id !== other.id);
+      else other.target = null;
+    }
+  }
+  const value = { ...draft, readings: old?.readings ?? draft.readings };
+  if (old) Object.assign(old, value);
+  else book.meters.push(value);
+  setHomeBook(p, book);
 }

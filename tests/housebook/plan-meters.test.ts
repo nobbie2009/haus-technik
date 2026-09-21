@@ -3,13 +3,61 @@ import { createProject } from "../../src/core/projectFactory";
 import { addElectrical } from "../../src/electrical/actions";
 import { addUtilityNode, utilities } from "../../src/utilities/model";
 import { homeBook, setHomeBook } from "../../src/housebook/home";
-import { syncPlanMeters, planMeters } from "../../src/housebook/planMeters";
+import { syncPlanMeters, planMeters, saveMeter } from "../../src/housebook/planMeters";
 import { transact } from "../../src/editor/history/transaction";
 import { duplicateSelection, deleteSelection } from "../../src/editor/actions/edit";
 import { useProjectStore } from "../../src/stores/projectStore";
 import { newId } from "../../src/utils/uuid";
 
 describe("Automatische Planzähler", () => {
+  it("verknüpft einen bestehenden Verlauf mit einem automatisch erfassten Planzähler", () => {
+    const p = transact(createProject(), (d) => {
+      addUtilityNode(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meter", "cold");
+    });
+    const b = homeBook(p),
+      automatic = b.meters[0]!;
+    const manual = {
+      ...structuredClone(automatic),
+      id: newId(),
+      name: "Gartenwasser",
+      target: null,
+      readings: [{ id: newId(), date: "2026-01-01", value: 42, reset: false, note: "Bestand" }],
+    };
+    b.meters.push(manual);
+    setHomeBook(p, b);
+    const next = transact(p, (d) => saveMeter(d, { ...manual, target: automatic.target }));
+    expect(homeBook(next).meters).toEqual([{ ...manual, target: automatic.target }]);
+    const detached = transact(next, (d) => saveMeter(d, { ...manual, target: null }));
+    expect(homeBook(detached).meters.find((m) => m.id === manual.id)?.readings).toEqual(manual.readings);
+    expect(homeBook(detached).meters.filter((m) => m.target)).toHaveLength(1);
+  });
+  it("bewahrt Daten eines bereits belegten Planzählers bei neuer Zuordnung", () => {
+    const p = transact(createProject(), (d) => {
+      addElectrical(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meters");
+    });
+    const b = homeBook(p),
+      occupied = b.meters[0]!;
+    occupied.serial = "Eigene Nummer";
+    occupied.readings = [{ id: newId(), date: "2026-01-01", value: 99, reset: false, note: "" }];
+    const manual = { ...structuredClone(occupied), id: newId(), name: "Bestehender Zähler", target: null };
+    b.meters.push(manual);
+    setHomeBook(p, b);
+    const next = transact(p, (d) => saveMeter(d, { ...manual, target: occupied.target }));
+    expect(homeBook(next).meters).toEqual([
+      { ...occupied, target: null },
+      { ...manual, target: occupied.target },
+    ]);
+    expect(() => transact(next, (d) => saveMeter(d, { ...manual, unit: "m³" }))).toThrow(/Einheit/);
+  });
+  it("lässt historische Zähler mit entferntem Planziel weiter bearbeiten", () => {
+    const p = transact(createProject(), (d) => {
+      addElectrical(d, d.floorOrder[0]!, { x: 0, y: 0 }, "meters");
+    });
+    const meter = homeBook(p).meters[0]!;
+    const removed = transact(p, (d) => deleteSelection(d, [{ kind: "meters", id: meter.target!.id }]));
+    const next = transact(removed, (d) => saveMeter(d, { ...meter, serial: "Nachgetragen" }));
+    expect(homeBook(next).meters[0]!.serial).toBe("Nachgetragen");
+  });
   it("erfasst ausschließlich Zähler mit passendem Medium, Einheit und Planverknüpfung", () => {
     const p = transact(createProject(), (p) => {
       const floor = p.floorOrder[0]!;
