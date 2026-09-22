@@ -23,7 +23,7 @@ import { Group } from "react-konva";
 
 const hints = {
   networkCable:
-    "Wegpunkte setzen; Start und Ziel sind fest. Enter: speichern; Backspace: letzter Punkt; Escape: abbrechen.",
+    "Startgerät, Wegpunkte, Zielgerät wählen. Geschosswechsel am letzten Wegpunkt. Backspace: letzter Punkt; Escape: abbrechen.",
   site: "Eckpunkte setzen · Enter: abschließen · Shift: rechtwinklig · Escape: abbrechen",
   network: "Gerät wählen und im Plan platzieren · danach ziehen oder rechts bearbeiten",
   utilityNode: "Komponente platzieren · Maße und Anschlüsse rechts bearbeiten",

@@ -11,6 +11,9 @@ import type { DrawingDraft, Selection, Tool } from "../editor/types";
 import { useProjectStore } from "./projectStore";
 
 interface EditorState {
+  networkStartId: string | null;
+  networkRoute: { floorId: string; position: Vec2 }[];
+  networkRequest: { from: string; to: string; route: { floorId: string; position: Vec2 }[] } | null;
   connectionHighlight: { projectId: string; ids: string[] } | null;
   category: EditorCategory;
   setCategory: (category: EditorCategory) => void;
@@ -89,6 +92,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       draft: emptyDraft(),
       cableStartId: null,
       networkCableId: null,
+      networkStartId: null,
+      networkRoute: [],
+      networkRequest: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -101,6 +107,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   connectionRequest: null,
   cableStartId: null,
   networkCableId: null,
+  networkStartId: null,
+  networkRoute: [],
+  networkRequest: null,
   utilityMedium: "cold",
   utilityKind: "source",
   furnitureType: "sofa",
@@ -142,6 +151,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       draft: emptyDraft(),
       cableStartId: null,
       networkCableId: null,
+      networkStartId: null,
+      networkRoute: [],
+      networkRequest: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -150,12 +162,30 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     });
   },
   setFloor(floorId) {
+    const current = get();
+    if (current.tool === "networkCable" && current.networkStartId && !current.networkRequest) {
+      const last = current.networkRoute.at(-1)!;
+      set({
+        floorId,
+        selection: [],
+        snap: null,
+        networkRoute:
+          floorId === current.floorId
+            ? current.networkRoute
+            : [...current.networkRoute, { floorId, position: { ...last.position } }],
+        draft: { points: [{ ...last.position }], cursor: null, input: "" },
+      });
+      return;
+    }
     set({
       floorId,
       selection: [],
       draft: emptyDraft(),
       cableStartId: null,
       networkCableId: null,
+      networkStartId: null,
+      networkRoute: [],
+      networkRequest: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,
@@ -169,6 +199,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       draft: emptyDraft(),
       cableStartId: null,
       networkCableId: null,
+      networkStartId: null,
+      networkRoute: [],
+      networkRequest: null,
       connectionRequest: null,
       snap: null,
       dragPointId: null,

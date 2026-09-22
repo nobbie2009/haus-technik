@@ -1,4 +1,5 @@
-import { startNetworkPath, finishNetworkPath } from "../../network/drawing";
+import { startNetworkPath, finishNetworkPath, undoNetworkPoint } from "../../network/drawing";
+import { NetworkConnectionDialog } from "./NetworkConnectionDialog";
 import { useState } from "react";
 import { useEditorStore } from "../../stores/editorStore";
 import { networkLabels } from "../../housebook/model";
@@ -11,6 +12,8 @@ import { isTvKind, tvCatalog } from "../../network/tv";
 export function NetworkLibrary() {
   const tool = useEditorStore((s) => s.tool);
   const kind = useEditorStore((s) => s.networkKind);
+  const request = useEditorStore((s) => s.networkRequest);
+  const editingCable = useEditorStore((s) => s.networkCableId);
   const [open, setOpen] = useState(false);
   const [tvOpen, setTvOpen] = useState(false);
   return (
@@ -56,10 +59,21 @@ export function NetworkLibrary() {
       </button>
       {tool === "networkCable" && (
         <>
-          <button onClick={finishNetworkPath}>Leitungsweg speichern</button>
+          {editingCable && <button onClick={finishNetworkPath}>Leitungsweg speichern</button>}
+          <button onClick={undoNetworkPoint}>Letzten Kabelpunkt entfernen</button>
           <button onClick={() => useEditorStore.getState().cancel()}>Leitungsweg abbrechen</button>
         </>
       )}
+      <button onClick={() => useEditorStore.getState().setTool("networkCable")}>
+        Netzwerkkabel verlegen
+      </button>
+      {tool === "networkCable" && !editingCable && (
+        <p className="field-hint">
+          Startgerät, Wegpunkte und Zielgerät anklicken. Für den Steigweg am letzten Punkt das Geschoss
+          wechseln. Danach Ports im Dialog festlegen.
+        </p>
+      )}
+      {request && <NetworkConnectionDialog />}
       <p className="field-hint">
         Gerät wählen und im Plan anklicken. Mit „Auswahl“ Geräte verschieben und rechts bearbeiten.
       </p>
@@ -80,7 +94,12 @@ export function NetworkLibrary() {
       )}
       {open && (
         <Modal title="Netzwerk und Verbindungen" onClose={() => setOpen(false)}>
-          <NetworkPanel />
+          <NetworkPanel
+            onDrawPath={(id) => {
+              setOpen(false);
+              startNetworkPath(id);
+            }}
+          />
         </Modal>
       )}
     </section>

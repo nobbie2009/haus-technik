@@ -3,6 +3,7 @@ import { furnitureHandle, resizeFurniture, resizeHandles } from "../../furniture
 import { addUtilityNode } from "../../utilities/model";
 import { confirmPipe } from "../../utilities/drawing";
 import { confirmCable } from "./cableDrawing";
+import { confirmNetworkRoute } from "../../network/drawing";
 import { confirmConnection } from "./connectionDrawing";
 import { confirmSite } from "../../site/drawing";
 import { addNetworkNode } from "../../network/model";
@@ -111,8 +112,11 @@ export function useCanvasInteraction() {
     }
     if (event.button !== 0) return;
     if (editor.tool === "networkCable") {
-      if (!editor.networkCableId) return;
       const position = updateCursor(world, event.shiftKey);
+      if (!editor.networkCableId) {
+        confirmNetworkRoute(position, world);
+        return;
+      }
       const current = useEditorStore.getState();
       useEditorStore.setState({ draft: { ...current.draft, points: [...current.draft.points, position] } });
       return;

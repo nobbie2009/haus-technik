@@ -73,6 +73,11 @@ export function fitView(): void {
       y: background.position.y - (background.width * background.pixelHeight) / background.pixelWidth,
     });
   positions.push(...book.networkNodes.filter((n) => n.floorId === editor.floorId).map((n) => n.position));
+  for (const link of book.networkLinks) {
+    positions.push(...(link.route ?? []).filter((p) => p.floorId === editor.floorId).map((p) => p.position));
+    if (book.networkNodes.find((n) => n.id === link.from)?.floorId === editor.floorId)
+      positions.push(...(link.path ?? []));
+  }
   positions.push(
     ...homeBook(project)
       .items.filter((i) => i.floorId === editor.floorId && i.position)

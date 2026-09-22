@@ -33,7 +33,7 @@ export type ProjectMutation = (project: import("../models/project").Project) => 
 export const toolLabels: Record<Tool, string> = {
   site: "Grundstück",
   network: "Netzwerkgerät",
-  networkCable: "Koax-Leitungsweg",
+  networkCable: "Netzwerk-Leitungsweg",
   utilityNode: "Komponente",
   utilityPipe: "Rohrleitung",
   connect: "Anschließen",

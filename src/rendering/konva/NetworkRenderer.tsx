@@ -64,8 +64,72 @@ export function NetworkRenderer({ project }: { project: Project }) {
   if (layer && !layer.visible) return null;
   const x = (v: number) => editor.viewport.originPx.x + v * editor.viewport.scale;
   const y = (v: number) => editor.viewport.originPx.y - v * editor.viewport.scale;
+  const routeView = (
+    route: { floorId: string; position: { x: number; y: number } }[],
+    key: string,
+    color: string,
+    label: string,
+  ) => (
+    <Group key={key}>
+      {route.slice(1).map((point, i) => {
+        const previous = route[i]!;
+        if (point.floorId === previous.floorId)
+          return point.floorId === editor.floorId ? (
+            <Line
+              key={i}
+              points={[
+                x(previous.position.x),
+                y(previous.position.y),
+                x(point.position.x),
+                y(point.position.y),
+              ]}
+              stroke={color}
+              dash={[5, 4]}
+            />
+          ) : null;
+        const local =
+          previous.floorId === editor.floorId ? previous : point.floorId === editor.floorId ? point : null;
+        const remote = local === previous ? point : previous;
+        return local ? (
+          <Group key={i}>
+            {local === previous && (
+              <Line
+                points={[
+                  x(previous.position.x),
+                  y(previous.position.y),
+                  x(point.position.x),
+                  y(point.position.y),
+                ]}
+                stroke={color}
+                dash={[5, 4]}
+              />
+            )}
+            <Circle x={x(point.position.x)} y={y(point.position.y)} radius={6} stroke={color} />
+            <Text
+              x={x(point.position.x) + 10}
+              y={y(point.position.y) + 12}
+              text={`${label} → ${project.floors[remote.floorId]?.name}`}
+              fill={color}
+              fontSize={11}
+            />
+          </Group>
+        ) : null;
+      })}
+    </Group>
+  );
   return (
     <Group opacity={layer?.opacity ?? 1}>
+      {editor.tool === "networkCable" &&
+        editor.networkStartId &&
+        routeView(
+          [
+            ...editor.networkRoute,
+            ...(editor.draft.cursor ? [{ floorId: editor.floorId, position: editor.draft.cursor }] : []),
+          ],
+          "draft",
+          "#16846b",
+          "Steigweg",
+        )}
       {book.networkLinks.map((link) => {
         const a = book.networkNodes.find((n) => n.id === link.from),
           b = book.networkNodes.find((n) => n.id === link.to);
@@ -74,7 +138,18 @@ export function NetworkRenderer({ project }: { project: Project }) {
         const path = editing
           ? [...editor.draft.points, ...(editor.draft.cursor ? [editor.draft.cursor] : [])]
           : (link.path ?? []);
-        if (coax && a && b && a.floorId !== b.floorId) {
+        if (a && b && link.route && !editing)
+          return routeView(
+            [
+              { floorId: a.floorId, position: a.position },
+              ...link.route,
+              { floorId: b.floorId, position: b.position },
+            ],
+            link.id,
+            coax ? "#a45b13" : "#7556a2",
+            link.name,
+          );
+        if (a && b && a.floorId !== b.floorId) {
           const local = a.floorId === editor.floorId ? a : b.floorId === editor.floorId ? b : null;
           const remote = local === a ? b : a;
           return local ? (

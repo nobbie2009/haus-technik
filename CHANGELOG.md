@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.56.0 · 22.09.2026
+
+- Netzwerkkabel direkt im Plan verlegen: Startgerät, Wegpunkte und Zielgerät anklicken, anschließend freie Ports, Kabeltyp und Zuschlag im Anschlussdialog festlegen. Kabelweg und Anschluss gemeinsam speichern; PoE verwendet dieselbe Verbindung.
+- Geschossübergreifende Leitungswege mit Wegpunkten pro Etage, Steigwegmarkierungen und Längen einschließlich Höhenunterschieden ergänzen. Verlauf in JSON und PDF erhalten, Abbruch und Rücknahme ohne unvollständig angelegte Kabel unterstützen.
+- Handbuch mit Schrittfolge, Anschlussdialog-Abbildung und FAQ aktualisieren.
+
 ## 0.55.0 · 22.09.2026
 
 - PoE-Switch, frei konfigurierbaren PoE-Verbraucher und Reolink Video Doorbell PoE in der Netzwerkbibliothek ergänzen. Bestehende Netzwerkgeräte können ebenfalls als PoE-Quelle oder Verbraucher konfiguriert werden.

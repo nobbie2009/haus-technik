@@ -240,6 +240,19 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 5. Verbindung speichern und prüfen. Ein Port kann nicht gleichzeitig mehrfach belegt werden; bei einem fehlenden Port die dokumentierte Anschlusszahl kontrollieren.
 6. Unter **Hausakte → Internet & WLAN** Anschlussdaten, SSID, Frequenzbänder, IP-/MAC-Adresse und Empfangsnotizen ergänzen.
 
+## Netzwerkkabel im Plan verlegen – auch über Geschosse
+
+1. **Netzwerk → Netzwerkkabel verlegen** wählen und das Startgerät anklicken.
+2. Die gewünschten Zwischenpunkte im Plan setzen. Für einen Etagenwechsel zuerst einen Wegpunkt am Steigschacht setzen und dann im Menüband das andere Geschoss wählen. Der letzte Punkt wird dort an derselben Planposition als Steigweg fortgesetzt. Weitere Zwischenpunkte setzen; auch mehrere Geschosswechsel sind möglich.
+3. Das Zielgerät anklicken. Jetzt öffnet sich **Netzwerkkabel anschließen** mit Start- und Zielgeschoss. Freie Ports sind vorgeschlagen; aktive PoE-Ports beziehungsweise der PoE-Eingangsport werden bevorzugt. Belegte Ports stehen nicht erneut zur Auswahl.
+4. Ports, Kabelkennzeichnung, Kabeltyp und optionalen **Längenzuschlag (m)** prüfen. **Kabel und Anschlüsse speichern** legt genau eine gemeinsame Verbindung an. PoE bezieht sich automatisch auf diese Leitung.
+
+**Letzten Kabelpunkt entfernen** beziehungsweise Backspace nimmt auch den letzten Geschossübergang zurück. **Leitungsweg abbrechen**, Escape oder Abbrechen im Anschlussdialog hinterlässt kein halbfertiges Kabel. Die Kabellänge folgt allen Wegabschnitten und addiert die Höhenunterschiede zwischen den beteiligten Etagen sowie den Zuschlag. Steigwegmarkierungen nennen auf beiden Etagen das jeweils andere Geschoss; der Verlauf bleibt beim Speichern, JSON-Export und PDF-Planexport erhalten.
+
+Anschlussdaten bestehender Kabel unter **Ports, Kabel & WLAN → Kabel bearbeiten** ändern. Auf derselben Etage kann **Leitungsweg zeichnen** den Verlauf neu festlegen. Ein geschossübergreifender Verlauf wird bei Bedarf durch Lösen der alten Verbindung und erneutes Zeichnen ersetzt. TV-/SAT-Koaxleitungen verwenden weiterhin ihre eigene Anschlussverwaltung.
+
+![Anschlussdialog nach dem Zeichnen eines Netzwerkkabels vom Erdgeschoss ins Obergeschoss mit freien Ports und berechneter Gesamtlänge.](bilder/network-route-dialog.png)
+
 ## PoE-Switch und Reolink Doorbell
 
 1. Unter **Netzwerk → Netzwerkgerät platzieren** einen **Switch mit PoE** und eine **Reolink Video Doorbell PoE** auswählen und platzieren. Für andere Kameras oder Geräte gibt es **PoE-Verbraucher**. Vorhandene Access Points oder Switches lassen sich über **PoE-Funktion** umstellen.
@@ -619,6 +632,10 @@ Tastenkürzel gelten im Editor, nicht beim Schreiben in ein Textfeld. Auf dem Ma
 Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten Punkt entfernen**, **Abbrechen**, **Rechtwinklig** und **Mehrfachauswahl** die entsprechenden Tastaturaktionen. Eine abgebrochene Geste soll keine Platzierung speichern. Bei Textmarkierungen darf der Zeiger über den Dialogrand hinausgezogen werden, ohne dass dies allein das Popup schließt.
 
 # FAQ und gezielte Fehlerhilfe {#faq}
+
+## Kann ich Netzwerkkabel wie Stromleitungen zeichnen und die Etage wechseln?
+
+Ja: **Netzwerkkabel verlegen** wählen, Startgerät und Wegpunkte anklicken. Am Steigschacht über das Menüband das Geschoss wechseln und dort weiterzeichnen. Ein Klick auf das Zielgerät öffnet die Anschlusseinstellungen; erst deren Bestätigung speichert Leitung und Ports zusammen. Siehe [Netzwerk](#netzwerk).
 
 ## Wie versorge ich meine Reolink-Türklingel über PoE?
 

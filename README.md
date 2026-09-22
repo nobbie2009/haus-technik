@@ -5,7 +5,7 @@ React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind un
 
 ## Bebildertes Handbuch
 
-In der oberen App-Leiste **Handbuch** öffnen: 31 Kapitel mit 26 Abbildungen aus Beispielprojekten,
+In der oberen App-Leiste **Handbuch** öffnen: 31 Kapitel mit 27 Abbildungen aus Beispielprojekten,
 ausführlichen Schrittfolgen, FAQ, alphabetischem Stichwortverzeichnis und lokaler Volltextsuche.
 Auch über die Tastaturhilfe erreichbar. Die Anleitung wird mit der App ausgeliefert und benötigt
 keinen externen Suchdienst. Kapitel und einzelne Antworten lassen sich direkt verlinken.

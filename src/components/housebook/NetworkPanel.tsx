@@ -389,7 +389,7 @@ export function NetworkPanel({
                   {isTvKind(b.kind) ? portName(b, l.toPort) : l.toPort} · {l.cableType} ·{" "}
                   {(length / 1000).toFixed(2)} m
                 </span>
-                {tvOnly && onDrawPath && (
+                {onDrawPath && (
                   <button
                     disabled={a.floorId !== b.floorId}
                     title={

@@ -134,6 +134,10 @@ export const bookSchema = z.strictObject({
         allowance: n.nonnegative(),
         medium: z.enum(["ethernet", "coax"]).optional(),
         path: z.array(point).max(2000).optional(),
+        route: z
+          .array(z.strictObject({ floorId: id, position: point }))
+          .max(2000)
+          .optional(),
       }),
     )
     .max(2000),

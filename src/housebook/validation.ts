@@ -121,6 +121,12 @@ export function housebookIssues(project: Project): { path: string; message: stri
           });
       }
       for (const link of networkLinks) {
+        if (link.route?.some((point) => !project.floors[point.floorId]) || (link.route && link.path?.length))
+          issues.push({
+            path: "metadata.housebook.networkLinks",
+            message:
+              "Leitungsweg enthält eine unbekannte Etage oder zwei unterschiedliche Wegbeschreibungen.",
+          });
         const from = networkNodes.find((n) => n.id === link.from),
           to = networkNodes.find((n) => n.id === link.to);
         if (from && to && from.floorId !== to.floorId && link.path?.length)

@@ -261,9 +261,31 @@ export function planPrimitives(
     for (const link of networkLayer(project)?.visible === false ? [] : book.networkLinks) {
       const a = book.networkNodes.find((n) => n.id === link.from),
         b = book.networkNodes.find((n) => n.id === link.to);
-      if (a?.floorId === floorId && b?.floorId === floorId)
+      if (a && b && link.route) {
+        const route = [
+          { floorId: a.floorId, position: a.position },
+          ...link.route,
+          { floorId: b.floorId, position: b.position },
+        ];
+        const color = isTvKind(a.kind) ? "#a45b13" : "#7556a2";
+        for (let i = 1; i < route.length; i++) {
+          const previous = route[i - 1]!,
+            point = route[i]!;
+          if (previous.floorId === floorId) line([previous.position, point.position], color, 15);
+          if (
+            point.floorId !== previous.floorId &&
+            (point.floorId === floorId || previous.floorId === floorId)
+          )
+            text(
+              point.position,
+              `${link.name} → ${project.floors[point.floorId === floorId ? previous.floorId : point.floorId]?.name}`,
+              color,
+              110,
+            );
+        }
+      } else if (a?.floorId === floorId && b?.floorId === floorId)
         line([a.position, ...(link.path ?? []), b.position], isTvKind(a.kind) ? "#a45b13" : "#7556a2", 15);
-      else if (a && b && isTvKind(a.kind)) {
+      else if (a && b) {
         const local = a.floorId === floorId ? a : b.floorId === floorId ? b : null;
         const remote = local === a ? b : a;
         if (local)
@@ -452,7 +474,7 @@ export function materialRows(project: Project): string[][] {
       "Dokumentiert",
       (length / 1000).toFixed(2),
       "m",
-      `${a.name}:${portName(a, link.fromPort)} → ${b.name}:${portName(b, link.toPort)} · ${link.path?.length ? "Leitungsweg" : "Luftlinie"}/Etagenhöhe/Zuschlag`,
+      `${a.name}:${portName(a, link.fromPort)} → ${b.name}:${portName(b, link.toPort)} · ${link.route || link.path?.length ? "Leitungsweg" : "Luftlinie"}/Etagenhöhe/Zuschlag`,
     ]);
   }
   const net = utilities(project);
