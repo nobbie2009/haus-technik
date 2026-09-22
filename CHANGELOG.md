@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.53.0 · 22.09.2026
+
+- Anschließen vereinfachen: belegte Leitungen übernehmen Stromkreis und Simulationszuordnung gemeinsam, einschließlich Abzweigdosen. Zusätzliche Zuordnungshäkchen entfallen; Änderungen und Löschen halten die verwalteten Anschlüsse zusammen. Widersprüchliche Stromkreise oder mehrere uneindeutige Lichtschalter werden gemeldet.
+- Lampen folgen Versorgung und Lichtschalter ohne separaten Ein/Aus-Zustand. Fehlende Lampenleistung mit editierbaren 5 W vorbelegen und fehlende Verbraucherspannung aus der angeschlossenen Versorgung beziehungsweise dem Trafo übernehmen. Manuelle Typenschildwerte erhalten.
+- Anleitung und Anschlussabbildungen an den vereinfachten Ablauf anpassen.
+
 ## 0.52.1 · 22.09.2026
 
 - Veraltete Browser-Testannahme beim Anschließen aus der Verbraucherdatenbank korrigieren: die vollständige automatische Belegung L–L, N–N und PE–PE sowie deren Erhalt beim Neuladen prüfen. Der Test berücksichtigt damit den seit 0.52.0 vorbelegten Schutzleiter.

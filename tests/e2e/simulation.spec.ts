@@ -59,9 +59,9 @@ test("Stromkreis simulieren: Lasten, Überlast, Sicherung, Phase und unveränder
   await expect(page.getByTestId("simulation-max-current")).toHaveText("Nicht berechenbar");
   await expect(dialog.getByText(/5 Verbraucher unvollständig/)).toBeVisible();
   await dialog.getByRole("button", { name: "Szenario zurücksetzen", exact: true }).click();
-  await dialog.getByRole("button", { name: "Alle aus", exact: true }).click();
-  await expect(page.getByTestId("simulation-total-power")).toHaveText("0 W");
-  await dialog.getByRole("button", { name: "Alle ein", exact: true }).click();
+  await dialog.getByRole("button", { name: "Geräte aus", exact: true }).click();
+  await expect(page.getByTestId("simulation-total-power")).toHaveText("25 W");
+  await dialog.getByRole("button", { name: "Geräte ein", exact: true }).click();
   await expect(page.getByTestId("simulation-total-power")).toHaveText("4.555 W");
   await page.setViewportSize({ width: 1024, height: 768 });
   await dialog.evaluate((element) => {

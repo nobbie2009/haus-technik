@@ -13,6 +13,7 @@ import type { FloorElement } from "../../models/common";
 import type { ProjectMutation } from "../types";
 import { parseProject } from "../../core/validation";
 import { syncNetworkPower } from "../../network/power";
+import { syncWiring, fillConsumerDefaults, resolveWiring } from "../../electrical/wiring";
 
 function geometrySignature(project: Project, entity: FloorElement): string {
   let dependencies: unknown[] = [];
@@ -113,6 +114,15 @@ export function transact(before: Project, mutate: ProjectMutation): Project {
   syncMountings(before, draft);
   assignFurnitureRooms(draft);
   syncElectricalRelations(draft);
+  if (
+    Object.values(draft.electrical.cables).some((c) => c.metadata.wiringManaged === true) ||
+    Object.values(before.electrical.cables).some((c) => c.metadata.wiringManaged === true)
+  ) {
+    const previousIssues = new Set(resolveWiring(before).issues);
+    const newIssues = syncWiring(draft).filter((issue) => !previousIssues.has(issue));
+    if (newIssues.length) throw new Error(newIssues.join(" "));
+  }
+  fillConsumerDefaults(draft, before);
   syncPlanMeters(draft, before);
   assertLocks(before, draft);
   if (JSON.stringify(before) === JSON.stringify(draft)) return before;

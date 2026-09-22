@@ -30,8 +30,8 @@ it("zeigt Leuchten und Betrieb nur für tatsächlich berechnete aktive Lasten", 
   scenario.disabledNodeIds = [];
   scenario.deviceStates[lamp.id] = "off";
   expect(deviceAppearance(lamp, simulate(project, scenario).devices[lamp.id])).toMatchObject({
-    running: false,
-    label: "Aus",
+    running: true,
+    label: "Leuchtet",
   });
   delete scenario.deviceStates[lamp.id];
   scenario.assumeUnityPowerFactor = false;

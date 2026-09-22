@@ -113,7 +113,7 @@ export function ElectricalProperties({ id, kind }: { id: string; kind: Electrica
           <SelectField
             label="Stromkreis"
             value={project.electrical.outlets[id]!.circuitId ?? ""}
-            disabled={locked}
+            disabled={locked || project.electrical.outlets[id]!.metadata.wiringManaged === true}
             onChange={(value) =>
               change((draft) => {
                 draft.electrical.outlets[id]!.circuitId = value || null;

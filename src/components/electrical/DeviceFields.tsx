@@ -7,6 +7,7 @@ import { switchChain } from "../../electrical/switchTopology";
 import { switchControl } from "../../electrical/switchingControls";
 import { DeviceControlFields } from "./DeviceControlFields";
 import { ConsumerFields } from "./ConsumerFields";
+import { deviceSymbolKind } from "../../rendering/deviceAppearance";
 
 export function DeviceFields({ id }: { id: string }) {
   const { project, locked, change } = usePropertyFields({ kind: "devices", id });
@@ -66,7 +67,7 @@ export function DeviceFields({ id }: { id: string }) {
               ? `circuit:${device.circuitId}`
               : ""
         }
-        disabled={locked}
+        disabled={locked || device.metadata.wiringManaged === true}
         onChange={(value) =>
           change((draft) => {
             const item = draft.electrical.devices[id]!;
@@ -99,6 +100,7 @@ export function DeviceFields({ id }: { id: string }) {
         value={device.switchId ?? ""}
         disabled={
           locked ||
+          device.metadata.wiringManaged === true ||
           !!device.controlId ||
           !device.circuitId ||
           !!device.connectionPointId ||
@@ -123,8 +125,9 @@ export function DeviceFields({ id }: { id: string }) {
           ))}
       </SelectField>
       <p className="field-hint">
-        Lichtschalter sind für einphasige Festanschlüsse desselben Stromkreises verfügbar. Vor einem
-        Anschlusswechsel die Schalterzuordnung lösen.
+        {device.metadata.wiringManaged === true
+          ? "Anschluss und Lichtschalter werden aus den Leitungen übernommen. Zum Ändern die Anschlussleitung bearbeiten."
+          : "Zum Anschließen eine Leitung zur Steckdose oder zum Lichtschalter zeichnen. Stromkreis und Simulation werden gemeinsam übernommen."}
       </p>
       <DeviceControlFields id={id} />
       {device.switchId && (
@@ -189,20 +192,27 @@ export function DeviceFields({ id }: { id: string }) {
         <option value="1">Einphasig</option>
         <option value="3">Dreiphasig</option>
       </SelectField>
-      <SelectField
-        label="Dokumentierter Betriebszustand"
-        value={device.operatingMode}
-        disabled={locked}
-        onChange={(value) =>
-          change((draft) => {
-            draft.electrical.devices[id]!.operatingMode = value as typeof device.operatingMode;
-          })
-        }
-      >
-        <option value="off">Aus</option>
-        <option value="on">Ein</option>
-        <option value="standby">Standby</option>
-      </SelectField>
+      {deviceSymbolKind(device) === "lamp" ? (
+        <p className="field-hint">
+          Die Lampe folgt ihrer Versorgung und dem Lichtschalter. Neue Lampen starten mit 5 W; der Wert ist
+          frei änderbar.
+        </p>
+      ) : (
+        <SelectField
+          label="Dokumentierter Betriebszustand"
+          value={device.operatingMode}
+          disabled={locked}
+          onChange={(value) =>
+            change((draft) => {
+              draft.electrical.devices[id]!.operatingMode = value as typeof device.operatingMode;
+            })
+          }
+        >
+          <option value="off">Aus</option>
+          <option value="on">Ein</option>
+          <option value="standby">Standby</option>
+        </SelectField>
+      )}
     </>
   );
 }

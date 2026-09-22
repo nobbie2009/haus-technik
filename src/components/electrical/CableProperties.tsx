@@ -124,7 +124,7 @@ export function CableProperties({
       <SelectField
         label="Leitungsstromkreis"
         value={cable.circuitId ?? ""}
-        disabled={locked || cable.connectionAssignment !== "none"}
+        disabled={locked || cable.connectionAssignment !== "none" || cable.metadata.wiringManaged === true}
         onChange={(value) =>
           change((draft) => {
             draft.electrical.cables[id]!.circuitId = value || null;

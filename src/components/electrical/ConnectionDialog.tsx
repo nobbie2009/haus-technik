@@ -9,7 +9,8 @@ import { connectionPair, contactsFor, setCableContacts } from "../../electrical/
 import type { Cable } from "../../electrical/models";
 import { connectionContacts, suggestContacts as suggested } from "../../electrical/contactSuggestions";
 import { newId } from "../../utils/uuid";
-import { boardCircuit, assignBoardTarget } from "../../electrical/boardConnection";
+import { boardCircuit } from "../../electrical/boardConnection";
+import { syncWiring, resolveWiring } from "../../electrical/wiring";
 import { networkNodeTable } from "../../network/model";
 import { ensureNetworkPower, networkPower } from "../../network/power";
 
@@ -33,16 +34,10 @@ export function ConnectionDialog() {
     return choices;
   });
   const reservedIds = useRef<Record<string, string>>({});
-  const [assignTarget, setAssignTarget] = useState(false);
   const [rows, setRows] = useState<Cable["conductorConnections"]>(() =>
     structuredClone(
       existing?.conductorConnections ?? suggested(project, request.startNodeId, request.endNodeId),
     ),
-  );
-  const [assign, setAssign] = useState(
-    existing
-      ? existing.connectionAssignment !== "none"
-      : !!connectionPair(project, request.startNodeId, request.endNodeId)?.device.metadata.networkNodeId,
   );
   const [error, setError] = useState<string | null>(null);
   const all = electricalNodes(project);
@@ -76,18 +71,8 @@ export function ConnectionDialog() {
     ];
   };
   const departure = departures[0];
-  const targetId = departure?.boardId === startId ? endId : startId;
-  const canAssignTarget =
-    !!departure &&
-    !!(
-      project.electrical.devices[targetId] ||
-      project.electrical.outlets[targetId] ||
-      project.electrical.switches[targetId] ||
-      project.electrical.transformers[targetId]
-    );
   const chooseBoard = (id: string, value: string) => {
     setBoardChoices((old) => ({ ...old, [id]: value }));
-    setAssignTarget(false);
     setError(null);
     if (!value || value === "input") {
       setRows(value ? suggested(preview, startId, endId, { ...boardPorts, [id]: null }, existing?.id) : []);
@@ -102,6 +87,16 @@ export function ConnectionDialog() {
   };
   const nodes = Object.values(all).filter((item) => project.layers[item.layerId]?.visible);
   const pair = connectionPair(project, startId, endId);
+  const assign = !!pair;
+  const inferred = resolveWiring(preview);
+  const inferredCircuit =
+    departure?.circuitId ??
+    inferred.circuits.get(startId) ??
+    inferred.circuits.get(endId) ??
+    project.electrical.switches[startId]?.circuitId ??
+    project.electrical.outlets[startId]?.circuitId ??
+    project.electrical.switches[endId]?.circuitId ??
+    project.electrical.outlets[endId]?.circuitId;
   const stale = project !== initialProject.current;
   const close = () => useEditorStore.getState().cancel();
   const selectEnd = (side: "start" | "end", value: string) => {
@@ -127,8 +122,6 @@ export function ConnectionDialog() {
     if (side === "start") setStart(value);
     else setEnd(value);
     setRows(suggested(selectionPreview, a, b, boardPorts, existing?.id));
-    setAssign(!!connectionPair(selectionPreview, a, b)?.device.metadata.networkNodeId);
-    setAssignTarget(false);
     setError(null);
   };
   const save = () => {
@@ -180,11 +173,13 @@ export function ConnectionDialog() {
           )
             throw new Error("Kontakt gehört nicht zum gewählten Abgang.");
         }
-        setCableContacts(draft, id, rows, assign);
+        setCableContacts(draft, id, rows, false);
         if (departure) {
           draft.electrical.cables[id]!.circuitId = departure.circuitId;
-          if (assignTarget && canAssignTarget) assignBoardTarget(draft, targetId, departure.circuitId);
         } else if (boardIds.length) draft.electrical.cables[id]!.circuitId = null;
+        const previousIssues = new Set(resolveWiring(project).issues);
+        const newIssues = syncWiring(draft).filter((issue) => !previousIssues.has(issue));
+        if (newIssues.length) throw new Error(newIssues.join(" "));
       })
     ) {
       close();
@@ -319,26 +314,13 @@ export function ConnectionDialog() {
       >
         Kontaktvorschläge übernehmen
       </button>
-      {canAssignTarget && (
-        <label className="connection-assignment">
-          <input type="checkbox" checked={assignTarget} onChange={(e) => setAssignTarget(e.target.checked)} />
-          Endobjekt zusätzlich diesem Stromkreis zuordnen (Versorgung / Simulation)
-        </label>
-      )}
-      {departure && (
-        <p className="field-hint">
-          Die Leitung erhält den gewählten Stromkreis. Eine zusätzlich bestätigte Endobjekt-Zuordnung bleibt
-          beim Löschen der Leitung erhalten. Abzweigdosen führen die dokumentierten Kontakte weiter;
-          nachgelagerte Verbraucher gesondert zuordnen.
-        </p>
-      )}
-      {!!pair && (
-        <label className="connection-assignment">
-          <input type="checkbox" checked={assign} onChange={(event) => setAssign(event.target.checked)} />
-          Verbraucher {pair.kind === "switch" ? "diesem Lichtschalter" : "dieser Steckdose"} zuordnen
-          (Simulation)
-        </label>
-      )}
+      <p className="connection-summary">
+        Stromkreis:{" "}
+        {inferredCircuit
+          ? preview.electrical.circuits[inferredCircuit]?.name
+          : "Wird aus der verbundenen Versorgung ermittelt"}
+        . Anschluss und Simulation werden automatisch gemeinsam zugeordnet.
+      </p>
       {assign && pair && (
         <p className="connection-summary">
           {pair.device.label} · {pair.device.name} wird{" "}
@@ -350,14 +332,6 @@ export function ConnectionDialog() {
             " Der Stromkreis des Schalters wird übernommen. L′ → L ist dafür erforderlich."}
         </p>
       )}
-      {!assign && !assignTarget && !departure && (
-        <p className="field-hint">
-          Nur Kontaktbelegung dokumentieren; vorhandene unabhängige Anschlusszuordnungen bleiben bestehen.
-          {existing?.connectionAssignment !== "none" &&
-            existing &&
-            " Die bisher von dieser Leitung verwaltete Zuordnung wird gelöst."}
-        </p>
-      )}
       {(project.electrical.switches[startId] || project.electrical.switches[endId]) && (
         <p className="field-hint">
           Die Kontaktvorlage folgt der Schalterrolle. Wechsel-/Kreuzschalter und Taster werden über ihre
@@ -365,8 +339,8 @@ export function ConnectionDialog() {
         </p>
       )}
       <p className="field-hint">
-        Die Simulation verwendet weiterhin Stromkreis- und Gerätezuordnungen. Kontaktbelegungen allein bilden
-        noch keinen vollständigen Leiterstromkreis.
+        Stromkreis und Schalterzuordnung folgen der Leitung. Die Leiterprüfung prüft zusätzlich den
+        vollständigen Stromweg einschließlich N.
       </p>
       {(error || stale || previewError) && (
         <p className="connection-error" role="alert">

@@ -152,7 +152,7 @@ Dieses Kapitel beschreibt die Eingabe in die Software. Die eingezeichneten Zuord
 
 **Versorgung und Zuordnung** öffnet die Einspeisung und die bisherigen Zuordnungsfelder. Die Schema-Linien zeigen gespeicherte Versorgungsbeziehungen; sie sind kein Nachweis einer physischen Aderverbindung. Unter den Leitungen wird die vorhandene Kontaktbelegung gesondert ausgewiesen.
 
-Die **geplante Versorgung** wird aus den Zuordnungen abgeleitet. Gezeichnete Leitungswege allein erzeugen diese Versorgung nicht. Ein fehlender Anschluss ist etwas anderes als eine ausgeschaltete Sicherung oder ein fehlender Typenschildwert.
+Die **geplante Versorgung** folgt den belegten Leitungen. Stromkreis und einfache Schalter-/Steckdosenanschlüsse werden beim Speichern gemeinsam übernommen. Ein reiner Leitungsweg ohne Kontaktbelegung stellt noch keine Versorgung her.
 
 ## Unterverteilung
 
@@ -180,16 +180,18 @@ Einphasige Stromkreise und eindeutig dokumentierte einphasige Anschlüsse einer 
 2. Am Kasten **Start · Sicherung / Stromkreis** beziehungsweise **Ziel · Sicherung / Stromkreis** wählen. Die Liste zeigt eingebaute Sicherungen mit Kennzeichnung, Typ und Amperewert sowie vorhandene Stromkreise. **Einspeisung des Kastens · IN** ist für die Zuleitung bestimmt.
 3. Hat die gewählte Sicherung noch keinen Stromkreis, wird beim Speichern ein **Abgang** dafür angelegt. Abbrechen verändert das Projekt nicht. Bei vorhandenen Stromkreisen den passenden Eintrag wählen.
 4. Die Kontaktliste zeigt nur die Leiter des gewählten Abgangs. Passende einfache Kontaktpaare werden vorgeschlagen; Zuordnung prüfen und gegebenenfalls ergänzen. Bei mehrdeutiger Phasenwahl die Außenleiter ausdrücklich festlegen. Für den Abgang muss mindestens ein Außenleiter verbunden sein. N und PE sind zugehörige Leiter, keine geschalteten Pole der Sicherung.
-5. Für direkte Verbraucher, Steckdosen, einfache Schalter oder Trafos bei Bedarf **Endobjekt zusätzlich diesem Stromkreis zuordnen** aktivieren. Damit wird auch die Versorgungssimulation zugeordnet. Bestehende andere Anschlüsse zuerst bewusst lösen; sie werden nicht überschrieben. Diese eigenständige Objektzuordnung bleibt nach dem Löschen der Leitung erhalten.
+5. Der Stromkreis wird automatisch aus dem Abgang übernommen und über belegte Leitungen und Abzweigdosen weitergeführt. Ein zusätzliches Zuordnungshäkchen ist nicht nötig. Unterschiedliche Stromkreise dürfen nicht versehentlich zusammengeführt werden; der Dialog meldet solche Konflikte.
 6. **Belegung speichern** übernimmt Leitung, Kontakte und gegebenenfalls den neuen Stromkreis zusammen. Im Kasten erscheint der Abgang unter seiner Sicherung. **Rückgängig** nimmt diesen Speicherschritt gemeinsam zurück.
 
-Eine Abzweigdose erhält die dokumentierten Kontaktpaare und den Stromkreis an ihrer Leitung. Dahinter angeschlossene Verbraucher werden nicht automatisch dem Stromkreis zugeordnet. Beim Verbinden zweier Kästen den Abgang des versorgenden Kastens mit der **Einspeisung** des anderen verbinden; zwei Abgänge werden nicht miteinander verbunden.
+Abzweigdosen führen den erkannten Stromkreis weiter. Nachgelagerte einfache Verbraucher erhalten ihre Versorgung aus den belegten Leitungen. Abgeleitete Anschlussfelder sind schreibgeschützt: zum Umhängen die Leitung bearbeiten. Beim Löschen einer Anschlussleitung wird auch deren abgeleitete Versorgung gelöst. Unabhängige, zuvor manuell dokumentierte Einspeisepunkte bleiben erhalten. Unterverteilungen und Schaltgruppen behalten ihre ausdrücklich konfigurierten Versorgungsbeziehungen.
 
 ![Im Anschlussdialog zuerst Sicherung und Stromkreis auswählen, anschließend die zugehörigen Leiter und das Endobjekt verbinden.](bilder/contact-dialog-desktop.png)
 
 ## Lichtschalter und Schaltgruppen
 
-Schalter und Lampe demselben passenden Stromkreis zuordnen. Die Lampe benötigt einen dokumentierten Anschluss und Betriebszustand. Danach den Schalter an der Lampe oder die Verbraucher am Schalter zuordnen. Für mehrere Schaltstellen eine Wechsel-/Kreuzschaltgruppe oder ein Stromstoßrelais verwenden.
+Leitung von der Versorgung zum Eingang **L** des Schalters zeichnen und anschließend **L′ → L** zur Lampe verbinden. Stromkreis und Schalterzuordnung werden beim Speichern übernommen. Lampen folgen ihrer Versorgung und dem Schalter; sie benötigen keinen eigenen Ein/Aus-Zustand. Das gilt auch für alte Lampen, bei denen früher „Aus“ gespeichert war. Für mehrere Schaltstellen eine Wechsel-/Kreuzschaltgruppe oder ein Stromstoßrelais verwenden; uneindeutige parallele Schalteranschlüsse werden gemeldet.
+
+Fehlt bei einer neu angelegten oder bearbeiteten Lampe die Leistung, werden **5 W** als editierbarer LED-Startwert eingetragen. Eine fehlende Verbraucherspannung wird bei bekanntem Anschluss aus der Versorgung übernommen, zum Beispiel **230 V**, bei Drehstrom aus der Außenleiterspannung und bei zugeordnetem Trafo aus dessen ausgewähltem Ausgang. Bereits eingetragene Werte werden nicht überschrieben. Bei älteren Projekten verwendet die Simulation die Leitungen auch dann, wenn frühere manuelle Schalterzuordnungen abweichen. Fehlende Aderpaare müssen weiterhin ergänzt werden; unbekannte Anschlusswege werden nicht geraten.
 
 Eine Reihenschaltung mehrerer Schalter bedeutet: Alle Kontakte müssen geschlossen sein. Sie ist keine Wechselschaltung. Beim Stromstoßrelais wechselt ein Tastimpuls den Szenariozustand; bei fehlender Versorgung entsteht im Modell kein wirksamer Impuls.
 
@@ -239,7 +241,7 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 ## Netzwerkgerät an eine Steckdose anschließen
 
 1. Router, Switch oder anderes Netzwerkgerät auswählen und **Mit Steckdose verbinden** anklicken. Alternativ mit dem elektrischen Anschlusswerkzeug das Netzwerkgerät im Plan treffen oder im Anschlussdialog unter **Netzwerkgeräte · Stromanschluss einrichten** auswählen. Dabei wird einmalig sein Stromanschluss eingerichtet; ein Abbruch der anschließenden Leitungsbearbeitung lässt diesen noch unverbundenen Anschluss bestehen.
-2. Im Anschlussdialog die Steckdose als anderes Endobjekt auswählen. L und N werden vorgeschlagen. Die Zuordnung **Verbraucher dieser Steckdose zuordnen (Simulation)** ist für diesen Ablauf bereits aktiviert und bleibt abwählbar.
+2. Im Anschlussdialog die Steckdose als anderes Endobjekt auswählen. L und N werden vorgeschlagen. Beim Speichern übernimmt die App die Steckdosen- und Simulationszuordnung automatisch; ein separates Häkchen entfällt.
 3. **Verbinden und zuordnen** speichern. Am Netzwerkgerät wird die zugeordnete Steckdose angezeigt.
 4. Unter **Stromanschluss konfigurieren** Typenschildwerte, Leistung und bei Bedarf **PE-Anschluss vorhanden** einstellen. Neue Netzwerk-Stromanschlüsse starten als einphasiges L/N-Modell ohne PE; die Einstellung an das dokumentierte Gerät beziehungsweise Netzteil anpassen. Ein reiner Datenport oder PoE wird dadurch nicht zu einem Netzspannungsanschluss.
 5. Nach Änderung des PE-Anschlusses **Mit Steckdose verbinden** erneut öffnen und **Kontaktvorschläge übernehmen** wählen. PE wird nur vorgeschlagen, wenn beide Enden ihn anbieten. Vorhandene belegte Kontakte müssen vor dem Entfernen ihrer Geräteanschlüsse ausdrücklich gelöst werden.
@@ -667,17 +669,17 @@ Nach der ersten Ablesung ist sie gesperrt, damit bestehende Werte nicht umgedeut
 
 ## Warum versorgt mein gezeichnetes Kabel den Verbraucher nicht?
 
-Geometrischer Leitungsweg, funktionale Versorgung und konkrete Aderbelegung sind getrennte Angaben. Anschluss und Stromkreis für die Versorgungssimulation prüfen; Kontaktpaare für die Leiterprüfung erfassen.
+Eine Leitung benötigt eine passende Kontaktbelegung und eine erkennbare Versorgung. Beim Speichern werden Stromkreis und einfache Verbraucherzuordnungen automatisch übernommen. Eine alte Linie ohne Aderpaare genügt nicht: **Anschlussbelegung bearbeiten** öffnen und die Vorschläge prüfen.
 
-Netzwerkgeräte über **Mit Steckdose verbinden** anschließen. N und vorhandener PE werden vorbelegt; für die Versorgung die angebotene Verbraucherzuordnung bestätigen. Einphasige Verbindungen benötigen keine zusätzlichen L2-/L3-Paare.
+Netzwerkgeräte über **Mit Steckdose verbinden** anschließen. N und vorhandener PE werden vorbelegt; die Verbraucherzuordnung erfolgt automatisch. Einphasige Verbindungen benötigen keine zusätzlichen L2-/L3-Paare.
 
 Im **Sicherungskasten öffnen** zeigt das Versorgungsschema die Schutzkette. Unter **Leitungen und Anschlüsse** die Leitung anklicken und **Anschlussbelegung bearbeiten** öffnen. Eine sichtbare Schema-Linie allein bedeutet noch keine dokumentierte Aderbelegung.
 
-Beim Anschluss am Kasten zuerst **Sicherung / Stromkreis** auswählen. Fehlt zu einer eingebauten Sicherung noch der Stromkreis, entsteht er beim Speichern. Für die Versorgung eines direkt angeschlossenen Endobjekts zusätzlich dessen Stromkreiszuordnung im Dialog bestätigen.
+Beim Anschluss am Kasten zuerst **Sicherung / Stromkreis** auswählen. Fehlt zu einer eingebauten Sicherung noch der Stromkreis, entsteht er beim Speichern. Die weitere Stromkreiszuordnung übernimmt die App.
 
 ## Warum leuchtet die Lampe in der Simulation nicht?
 
-Einspeisung, Schutzkette, Stromkreis, Anschluss, Schalterzuordnung und Betriebszustand prüfen. Fehlende Lastdaten und ein ausgeschaltetes Gerät sind unterschiedliche Fälle. Bei Leiterprüfung außerdem die dokumentierten Aderpaare kontrollieren.
+Einspeisung, Sicherung und Leitungsbelegung prüfen. Die Lampe folgt dem angeschlossenen Schalter und hat keinen separaten Ein/Aus-Zustand mehr. Bei mehreren widersprüchlichen Anschlüssen zeigt die Simulation einen Hinweis. Für die Leiterprüfung muss auch der Rückweg über N vollständig dokumentiert sein. Manuelle Typenschildwerte müssen zur Versorgung passen.
 
 ## Warum löst die B16-Sicherung bei über 16 A nicht automatisch aus?
 

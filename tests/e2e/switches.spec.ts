@@ -52,8 +52,8 @@ test("Lichtschalter platzieren, Lampen zuordnen, simulieren und verlustfrei spei
   await expect(page.getByTestId("simulation-total-power")).toHaveText("100 W");
   await page.getByLabel("S-01 Lichtschalter geschlossen", { exact: true }).check();
   await expect(page.getByTestId("simulation-total-power")).toHaveText("165 W");
-  await page.getByLabel("VG-01 im Szenario einschalten", { exact: true }).uncheck();
-  await expect(page.getByTestId("simulation-total-power")).toHaveText("140 W");
+  await expect(page.getByLabel("VG-01 im Szenario einschalten", { exact: true })).toHaveCount(0);
+  await expect(page.getByTestId("simulation-total-power")).toHaveText("165 W");
   await page.getByLabel("F2 geschlossen", { exact: true }).uncheck();
   await expect(page.getByTestId("simulation-total-power")).toHaveText("0 W");
   await page.getByLabel("F2 geschlossen", { exact: true }).check();

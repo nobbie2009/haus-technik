@@ -61,7 +61,7 @@ const html = sections
       const capturedVersion = ["contact-dialog-desktop.png", "network-editor-desktop.png"].some((name) =>
         file.endsWith(name),
       )
-        ? "0.52.0"
+        ? "0.53.0"
         : file.endsWith("board-equipment-desktop.png")
           ? "0.50.0"
           : "0.48.0";

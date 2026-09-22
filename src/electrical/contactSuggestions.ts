@@ -116,6 +116,12 @@ export function suggestContacts(
     const reverse = pair.device.id === startId;
     return [{ startContactId: reverse ? "L" : "L_OUT", endContactId: reverse ? "L_OUT" : "L" }];
   }
+  // A supply/junction feeds the input of a simple switch; consumers use L_OUT above.
+  for (const side of ["start", "end"] as const) {
+    const id = side === "start" ? startId : endId;
+    if (project.electrical.switches[id] && contacts[side].some((c) => c.id === "L_OUT"))
+      contacts[side] = contacts[side].filter((c) => c.id === "L");
+  }
   const rows: Cable["conductorConnections"] = [];
   const pin = (c: Contact) =>
     c.id

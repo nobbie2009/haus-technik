@@ -39,8 +39,9 @@ test("Anschlüsse ziehen, Kontakte bestätigen, simulieren und atomar rückgäng
   await page.getByLabel("Elektroobjekt", { exact: true }).selectOption("devices");
   await page.mouse.click(b.x, b.y);
   await field(page, "Elektro-Name", "Deckenlicht");
+  await expect(page.getByLabel("Nennleistung (W)", { exact: true })).toHaveValue("5");
   await field(page, "Nennleistung (W)", "25");
-  await page.getByLabel("Dokumentierter Betriebszustand", { exact: true }).selectOption("on");
+  await expect(page.getByLabel("Dokumentierter Betriebszustand", { exact: true })).toHaveCount(0);
   const before = await exported(page);
   const lightSwitch = Object.values(before.electrical.switches)[0]!;
   const device = Object.values(before.electrical.devices)[0]!;
@@ -71,9 +72,6 @@ test("Anschlüsse ziehen, Kontakte bestätigen, simulieren und atomar rückgäng
   await expect(
     page.getByLabel("Verbindung 1 · Startkontakt", { exact: true }).locator('option[value="N"]'),
   ).toHaveCount(0);
-  await page
-    .getByRole("checkbox", { name: "Verbraucher diesem Lichtschalter zuordnen (Simulation)", exact: true })
-    .check();
   await page.getByLabel("Verbindung 1 · Startkontakt", { exact: true }).selectOption("L");
   await page.screenshot({ path: "test-results/contact-dialog-desktop.png" });
   await page.setViewportSize({ width: 1024, height: 768 });
@@ -85,6 +83,7 @@ test("Anschlüsse ziehen, Kontakte bestätigen, simulieren und atomar rückgäng
   expect(cable.conductorConnections).toEqual([{ startContactId: "L", endContactId: "L_OUT" }]);
   expect(connected.electrical.devices[device.id]!.switchId).toBe(lightSwitch.id);
   expect(connected.electrical.devices[device.id]!.circuitId).toBe(terminal);
+  expect(connected.electrical.devices[device.id]!.ratedVoltage).toBe(230);
   expect(connected.electrical.devices[device.id]!.position).toEqual(device.position);
   await page.getByRole("button", { name: "Anschlussbelegung bearbeiten", exact: true }).click();
   await expect(page.getByLabel("Verbindung 1 · Zielkontakt", { exact: true })).toHaveValue("L_OUT");

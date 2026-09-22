@@ -1,3 +1,4 @@
+import { deviceSymbolKind } from "../rendering/deviceAppearance";
 import type { Project } from "../models/project";
 import type { SimulationScenario } from "./models";
 import { electricalNodes } from "../electrical/cables";
@@ -213,7 +214,8 @@ function solveConductorPass(project: Project, scenario: SimulationScenario): Con
       return item;
     }
     item.voltage = sources.get(sourceId)![device.phases === 3 ? "ll" : "ln"];
-    const state = scenario.deviceStates[device.id] ?? device.operatingMode;
+    const state =
+      deviceSymbolKind(device) === "lamp" ? "on" : (scenario.deviceStates[device.id] ?? device.operatingMode);
     if (state === "off") return { ...item, status: "off", power: 0, current: 0 };
     if (state === "standby") return { ...item, status: "incomplete", issues: ["Standby-Leistung fehlt."] };
     const load = calculateLoad(device, item.voltage, scenario.assumeUnityPowerFactor);

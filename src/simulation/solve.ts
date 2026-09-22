@@ -1,4 +1,6 @@
 import { transformerVoltage } from "../electrical/transformers";
+import { deviceSymbolKind } from "../rendering/deviceAppearance";
+import { syncWiring } from "../electrical/wiring";
 import type { Project } from "../models/project";
 import { buildSupplyGraph } from "./graph";
 import { calculateLoad } from "./load";
@@ -15,8 +17,10 @@ const currents = () => ({ L1: 0, L2: 0, L3: 0 });
 
 /** Statische radiale Lastrechnung und Erreichbarkeit. Keine Kurzschluss-/Auslöse-/Leitungsberechnung. */
 export function simulate(project: Project, scenario: SimulationScenario): SimulationResult {
+  project = structuredClone(project);
+  const wiringIssues = syncWiring(project);
   const graph = buildSupplyGraph(project);
-  const result: SimulationResult = { graph, nodes: {}, devices: {}, issues: [] };
+  const result: SimulationResult = { graph, nodes: {}, devices: {}, issues: wiringIssues };
   const transformerVA: Record<string, number> = {};
   const disabled = new Set(scenario.disabledNodeIds);
   const children: Record<string, string[]> = {};
@@ -93,7 +97,8 @@ export function simulate(project: Project, scenario: SimulationScenario): Simula
     const transformer = device.transformerId ? project.electrical.transformers[device.transformerId] : null;
     const gate = device.controlId ?? device.switchId;
     if (transformer && gate && !feeds[gate]?.available.length) feed.available = [];
-    const state = scenario.deviceStates[device.id] ?? device.operatingMode;
+    const state =
+      deviceSymbolKind(device) === "lamp" ? "on" : (scenario.deviceStates[device.id] ?? device.operatingMode);
     const source = feed.sourceId ? project.electrical.supplies[feed.sourceId] : null;
     const primaryVoltage = source
       ? device.phases === 3

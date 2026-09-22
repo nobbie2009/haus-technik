@@ -51,9 +51,7 @@ test("Router an Steckdose anschließen: automatische Kontakte, Zuordnung und Wie
   await expect(dialog.locator(".automatic-contact summary")).toHaveText([
     "N → N · vorbelegt · bei Bedarf bearbeiten",
   ]);
-  await expect(
-    dialog.getByRole("checkbox", { name: "Verbraucher dieser Steckdose zuordnen (Simulation)", exact: true }),
-  ).toBeChecked();
+  await expect(dialog).toContainText("automatisch gemeinsam zugeordnet");
   await dialog.getByRole("button", { name: "Verbinden und zuordnen", exact: true }).click();
   await expect(
     page.getByText(`Steckdose: ${project.electrical.outlets[outlet]!.label}`, { exact: true }),

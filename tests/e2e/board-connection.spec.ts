@@ -27,7 +27,6 @@ test("Sicherung ohne Stromkreis als Anschluss wählen, abbrechen und atomar spei
       .getByLabel("Start · Sicherung / Stromkreis", { exact: true })
       .selectOption(`protection:${protection}`);
     await expect(page.getByLabel("Verbindung 1 · Startkontakt", { exact: true })).toContainText("F-KUECHE");
-    await page.getByRole("checkbox", { name: /Endobjekt zusätzlich/ }).check();
     if (save) {
       await page.setViewportSize({ width: 1440, height: 1600 });
       await page

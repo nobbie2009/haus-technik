@@ -59,10 +59,11 @@ export function SimulationDialog({ onClose }: { onClose: () => void }) {
               summiert. Ohne Phasenzuordnung ist die Auslastung unvollständig.
             </p>
             <p>
-              Gezeichnete Kabelwege sind noch kein Leiter-/Polnetz: Diese Simulation nutzt die ausdrücklichen
-              Versorgungszuordnungen. „Stromkreis verbunden“ unterbricht diese Verbindung. Kein
-              Spannungsabfall, Kurzschluss, Fehlerstrom oder zeitabhängiges Auslösen. Mehr als 100 % wird
-              angezeigt und nicht automatisch abgeschaltet.
+              Belegte Leitungen bestimmen Stromkreis und Schalterzuordnung. Ohne Leitung gelten die manuell
+              dokumentierten Anschlüsse. Lampen folgen ihrer Versorgung ohne separaten Geräteschalter.
+              „Stromkreis verbunden“ unterbricht diese Verbindung. Kein Spannungsabfall, Kurzschluss,
+              Fehlerstrom oder zeitabhängiges Auslösen. Mehr als 100 % wird angezeigt und nicht automatisch
+              abgeschaltet.
             </p>
             <p>
               Standby benötigt eigene Lastdaten und wird derzeit als unvollständig angezeigt.

@@ -2,6 +2,7 @@ import { useProjectStore } from "../../stores/projectStore";
 import { useSimulationStore } from "../../stores/simulationStore";
 import { phases } from "../../simulation/models";
 import { simulationNumber, simulationStatus } from "./format";
+import { deviceSymbolKind } from "../../rendering/deviceAppearance";
 
 export function SimulationResults({ circuitId }: { circuitId: string }) {
   const project = useProjectStore((s) => s.project);
@@ -9,6 +10,9 @@ export function SimulationResults({ circuitId }: { circuitId: string }) {
   const node = result?.nodes[circuitId];
   if (!node || !result) return null;
   const deviceIds = node.deviceIds;
+  const switchableIds = deviceIds.filter(
+    (id) => deviceSymbolKind(project.electrical.devices[id]!) !== "lamp",
+  );
   return (
     <section aria-label="Stromkreisergebnis" className="simulation-results">
       <h3>
@@ -64,26 +68,27 @@ export function SimulationResults({ circuitId }: { circuitId: string }) {
       <h3>Verbraucher einschließlich Unterverteilungen</h3>
       <div className="simulation-actions">
         <button
-          disabled={!deviceIds.length}
+          disabled={!switchableIds.length}
           onClick={() =>
             update((draft) => {
-              for (const id of deviceIds) draft.deviceStates[id] = "on";
+              for (const id of switchableIds) draft.deviceStates[id] = "on";
             })
           }
         >
-          Alle ein
+          Geräte ein
         </button>
         <button
-          disabled={!deviceIds.length}
+          disabled={!switchableIds.length}
           onClick={() =>
             update((draft) => {
-              for (const id of deviceIds) draft.deviceStates[id] = "off";
+              for (const id of switchableIds) draft.deviceStates[id] = "off";
             })
           }
         >
-          Alle aus
+          Geräte aus
         </button>
       </div>
+      <p className="field-hint">Lampen werden über Lichtschalter oder Versorgung geschaltet.</p>
       {!deviceIds.length ? (
         <p>
           Noch keine Verbraucher an diesem Stromkreis angeschlossen. Geräte über eine Steckdose oder als
@@ -110,16 +115,18 @@ export function SimulationResults({ circuitId }: { circuitId: string }) {
                   <tr key={id}>
                     <th scope="row">
                       <label>
-                        <input
-                          type="checkbox"
-                          aria-label={`${device.label} im Szenario einschalten`}
-                          checked={value.state === "on"}
-                          onChange={(e) =>
-                            update((draft) => {
-                              draft.deviceStates[id] = e.target.checked ? "on" : "off";
-                            })
-                          }
-                        />
+                        {deviceSymbolKind(device) !== "lamp" && (
+                          <input
+                            type="checkbox"
+                            aria-label={`${device.label} im Szenario einschalten`}
+                            checked={value.state === "on"}
+                            onChange={(e) =>
+                              update((draft) => {
+                                draft.deviceStates[id] = e.target.checked ? "on" : "off";
+                              })
+                            }
+                          />
+                        )}
                         {device.label} · {device.name}
                       </label>
                     </th>

@@ -14,7 +14,7 @@ export function SwitchSupplyFields({ id }: { id: string }) {
       <SelectField
         label="Schalterversorgung / Reihenschaltung"
         value={item.supply.kind === "switch" ? item.supply.switchId : item.supply.kind}
-        disabled={locked}
+        disabled={locked || item.metadata.wiringManaged === true}
         onChange={(value) =>
           change((draft) =>
             setSwitchSupply(

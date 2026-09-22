@@ -67,9 +67,6 @@ test("Kühlschrank erfassen, maßstäblich platzieren, anschließen und wieder l
   await page.getByRole("button", { name: "Anschlussdialog öffnen", exact: true }).click();
   await page.getByLabel("Startobjekt", { exact: true }).selectOption(outlet);
   await page.getByLabel("Zielobjekt", { exact: true }).selectOption(device.id);
-  await page
-    .getByRole("checkbox", { name: "Verbraucher dieser Steckdose zuordnen (Simulation)", exact: true })
-    .check();
   await page.getByRole("button", { name: "Verbinden und zuordnen", exact: true }).click();
   const connected = await exported(page);
   expect(connected.electrical.devices[device.id]!.connectionPointId).toBe(outlet);

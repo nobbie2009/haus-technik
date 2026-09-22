@@ -43,7 +43,7 @@ export function SwitchFields({ id }: { id: string }) {
       <SelectField
         label="Schalter-Stromkreis"
         value={item.circuitId ?? ""}
-        disabled={locked || !!group || assigned.length > 0}
+        disabled={locked || !!group || assigned.length > 0 || item.metadata.wiringManaged === true}
         onChange={(value) =>
           change((draft) => {
             draft.electrical.switches[id]!.circuitId = value || null;
@@ -86,6 +86,7 @@ export function SwitchFields({ id }: { id: string }) {
                 checked={device.switchId === id}
                 disabled={
                   locked ||
+                  device.metadata.wiringManaged === true ||
                   project.layers[device.layerId]!.locked ||
                   !!device.controlId ||
                   (!!device.switchId && device.switchId !== id)
@@ -102,15 +103,15 @@ export function SwitchFields({ id }: { id: string }) {
           ))}
           {!eligible.length && (
             <p className="field-hint">
-              Zuerst den Schalter und eine einphasige Lampe demselben Stromkreis zuordnen. An der Lampe
-              „Festanschluss an Stromkreis“ wählen.
+              Eine Leitung vom Schalter zur Lampe zeichnen. Anschluss und Stromkreis werden gemeinsam
+              übernommen.
             </p>
           )}
         </fieldset>
       )}
       <p className="field-hint">
-        In der Simulation schaltet dieser Kontakt alle zugeordneten Geräte. Deren eigener Betriebszustand
-        bleibt erhalten. Für Lampen normalerweise „Ein“ wählen.
+        Lampen folgen diesem Schalter ohne separaten Ein/Aus-Zustand. Andere Geräte behalten ihren eigenen
+        Betriebszustand.
       </p>
       <p className="field-hint">
         Wandbezug: {item.wallId ? "Wand an dieser Position" : "Keine Wand an dieser Position"}

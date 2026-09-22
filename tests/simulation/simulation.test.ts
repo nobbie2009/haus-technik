@@ -179,6 +179,7 @@ describe("Statische Stromkreissimulation", () => {
   });
   it("zeigt fehlende Daten und Standby als unvollständig, ausgeschaltete Geräte aber mit Nulllast", () => {
     const { project, devices, terminal } = simulationFixture([230, 230, 230]);
+    for (const id of devices) project.electrical.devices[id]!.metadata.electricalSymbol = "device";
     project.electrical.devices[devices[0]!]!.ratedPower = null;
     project.electrical.devices[devices[1]!]!.operatingMode = "standby";
     project.electrical.devices[devices[2]!]!.operatingMode = "off";
