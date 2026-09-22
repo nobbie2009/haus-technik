@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.52.1 · 22.09.2026
+
+- Veraltete Browser-Testannahme beim Anschließen aus der Verbraucherdatenbank korrigieren: die vollständige automatische Belegung L–L, N–N und PE–PE sowie deren Erhalt beim Neuladen prüfen. Der Test berücksichtigt damit den seit 0.52.0 vorbelegten Schutzleiter.
+
 ## 0.52.0 · 22.09.2026
 
 - Leitungsverlegung und Anschließen zusammenführen: Am Ziel den Anschlussdialog mit Kontaktvorschlägen öffnen und Leitungsweg samt Zwischenpunkten und Belegung gemeinsam speichern oder verwerfen.

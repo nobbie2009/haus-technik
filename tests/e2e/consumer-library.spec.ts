@@ -73,17 +73,21 @@ test("Kühlschrank erfassen, maßstäblich platzieren, anschließen und wieder l
   await page.getByRole("button", { name: "Verbinden und zuordnen", exact: true }).click();
   const connected = await exported(page);
   expect(connected.electrical.devices[device.id]!.connectionPointId).toBe(outlet);
-  expect(
-    Object.values(connected.electrical.cables).some(
-      (c) => c.endNodeId === device.id && c.conductorConnections.length === 2,
-    ),
-  ).toBe(true);
+  const connection = Object.values(connected.electrical.cables).find(
+    (c) => c.startNodeId === outlet && c.endNodeId === device.id,
+  );
+  expect(connection?.conductorConnections).toEqual([
+    { startContactId: "L", endContactId: "L" },
+    { startContactId: "N", endContactId: "N" },
+    { startContactId: "PE", endContactId: "PE" },
+  ]);
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole("button", { name: "Neu", exact: true })).toBeEnabled();
   const restored = await exported(page);
   expect(asset(restored.electrical.devices[device.id]!).serial).toBe("TEST-123");
   expect(restored.electrical.devices[device.id]).toEqual(connected.electrical.devices[device.id]);
+  expect(restored.electrical.cables[connection!.id]).toEqual(connection);
   expect(consumerLibrary(restored)).toHaveLength(1);
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
   await page.getByRole("button", { name: "Verbraucherdatenbank", exact: true }).click();
