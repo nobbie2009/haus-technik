@@ -495,12 +495,14 @@ Der optionale Projektdienst speichert gemeinsame Projekte auf deinem eigenen Hau
 
 Nach Installation einer passenden App-Version im LXC **als Administrator** `Update --setup-projects` ausführen. Der Befehl richtet den Projektdienst ein und zeigt einen eigenen Zugriffsschlüssel einmalig an. Den Schlüssel sicher aufbewahren. Er ist nicht das Passwort für App-Updates und gewährt Zugriff auf alle gemeinsamen Projekte dieses Hausservers.
 
+Ab Version 0.57.0 kann der Administrator mit `/usr/local/bin/Update --set-project-key` einen eigenen gut merkbaren Schlüssel festlegen. Die Eingabe erfolgt zweimal verdeckt, nicht als Befehlsargument. 12 bis 128 Zeichen sind erlaubt: Buchstaben ohne Umlaute, Zahlen, Leerzeichen und Sonderzeichen; keine Leerzeichen am Anfang oder Ende. Mehrere gut merkbare Wörter erleichtern die Eingabe am iPhone. Der bisherige Schlüssel wird ungültig; alle Geräte anschließend mit dem neuen Schlüssel verbinden. Projekte und Update-Passwort bleiben erhalten.
+
 Eine vorhandene HTTPS-Adresse schützt die Übertragung. Die Einrichtung gehört auf den Server, nicht in ein Eingabefeld der Hausakte. Bei einer individuell angepassten Nginx-Konfiguration die Betriebsanleitung beachten: Die verwaltete Konfiguration wird mit vorheriger Sicherung ersetzt. Die App allein aktiviert keinen Serverdienst.
 
 ## Erstes Gerät verbinden
 
 1. **Hausakte → Gemeinsame Projekte** öffnen.
-2. **Projektdienst-Zugriffsschlüssel** eintragen und **Mit Projektdienst verbinden** wählen.
+2. **Projektdienst-Zugriffsschlüssel** eintragen, auf eigenen Geräten **Auf diesem Gerät merken** anhaken und **Mit Projektdienst verbinden** wählen. **Schlüssel anzeigen** hilft bei der Eingabekontrolle. Erst nach erfolgreicher Prüfung wird der neue Zugang gespeichert.
 3. Projektname und geöffneten Bestand kontrollieren.
 4. **Aktuelles Projekt erstmals bereitstellen** wählen.
 5. Auf den Status achten. Danach werden lokale Änderungen des verbundenen Projekts bei sichtbarem Tab etwa alle zehn Sekunden abgeglichen. **Jetzt abgleichen** stößt die Prüfung direkt an.
@@ -522,7 +524,9 @@ Eine Änderung auf einem anderen Gerät wird angeboten, nicht ungefragt über de
 3. Entscheiden, welchen Stand du weiterbearbeiten willst. Die App führt Inhalte nicht automatisch zusammen.
 4. Falls nötig fehlende Änderungen anhand der gesicherten Kopie im gewählten Stand nachtragen.
 
-Der Schlüssel bleibt in der Tab-Sitzung und gehört nicht in die Projektdatei. Nach Schließen des Tabs erneut verbinden. **Verbindung trennen** beendet die Verbindung, löscht aber keine Projektdateien auf dem Server. Home-Assistant-Zugangsdaten und die lokale übergreifende Gerätebibliothek werden nicht als eigene Einstellungen synchronisiert.
+Mit **Auf diesem Gerät merken** bleiben Schlüssel und Projektverknüpfungen im Browserprofil dieser App-Adresse auch nach dem Schließen gespeichert. Wer das Browserprofil verwendet, hat damit Zugang zu den gemeinsamen Projekten. **Gespeicherten Zugang entfernen** löscht den Zugang dieses Browsers, keine Serverprojekte. Ohne Häkchen gilt die Anmeldung nur für den Tab; **Verbindung trennen** beendet sie. Gelöschte Websitedaten, private Browserfenster oder eine andere App-Adresse können eine erneute Anmeldung erfordern. Kann der Browser nicht speichern, zeigt die App einen Hinweis. Der Schlüssel gehört nicht in die Projektdatei. Home-Assistant-Zugangsdaten und die lokale übergreifende Gerätebibliothek werden nicht als eigene Einstellungen synchronisiert.
+
+![Gemeinsame Projekte auf dem iPhone: Zugang auf dem eigenen Gerät merken und wieder entfernen.](bilder/shared-access-phone.png)
 
 ## Sicherung des Servers
 
@@ -778,6 +782,10 @@ Ein anderes Gerät hat den Serverstand geändert, seit dein lokaler Stand verbun
 ## Warum ist der Projektdienst nicht erreichbar?
 
 Prüfen, ob auf diesem Server `Update --setup-projects` ausgeführt wurde, der Dienst läuft und dieselbe App-Adresse verwendet wird. Eine statische Vorschau allein enthält keinen laufenden Projektdienst. Bei ungültigem Schlüssel erneut verbinden.
+
+## Warum muss ich den Projektschlüssel immer wieder eintippen?
+
+Unter [Gemeinsame Projekte](#gemeinsame-projekte) **Auf diesem Gerät merken** aktivieren. Das gilt je Browser und App-Adresse. Einen leichter eintippbaren Schlüssel kann der Administrator nach dem Update mit `/usr/local/bin/Update --set-project-key` setzen. Danach den neuen Schlüssel auf jedem Gerät einmal eingeben und merken lassen.
 
 ## Ist der Projektschlüssel mein Update-Passwort?
 

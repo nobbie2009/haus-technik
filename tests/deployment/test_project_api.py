@@ -53,6 +53,15 @@ class ProjectApiTests(unittest.TestCase):
         self.assertEqual(self.request('GET', '/../auth.json')[0], 404)
         self.assertEqual(self.store.list(), [])
 
+    def test_custom_passphrase_and_old_key_revocation(self):
+        old = self.token
+        self.token = 'fixture phrase for tests'
+        self.server.token_salt = 'a1' * 16
+        self.server.token_hash = hashlib.pbkdf2_hmac('sha256', self.token.encode(), bytes.fromhex(self.server.token_salt), 600000).hex()
+        self.assertEqual(self.request('GET')[0], 200)
+        self.assertEqual(self.request('GET', headers={'Authorization': 'Bearer ' + old})[0], 401)
+        self.assertEqual(self.request('GET', auth=False)[0], 401)
+
     def test_requests_are_rate_limited_before_authentication(self):
         self.server.rate_limit = 2
         self.assertEqual(self.request('GET', auth=False)[0], 401)

@@ -98,14 +98,15 @@ einen unprivilegierten Dienstbenutzer an, installiert `home-technik-projects.ser
 einen eigenen zufälligen Zugriffsschlüssel. Diesen einmal angezeigten Schlüssel sicher aufbewahren;
 bei der ersten Einrichtung nach einem älteren Updater werden fehlende Dienstdateien aus dem geprüften
 Paket genau der installierten Version nachgeladen. Dafür muss GitHub erreichbar sein.
-auf dem Server liegt nur dessen SHA-256-Hash. Er ist unabhängig vom Update-Passwort.
+Auf dem Server liegt nur dessen Hash. Er ist unabhängig vom Update-Passwort.
 Die verwaltete Nginx-Site wird mit vorheriger Sicherung ersetzt und geprüft. Eigene Anpassungen
 an HTTPS oder Reverse-Proxy vorher mit der Vorlage abgleichen. Keine öffentliche Freigabe einrichten.
 
 Auf jedem Gerät dieselbe App-Adresse öffnen: **Hausakte → Gemeinsame Projekte**. Schlüssel eingeben,
-verbinden und auf dem ersten Gerät **Aktuelles Projekt erstmals bereitstellen** wählen. Auf weiteren
+verbinden, auf eigenen Geräten **Auf diesem Gerät merken** aktivieren und auf dem ersten Gerät **Aktuelles Projekt erstmals bereitstellen** wählen. Auf weiteren
 Geräten **Serverstand prüfen** und **Serverstand übernehmen und verbinden** wählen. Der Schlüssel bleibt
-in der Tab-Sitzung, nicht in der Projektdatei. Nach Schließen des Tabs erneut verbinden.
+ohne Merken-Option in der Tab-Sitzung, mit Option dauerhaft im Browserprofil dieser App-Adresse. Er steht
+nicht in der Projektdatei. **Gespeicherten Zugang entfernen** entfernt ihn wieder. Nur eigene Geräte verwenden.
 Für verschlüsselte Übertragung die vorhandene HTTPS-Adresse benutzen.
 
 Verbundene lokale Änderungen werden bei sichtbarem Tab alle zehn Sekunden hochgeladen. Neue Serverstände
@@ -124,8 +125,17 @@ nicht nur die laufende Hauptdatei ohne WAL kopieren. Ein App-Rollback verändert
 
 Diagnose: `systemctl status home-technik-projects`, `journalctl -u home-technik-projects`.
 `Update --reset-project-key` widerruft den bisherigen Schlüssel und erzeugt einen neuen; alle Geräte
-müssen neu verbunden werden. Der Schlüssel gewährt Zugriff auf alle Projekte dieses Hausservers;
-es gibt keine getrennten Benutzerkonten. Home-Assistant-Zugangsdaten und die lokale übergreifende
+müssen neu verbunden werden. Der Schlüssel gewährt Zugriff auf alle Projekte dieses Hausservers.
+
+Ab 0.57.0 erlaubt `/usr/local/bin/Update --set-project-key` stattdessen eine eigene Passphrase:
+12 bis 128 druckbare ASCII-Zeichen, ohne Rand-Leerzeichen. Mehrere Wörter sind möglich.
+Der Dialog fragt zweimal verdeckt; keine Schlüssel als Befehlsargument oder in Shell-History schreiben.
+Der Dienst speichert einen zufälligen Salt und PBKDF2-SHA256 mit 600.000 Iterationen; bestehende
+SHA-256-Hashes zufälliger Schlüssel bleiben kompatibel. Der Schlüsselwechsel ersetzt die Auth-Datei
+atomar und startet ausschließlich den Projektdienst neu. Datenbank und Nginx-Konfiguration bleiben erhalten.
+Bei fehlgeschlagenem Neustart wird die bisherige Auth-Datei wiederhergestellt. Alle Geräte danach neu verbinden.
+
+Es gibt keine getrennten Benutzerkonten. Home-Assistant-Zugangsdaten und die lokale übergreifende
 Gerätebibliothek werden nicht als eigene Serverdaten synchronisiert.
 
 ## Manueller Weg für Sonderfälle

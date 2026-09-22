@@ -5,7 +5,7 @@ React, TypeScript, Vite, Zustand und react-konva. Daten und Berechnungen sind un
 
 ## Bebildertes Handbuch
 
-In der oberen App-Leiste **Handbuch** öffnen: 31 Kapitel mit 27 Abbildungen aus Beispielprojekten,
+In der oberen App-Leiste **Handbuch** öffnen: 31 Kapitel mit 28 Abbildungen aus Beispielprojekten,
 ausführlichen Schrittfolgen, FAQ, alphabetischem Stichwortverzeichnis und lokaler Volltextsuche.
 Auch über die Tastaturhilfe erreichbar. Die Anleitung wird mit der App ausgeliefert und benötigt
 keinen externen Suchdienst. Kapitel und einzelne Antworten lassen sich direkt verlinken.
@@ -18,6 +18,12 @@ zeigen ausschließlich Testprojekte und sind mit ihrem Aufnahmestand gekennzeich
 ## Grundstück per GPS erfassen
 
 Auf iPhone und iPad lassen sich Grundstücksgrenzen, Wege, Beete und Referenzpunkte per Standortaufnahme erfassen. Benötigt HTTPS und Standortfreigabe; GPS dient zur Groberfassung. [Anleitung](docs/gps-grundstueck.md).
+
+## Neu in 0.57.0: Projektschlüssel merken und selbst festlegen
+
+Unter **Hausakte → Gemeinsame Projekte** den Zugang auf eigenen Geräten dauerhaft merken oder wieder entfernen.
+Nach dem App-Update im LXC `/usr/local/bin/Update --set-project-key` ausführen, um eine eigene Passphrase
+mit mindestens 12 Zeichen verdeckt festzulegen. Anschließend alle Geräte mit dem neuen Schlüssel verbinden.
 
 ## Seit 0.48.0: Wandansicht, Baustelle und gemeinsame Projekte
 

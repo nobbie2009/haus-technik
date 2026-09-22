@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.57.0 · 22.09.2026
+
+- Gemeinsame Projekte: Zugriffsschlüssel und Abgleichverbindungen auf eigenen Geräten dauerhaft merken, gespeicherten Zugang entfernen und Eingabe auf Wunsch anzeigen. Falsche Schlüssel werden nicht gespeichert; blockierter Browserspeicher wird sichtbar gemeldet.
+- Eigenen gut merkbaren Projektschlüssel mit `Update --set-project-key` im LXC verdeckt festlegen. Gesalzene Passwort-Hashes verwenden, bisherige zufällige Schlüssel weiter unterstützen und Projektdateien beim Schlüsselwechsel erhalten.
+- Handbuch, FAQ und Deployment-Anleitung mit iPhone-Abbildung und Einrichtungsschritten aktualisieren.
+
 ## 0.56.0 · 22.09.2026
 
 - Netzwerkkabel direkt im Plan verlegen: Startgerät, Wegpunkte und Zielgerät anklicken, anschließend freie Ports, Kabeltyp und Zuschlag im Anschlussdialog festlegen. Kabelweg und Anschluss gemeinsam speichern; PoE verwendet dieselbe Verbindung.

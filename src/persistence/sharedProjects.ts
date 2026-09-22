@@ -3,29 +3,25 @@ import { useProjectStore } from "../stores/projectStore";
 import { importProjectText } from "./projectFile";
 import { projectFingerprint } from "./backupLog";
 import type { Project } from "../models/project";
-const endpoint = "/api/home-technik-projects",
-  storageKey = "home-technik-shared-session";
-type Link = { etag: string; hash: string };
-type Session = { token: string; links: Record<string, Link> };
-function read(): Session {
-  try {
-    const v = JSON.parse(sessionStorage.getItem(storageKey) ?? "null");
-    if (v && typeof v.token === "string" && v.links && typeof v.links === "object") return v;
-  } catch {
-    /* Private mode or first visit. */
-  }
-  return { token: "", links: {} };
-}
-export const useSharedProjects = create<Session & { message: string; busy: boolean; remoteChanged: boolean }>(
-  () => ({ ...read(), message: "Nicht verbunden", busy: false, remoteChanged: false }),
-);
+import { readSharedAccess, writeSharedAccess, clearSharedAccess, type SharedSession } from "./sharedAccess";
+const endpoint = "/api/home-technik-projects";
+export const useSharedProjects = create<
+  SharedSession & { storageError: string; message: string; busy: boolean; remoteChanged: boolean }
+>(() => ({
+  ...readSharedAccess(),
+  storageError: "",
+  message: "Serververbindung bereit",
+  busy: false,
+  remoteChanged: false,
+}));
 function saveSession() {
-  const { token, links } = useSharedProjects.getState();
-  sessionStorage.setItem(storageKey, JSON.stringify({ token, links }));
+  const { token, links, remember } = useSharedProjects.getState();
+  useSharedProjects.setState({ storageError: writeSharedAccess({ token, links, remember }) });
 }
-export function connectShared(token: string) {
+export function connectShared(token: string, remember = false) {
   useSharedProjects.setState({
     token: token.trim(),
+    remember,
     links: {},
     message: "Verbindung wird geprüft …",
     remoteChanged: false,
@@ -33,13 +29,35 @@ export function connectShared(token: string) {
   saveSession();
 }
 export function disconnectShared() {
-  sessionStorage.removeItem(storageKey);
-  useSharedProjects.setState({ token: "", links: {}, message: "Nicht verbunden", remoteChanged: false });
+  const storageError = clearSharedAccess();
+  useSharedProjects.setState({
+    token: "",
+    links: {},
+    remember: false,
+    storageError,
+    message: "Nicht verbunden",
+    remoteChanged: false,
+  });
 }
-export async function sharedRequest(path = "", init: RequestInit = {}) {
+export function rememberShared(remember: boolean) {
+  useSharedProjects.setState({ remember });
+  saveSession();
+}
+export async function authenticateShared(token: string, remember: boolean) {
+  const response = await sharedRequest("", {}, token.trim());
+  const data = await response.json();
+  if (!Array.isArray(data.projects)) throw new Error("Projektdienst nicht eingerichtet.");
+  connectShared(token, remember);
+  return data.projects as SharedSummary[];
+}
+export async function sharedRequest(
+  path = "",
+  init: RequestInit = {},
+  token = useSharedProjects.getState().token,
+) {
   const response = await fetch(endpoint + path, {
     ...init,
-    headers: { ...init.headers, Authorization: `Bearer ${useSharedProjects.getState().token}` },
+    headers: { ...init.headers, Authorization: `Bearer ${token}` },
     cache: "no-store",
     signal: AbortSignal.timeout(20000),
   });

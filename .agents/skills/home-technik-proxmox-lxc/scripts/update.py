@@ -241,6 +241,49 @@ def setup_projects(reset_key=False):
     print('Projektdienst eingerichtet. Hausakte → Gemeinsame Projekte öffnen. Vorhandene Schlüssel bleiben unverändert.')
 
 
+def custom_project_auth(key, repeated):
+    if key != repeated:
+        raise ValueError('Die Eingaben stimmen nicht überein. Schlüssel unverändert.')
+    if not 12 <= len(key) <= 128 or key != key.strip() or any(ord(c) < 32 or ord(c) > 126 for c in key):
+        raise ValueError('12 bis 128 Zeichen verwenden: Buchstaben ohne Umlaute, Zahlen, Leerzeichen oder Sonderzeichen; keine Leerzeichen am Anfang/Ende.')
+    salt = secrets.token_hex(16)
+    return {'tokenSalt': salt, 'tokenHash': hashlib.pbkdf2_hmac('sha256', key.encode(), bytes.fromhex(salt), 600000).hex()}
+
+
+def set_project_key():
+    auth = Path('/var/lib/home-technik-projects/auth.json')
+    if not auth.is_file():
+        raise ValueError('Zuerst Update --setup-projects ausführen.')
+    # An older running service must never interpret a password hash as a legacy token hash.
+    cache = Path('/opt/home-technik')
+    if 'tokenSalt' not in (cache / 'project_api.py').read_text():
+        raise ValueError('Zuerst das aktuelle App-Release mit Update installieren.')
+    print('Eigenen Projektschlüssel festlegen, mindestens 12 Zeichen. Mehrere gut merkbare Wörter sind möglich. Alle Geräte anschließend neu verbinden.')
+    key = getpass.getpass('Neuer Projektschlüssel: ')
+    config = custom_project_auth(key, getpass.getpass('Projektschlüssel wiederholen: '))
+    old = auth.read_bytes()
+    stat = auth.stat()
+    fd, temporary = tempfile.mkstemp(prefix='.auth-', dir=auth.parent)
+    try:
+        with os.fdopen(fd, 'w') as stream:
+            json.dump(config, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o600)
+        os.chown(temporary, stat.st_uid, stat.st_gid)
+        os.replace(temporary, auth)
+        try:
+            run('systemctl', 'restart', 'home-technik-projects.service')
+        except Exception:
+            auth.write_bytes(old)
+            run('systemctl', 'restart', 'home-technik-projects.service')
+            raise
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+    print('Projektschlüssel geändert. Der bisherige Schlüssel ist ungültig. Projekte bleiben erhalten.')
+
+
 def main():
     parser = argparse.ArgumentParser(description='Home-Technik im LXC aktualisieren')
     group = parser.add_mutually_exclusive_group()
@@ -249,6 +292,7 @@ def main():
     group.add_argument('--setup-web', action='store_true', help='Update aus der App einrichten')
     group.add_argument('--setup-projects', action='store_true', help='Gemeinsamen Projektdienst einrichten')
     group.add_argument('--reset-project-key', action='store_true', help='Projektschlüssel widerrufen und neuen erzeugen')
+    group.add_argument('--set-project-key', action='store_true', help='Eigenen gut merkbaren Projektschlüssel verdeckt eingeben')
     parser.add_argument('--yes', action='store_true', help='Installation ohne Rückfrage')
     args = parser.parse_args()
     if os.geteuid() != 0:
@@ -259,6 +303,9 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.setup_web:
             setup_web()
+            return
+        if args.set_project_key:
+            set_project_key()
             return
         if args.setup_projects or args.reset_project_key:
             setup_projects(args.reset_project_key)

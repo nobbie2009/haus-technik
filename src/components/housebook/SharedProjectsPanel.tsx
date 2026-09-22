@@ -1,7 +1,8 @@
 import { useState } from "react";
 import {
   useSharedProjects,
-  connectShared,
+  authenticateShared,
+  rememberShared,
   disconnectShared,
   listShared,
   getShared,
@@ -20,6 +21,8 @@ export function SharedProjectsPanel() {
   const p = useProjectStore((s) => s.project),
     state = useSharedProjects();
   const [key, setKey] = useState(""),
+    [remember, setRemember] = useState(state.remember),
+    [visible, setVisible] = useState(false),
     [rows, setRows] = useState<SharedSummary[]>([]),
     [pending, setPending] = useState<Awaited<ReturnType<typeof getShared>> | null>(null);
   const run = async (fn: () => Promise<void>) => {
@@ -42,15 +45,38 @@ export function SharedProjectsPanel() {
         werden zur Übernahme angeboten; Konflikte überschreiben keinen Entwurf.
       </p>
       <Field label="Projektdienst-Zugriffsschlüssel">
-        <input type="password" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} />
+        <input
+          type={visible ? "text" : "password"}
+          name="home-technik-project-key"
+          autoComplete="current-password"
+          autoCapitalize="none"
+          spellCheck={false}
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
+        />
       </Field>
+      <div className="book-actions">
+        <button type="button" aria-pressed={visible} onClick={() => setVisible(!visible)}>
+          {visible ? "Schlüssel verbergen" : "Schlüssel anzeigen"}
+        </button>
+      </div>
+      <label>
+        <input
+          type="checkbox"
+          checked={remember}
+          onChange={(event) => {
+            setRemember(event.target.checked);
+            if (state.token) rememberShared(event.target.checked);
+          }}
+        />{" "}
+        Auf diesem Gerät merken
+      </label>
       <div className="book-actions">
         <button
           disabled={state.busy || !key.trim()}
           onClick={() =>
             void run(async () => {
-              connectShared(key);
-              setRows(await listShared());
+              setRows(await authenticateShared(key, remember));
               setKey("");
               useSharedProjects.setState({
                 message: "Verbunden. Serverprojekt öffnen oder aktuelles Projekt bereitstellen.",
@@ -60,16 +86,36 @@ export function SharedProjectsPanel() {
         >
           Mit Projektdienst verbinden
         </button>
-        <button disabled={state.busy} onClick={disconnectShared}>
-          Verbindung trennen
+        <button
+          disabled={state.busy}
+          onClick={() => {
+            disconnectShared();
+            setRemember(false);
+            setKey("");
+            setRows([]);
+            setPending(null);
+          }}
+        >
+          {state.remember ? "Gespeicherten Zugang entfernen" : "Verbindung trennen"}
         </button>
       </div>
       <p>
-        Der Schlüssel bleibt bis zum Schließen des Tabs gespeichert und ist nicht Teil der Projektdatei. Im
-        Heimnetz eine vertrauenswürdige Verbindung verwenden; HTTPS schützt auch den Zugriffsschlüssel bei der
-        Übertragung.
+        Mit „Auf diesem Gerät merken“ bleiben Schlüssel und Projektverbindungen auch nach dem Schließen
+        gespeichert. Nur auf eigenen Geräten verwenden: Wer dieses Browserprofil nutzt, kann damit auf die
+        gemeinsamen Projekte zugreifen. Ohne Häkchen gilt der Zugang nur für diesen Tab. Der Schlüssel ist
+        nicht Teil der Projektdatei. Im Heimnetz eine vertrauenswürdige Verbindung verwenden; HTTPS schützt
+        auch den Zugriffsschlüssel bei der Übertragung.
       </p>
       <p role="status">{state.message}</p>
+      {state.storageError && <p role="alert">{state.storageError}</p>}
+      <details>
+        <summary>Eigenen, gut merkbaren Schlüssel festlegen</summary>
+        <p>
+          Nach dem App-Update im LXC <code>/usr/local/bin/Update --set-project-key</code> ausführen. Eine
+          eigene Passphrase mit mindestens 12 Zeichen zweimal verdeckt eingeben. Danach alle Geräte mit dem
+          neuen Schlüssel verbinden. Das Update-Passwort bleibt unverändert.
+        </p>
+      </details>
       <div className="book-actions">
         <button
           disabled={!state.token || state.busy}

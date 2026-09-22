@@ -37,6 +37,38 @@ def archive(name='dist/index.html', link=False):
 
 
 class UpdateTests(unittest.TestCase):
+    def test_key_change_restarts_service_and_restores_auth_on_failure(self):
+        for fail in (False, True):
+            with self.subTest(fail=fail), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                auth = root / 'auth.json'
+                old = b'{"tokenHash":"previous-test-hash"}'
+                auth.write_bytes(old)
+                (root / 'project_api.py').write_text('tokenSalt')
+                paths = {'/var/lib/home-technik-projects/auth.json': auth, '/opt/home-technik': root}
+                with patch.object(updater, 'Path', side_effect=lambda v: paths.get(str(v), Path(v))), patch.object(updater.os, 'chown', create=True), patch.object(updater.getpass, 'getpass', return_value='fixture phrase for tests'), patch.object(updater, 'run', side_effect=[RuntimeError('restart failed'), None] if fail else None) as run, patch('builtins.print'):
+                    if fail:
+                        with self.assertRaises(RuntimeError):
+                            updater.set_project_key()
+                        self.assertEqual(auth.read_bytes(), old)
+                        self.assertEqual(run.call_count, 2)
+                    else:
+                        updater.set_project_key()
+                        self.assertIn('tokenSalt', json.loads(auth.read_text()))
+                        run.assert_called_once_with('systemctl', 'restart', 'home-technik-projects.service')
+                    self.assertEqual(list(root.glob('.auth-*')), [])
+
+    def test_custom_project_key_is_salted_and_validated(self):
+        key = 'fixture phrase for tests'
+        first = updater.custom_project_auth(key, key)
+        second = updater.custom_project_auth(key, key)
+        self.assertNotEqual(first, second)
+        self.assertEqual(first['tokenHash'], hashlib.pbkdf2_hmac('sha256', key.encode(), bytes.fromhex(first['tokenSalt']), 600000).hex())
+        self.assertNotIn(key, json.dumps(first))
+        for value, repeat in [('short', 'short'), (key, 'different'), (' space at start', ' space at start'), ('ä' * 12, 'ä' * 12), ('a' * 129, 'a' * 129)]:
+            with self.assertRaises(ValueError):
+                updater.custom_project_auth(value, repeat)
+
     def test_first_project_setup_recovers_files_not_copied_by_old_updater(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

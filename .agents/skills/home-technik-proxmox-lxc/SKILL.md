@@ -32,6 +32,9 @@ Eine fehlgeschlagene Containererstellung vor Wiederholung mit `pct list`/`pct co
   einmalig `Update --setup-projects` im LXC. Eigener Zugriffsschlüssel, Python/SQLite auf Loopback 9088,
   Nginx-Weiterleitung und unprivilegierter systemd-Dienst. Der Update-Dienst bleibt getrennt.
   Einrichtung, Schlüsselwechsel und Sicherung: [Betriebsanleitung](references/deployment.md).
+  Ab 0.57.0 setzt `/usr/local/bin/Update --set-project-key` eine eigene Passphrase durch verdeckte
+  doppelte Eingabe. Die App kann den Zugang ausdrücklich auf dem eigenen Gerät merken und entfernen.
+  Eigene Schlüssel werden mit gesalzenem PBKDF2-SHA256 gespeichert; alte zufällige Schlüssel bleiben gültig.
   IndexedDB und lokale Sicherungsnachweise bleiben unter der jeweiligen Browser-Origin.
 - Vor Wechsel von Host, Port oder HTTP zu HTTPS am alten Ziel JSON exportieren und prüfen.
   Am neuen Ziel unter **Hausakte → Sicherung & Gerätewechsel** importieren.

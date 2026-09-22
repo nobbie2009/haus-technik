@@ -70,8 +70,9 @@ class Store:
 class Server(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, address, store, token_hash):
+    def __init__(self, address, store, token_hash, token_salt=None):
         self.store, self.token_hash = store, token_hash
+        self.token_salt = token_salt
         self.slots = threading.BoundedSemaphore(16)
         self.rate_lock = threading.Lock()
         self.requests = {}
@@ -139,8 +140,13 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(429, {'error': 'Zu viele Anfragen. Bitte kurz warten.'})
             return
         auth = self.headers.get('Authorization', '')
-        supplied = hashlib.sha256(auth.removeprefix('Bearer ').encode()).hexdigest()
-        if not auth.startswith('Bearer ') or not hmac.compare_digest(supplied, self.server.token_hash):
+        token = auth.removeprefix('Bearer ')
+        if not auth.startswith('Bearer ') or not 1 <= len(token) <= 256:
+            self.reply(401, {'error': 'Zugriffsschlüssel fehlt oder ist ungültig.'})
+            return
+        supplied = (hashlib.pbkdf2_hmac('sha256', token.encode(), bytes.fromhex(self.server.token_salt), 600000).hex()
+                    if self.server.token_salt else hashlib.sha256(token.encode()).hexdigest())
+        if not hmac.compare_digest(supplied, self.server.token_hash):
             self.reply(401, {'error': 'Zugriffsschlüssel fehlt oder ist ungültig.'})
             return
         origin = self.headers.get('Origin')
@@ -210,4 +216,4 @@ if __name__ == '__main__':
     os.umask(0o077)
     directory = Path(args.data)
     config = json.loads((directory / 'auth.json').read_text())
-    Server(('127.0.0.1', args.port), Store(directory / 'projects.sqlite3'), config['tokenHash']).serve_forever()
+    Server(('127.0.0.1', args.port), Store(directory / 'projects.sqlite3'), config['tokenHash'], config.get('tokenSalt')).serve_forever()
