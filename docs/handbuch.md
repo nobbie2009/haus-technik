@@ -138,7 +138,19 @@ Dieses Kapitel beschreibt die Eingabe in die Software. Die eingezeichneten Zuord
 6. **Stromkreise verwalten** öffnen. Einen Stromkreis mit verständlicher Bezeichnung anlegen, Schutzgerät und dokumentierte Phase zuordnen.
 7. Steckdosen platzieren und dem Stromkreis zuweisen. Verbraucher ausdrücklich an eine Steckdose oder als Festanschluss zuordnen.
 
-![Im Sicherungskasten lassen sich Schutzgeräte und weitere Betriebsmittel dokumentieren.](bilder/board-equipment-desktop.png)
+![Der grafische Sicherungskasten zeigt die Schutzkette, Stromkreise und Klingeltrafos. Komponenten öffnen ihre Einstellungen in einem weiteren Popup.](bilder/board-equipment-desktop.png)
+
+## Sicherungskasten im Popup verwalten
+
+1. Den Sicherungskasten im Plan oder in der Objektliste auswählen und **Sicherungskasten öffnen** anklicken.
+2. Im **Versorgungsschema** der Linie vom Eingang über FI und Sicherungen zum Stromkreis folgen. Klingeltrafos erscheinen unter ihrem Primärstromkreis. Die Anordnung zeigt die logische Schutzkette, keine maßstäbliche Hutschienenbelegung.
+3. Eine Sicherung anklicken. Im zweiten Popup Kennzeichnung, Typ, Bemessungswerte und **Vorgeschaltetes Schutzgerät** ändern. So lässt sich beispielsweise ein LS einem FI zuordnen. Änderungen werden direkt übernommen.
+4. Einen Stromkreis oder Klingeltrafo anklicken, um dessen Zuordnung und technische Daten zu bearbeiten. Stromkreise ohne Schutzgerät und Trafos ohne Stromkreis dieses Kastens werden getrennt gekennzeichnet.
+5. Unter **Neue Sicherung** eine Vorlage auswählen und **Sicherung hinzufügen** anklicken. **Klingeltrafo hinzufügen** öffnet ebenfalls direkt die Komponenteneinstellungen. Über **Stromkreise verwalten** weitere Stromkreise anlegen.
+6. Unter **Leitungen und Anschlüsse** eine Leitung anklicken. Name, Endpunkte, Typ, Querschnitt und weitere Leitungsdaten bearbeiten; **Anschlussbelegung bearbeiten** öffnet den Kontakteditor. **Leitung verbinden** legt eine Verbindung vom Kasten zu einem vorhandenen Endobjekt an. Aufgeführt werden direkte Leitungen am Kasten oder seinen Trafos und die Leitungen seiner Stromkreise. Räumliche Leitungswege mit Zwischenpunkten im Plan zeichnen.
+7. Das zweite Popup mit dem Kreuz oder Escape schließen. Der Sicherungskasten bleibt geöffnet und zeigt den aktuellen Stand. Auf einer gesperrten Elektrikebene sind Änderungen deaktiviert.
+
+**Versorgung und Zuordnung** öffnet die Einspeisung und die bisherigen Zuordnungsfelder. Die Schema-Linien zeigen gespeicherte Versorgungsbeziehungen; sie sind kein Nachweis einer physischen Aderverbindung. Unter den Leitungen wird die vorhandene Kontaktbelegung gesondert ausgewiesen.
 
 Die **geplante Versorgung** wird aus den Zuordnungen abgeleitet. Gezeichnete Leitungswege allein erzeugen diese Versorgung nicht. Ein fehlender Anschluss ist etwas anderes als eine ausgeschaltete Sicherung oder ein fehlender Typenschildwert.
 
@@ -632,6 +644,8 @@ Nach der ersten Ablesung ist sie gesperrt, damit bestehende Werte nicht umgedeut
 
 Geometrischer Leitungsweg, funktionale Versorgung und konkrete Aderbelegung sind getrennte Angaben. Anschluss und Stromkreis für die Versorgungssimulation prüfen; Kontaktpaare für die Leiterprüfung erfassen.
 
+Im **Sicherungskasten öffnen** zeigt das Versorgungsschema die Schutzkette. Unter **Leitungen und Anschlüsse** die Leitung anklicken und **Anschlussbelegung bearbeiten** öffnen. Eine sichtbare Schema-Linie allein bedeutet noch keine dokumentierte Aderbelegung.
+
 ## Warum leuchtet die Lampe in der Simulation nicht?
 
 Einspeisung, Schutzkette, Stromkreis, Anschluss, Schalterzuordnung und Betriebszustand prüfen. Fehlende Lastdaten und ein ausgeschaltetes Gerät sind unterschiedliche Fälle. Bei Leiterprüfung außerdem die dokumentierten Aderpaare kontrollieren.
@@ -752,7 +766,7 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | Einspeisung                 | Ausgang der dokumentierten [Versorgung](#elektrik)                                       |
 | Ertragszähler               | Zähler für dokumentierten [Solarertrag](#solar)                                          |
 | Etagenleitung               | Verbindung zwischen [Geschossen](#rohrnetze)                                             |
-| FI / RCD / FI-LS            | Dokumentierte [Schutzgeräte](#elektrik), eigenes Modell in der Leiterprüfung             |
+| FI / RCD / FI-LS            | Grafische [Schutzgeräte](#elektrik) im Popup und in der Leiterprüfung                    |
 | Fotozoom                    | Vergrößerung von [Leitungsfotos](#fotos)                                                 |
 | Gartenleitung               | Mediengetrennte Dokumentation im [Außenbereich](#grundstueck)                            |
 | Gerätebibliothek            | Wiederverwendbare [Verbrauchervorlagen](#geraetebibliothek)                              |

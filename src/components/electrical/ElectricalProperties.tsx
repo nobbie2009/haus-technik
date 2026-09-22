@@ -11,6 +11,7 @@ import { SwitchFields } from "./SwitchFields";
 import { ControlFields } from "./ControlFields";
 import { TransformerFields } from "./TransformerFields";
 import { BoardFields } from "./BoardFields";
+import { BoardDialog } from "./BoardDialog";
 import { SupplyFields } from "./SupplyFields";
 import { MeterFields } from "./MeterFields";
 import { SupplySummary } from "./SupplySummary";
@@ -20,9 +21,16 @@ export function ElectricalProperties({ id, kind }: { id: string; kind: Electrica
   const { project, locked, change, lengthField } = usePropertyFields({ kind, id });
   const item = project.electrical[kind][id]!;
   const [manage, setManage] = useState(false);
+  const [boardOpen, setBoardOpen] = useState(false);
   const [managedCircuit, setManagedCircuit] = useState<string | null>(null);
   return (
     <>
+      {kind === "distributionBoards" && (
+        <button onClick={() => setBoardOpen(true)}>Sicherungskasten öffnen</button>
+      )}
+      {kind === "distributionBoards" && boardOpen && (
+        <BoardDialog id={id} onClose={() => setBoardOpen(false)} />
+      )}
       {(kind === "outlets" || (kind === "devices" && !solarPlacement(item))) && (
         <SupplySummary data={objectSupply(project, kind, id)} />
       )}

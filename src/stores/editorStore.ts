@@ -17,7 +17,12 @@ interface EditorState {
   floorId: UUID;
   tool: Tool;
   cableStartId: UUID | null;
-  connectionRequest: { startNodeId: string; endNodeId: string; cableId: string | null } | null;
+  connectionRequest: {
+    startNodeId: string;
+    endNodeId: string;
+    cableId: string | null;
+    preserveSelection?: boolean;
+  } | null;
   furnitureType: string;
   siteKind: SiteKind;
   siteWidth: number;

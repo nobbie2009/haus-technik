@@ -58,7 +58,8 @@ const html = sections
       const width = data.readUInt32BE(16),
         height = data.readUInt32BE(20);
       pictures++;
-      return `<figure><a href="${file}" target="_blank" rel="noopener" aria-label="Bild in Originalgröße öffnen: ${alt}"><img src="${file}" alt="${alt}" width="${width}" height="${height}" loading="lazy" decoding="async"></a><figcaption>Abb. ${pictures} · ${alt} <span>Beispieldaten · Aufnahme 0.48.0 · zum Vergrößern öffnen</span></figcaption></figure>`;
+      const capturedVersion = file.endsWith("board-equipment-desktop.png") ? "0.50.0" : "0.48.0";
+      return `<figure><a href="${file}" target="_blank" rel="noopener" aria-label="Bild in Originalgröße öffnen: ${alt}"><img src="${file}" alt="${alt}" width="${width}" height="${height}" loading="lazy" decoding="async"></a><figcaption>Abb. ${pictures} · ${alt} <span>Beispieldaten · Aufnahme ${capturedVersion} · zum Vergrößern öffnen</span></figcaption></figure>`;
     });
     body = body
       .replace(

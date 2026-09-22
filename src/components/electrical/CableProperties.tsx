@@ -7,7 +7,13 @@ import { formatLength } from "../../utils/units";
 import { useEditorStore } from "../../stores/editorStore";
 import { contactsFor } from "../../electrical/contacts";
 
-export function CableProperties({ id }: { id: string }) {
+export function CableProperties({
+  id,
+  preserveSelection = false,
+}: {
+  id: string;
+  preserveSelection?: boolean;
+}) {
   const { project, locked, change, lengthField, unit } = usePropertyFields({ kind: "cables", id });
   const cable = project.electrical.cables[id]!;
   const nodes = Object.values(electricalNodes(project));
@@ -35,7 +41,12 @@ export function CableProperties({ id }: { id: string }) {
           disabled={locked}
           onClick={() =>
             useEditorStore.setState({
-              connectionRequest: { cableId: id, startNodeId: cable.startNodeId, endNodeId: cable.endNodeId },
+              connectionRequest: {
+                cableId: id,
+                startNodeId: cable.startNodeId,
+                endNodeId: cable.endNodeId,
+                preserveSelection,
+              },
             })
           }
         >

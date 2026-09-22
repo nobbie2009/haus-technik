@@ -36,6 +36,7 @@ export function Modal({
       aria-label={title}
       onCancel={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         onClose();
       }}
       onPointerDownCapture={(event) => {

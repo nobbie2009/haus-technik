@@ -1,0 +1,113 @@
+.modal.board-dialog {
+  width: min(1100px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+}
+.board-dialog-actions {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0;
+}
+.board-dialog-actions button {
+  min-height: 44px;
+}
+.board-schematic {
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.board-tree,
+.board-tree ul,
+.board-unassigned ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.board-tree {
+  border-left: 3px solid var(--accent);
+  margin-left: 20px;
+}
+.board-tree li {
+  position: relative;
+  padding: 18px 0 0 26px;
+}
+.board-tree li::before {
+  content: "";
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 26px;
+  border-top: 3px solid var(--accent);
+}
+.board-tree ul {
+  border-left: 3px solid var(--accent);
+  margin-left: 20px;
+}
+.board-node {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: left;
+  background: var(--surface);
+  min-height: 64px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.board-node:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.board-node:hover {
+  border-color: var(--accent);
+}
+.board-node small {
+  font-size: 12px;
+}
+.board-node-protection {
+  border-left: 6px solid var(--accent);
+  min-width: 180px;
+}
+.board-switch {
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  padding: 2px 12px;
+  font-weight: 700;
+}
+.board-unassigned {
+  margin-top: 24px;
+  border: 2px dashed var(--border);
+  padding: 12px;
+}
+.board-unassigned li,
+.board-unassigned > div {
+  margin: 8px 0;
+}
+.board-cable-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .board-schematic {
+    padding: 10px;
+  }
+  .board-tree li {
+    padding-left: 12px;
+  }
+  .board-tree li::before {
+    width: 12px;
+  }
+  .board-tree ul,
+  .board-tree {
+    margin-left: 4px;
+  }
+  .board-node-protection {
+    min-width: 0;
+  }
+}

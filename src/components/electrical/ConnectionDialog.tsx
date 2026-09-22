@@ -86,7 +86,7 @@ export function ConnectionDialog() {
       })
     ) {
       close();
-      useEditorStore.setState({ selection: [{ kind: "cables", id }] });
+      if (!request.preserveSelection) useEditorStore.setState({ selection: [{ kind: "cables", id }] });
     } else {
       setError(useProjectStore.getState().error);
       useProjectStore.setState({ error: null });

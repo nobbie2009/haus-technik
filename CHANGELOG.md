@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.50.0 · 22.09.2026
+
+- Sicherungskästen in einem grafischen Popup verwalten: Schutzketten, Stromkreise und Klingeltrafos mit sichtbaren Verbindungen sowie zugehörige Leitungen anzeigen. Komponenten per Klick in einem weiteren Popup konfigurieren und neue Sicherungen beziehungsweise Trafos direkt hinzufügen.
+- Escape schließt bei verschachtelten Dialogen nur das oberste Fenster. Anleitung mit Bedienablauf und aktueller Abbildung ergänzen.
+
 ## 0.49.1 · 21.09.2026
 
 - Anleitungspflege fest in den Update-Skill aufnehmen: betroffene Kapitel, Fachtexte, FAQ, Stichwörter und Bilder gemeinsam mit Änderungen aktualisieren, Handbuch erzeugen und passende Prüfungen ausführen. Bei Installation veröffentlichter Releases die mitgelieferte Anleitung und Version kontrollieren.
