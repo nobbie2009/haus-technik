@@ -8,6 +8,7 @@ import { switchControl } from "../../electrical/switchingControls";
 import { DeviceControlFields } from "./DeviceControlFields";
 import { ConsumerFields } from "./ConsumerFields";
 import { deviceSymbolKind } from "../../rendering/deviceAppearance";
+import { hasAutomaticCurrent } from "../../electrical/currentDefault";
 
 export function DeviceFields({ id }: { id: string }) {
   const { project, locked, change } = usePropertyFields({ kind: "devices", id });
@@ -175,10 +176,19 @@ export function DeviceFields({ id }: { id: string }) {
           onCommit={(value) =>
             change((draft) => {
               draft.electrical.devices[id]![key] = value;
+              if (key === "ratedCurrent") delete draft.electrical.devices[id]!.metadata.automaticCurrent;
             })
           }
         />
       ))}
+      {hasAutomaticCurrent(device) && (
+        <p className="field-hint">
+          Nennstrom automatisch aus Leistung und Spannung berechnet
+          {device.powerFactor === null ? " · Schätzung mit cos φ = 1" : " · mit dem eingetragenen cos φ"}.
+          Änderungen an Leistung, Spannung oder Phasen rechnen ihn neu. Eine manuelle Ampere-Eingabe bleibt
+          erhalten; ein leeres Feld aktiviert die Vorbelegung wieder.
+        </p>
+      )}
       <SelectField
         label="Phasen"
         value={String(device.phases)}

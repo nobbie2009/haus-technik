@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.54.0 · 22.09.2026
+
+- Verbraucherstrom in Ampere automatisch aus Leistung, Spannung, Phasen und Leistungsfaktor vorbelegen. Automatische Werte bei Änderungen nachführen und manuelle Eingaben erhalten. Fehlenden Leistungsfaktor ausdrücklich als Schätzung mit cos φ = 1 kennzeichnen und in der Simulation weiterhin als Annahme behandeln.
+
 ## 0.53.0 · 22.09.2026
 
 - Anschließen vereinfachen: belegte Leitungen übernehmen Stromkreis und Simulationszuordnung gemeinsam, einschließlich Abzweigdosen. Zusätzliche Zuordnungshäkchen entfallen; Änderungen und Löschen halten die verwalteten Anschlüsse zusammen. Widersprüchliche Stromkreise oder mehrere uneindeutige Lichtschalter werden gemeldet.

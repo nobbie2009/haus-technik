@@ -197,6 +197,8 @@ Eine Reihenschaltung mehrerer Schalter bedeutet: Alle Kontakte müssen geschloss
 
 # Simulation verstehen {#simulation}
 
+**Ampere automatisch:** Sind Leistung und Spannung vorhanden, wird der Verbraucherstrom vorbelegt. Einphasig gilt `I = P / (U × cos φ)`, bei symmetrischem Drehstrom `I = P / (√3 × U × cos φ)` mit der Außenleiterspannung. Ohne Leistungsfaktor verwendet die Vorbelegung ausdrücklich eine Schätzung mit `cos φ = 1`: Eine 5-W-Lampe an 230 V erhält beispielsweise **0,021739 A** (rund 0,022 A). Automatische Werte folgen Änderungen an Leistung, Spannung, Phasen und Leistungsfaktor. Eine manuelle Ampere-Eingabe bleibt erhalten; das Leeren des Feldes aktiviert die Vorbelegung wieder. Fehlende oder ungeeignete Ausgangswerte bleiben unberechnet. In der Simulation bleibt die Annahme abschaltbar; der vorgeschlagene Strom wird nicht als unabhängiger Messwert behandelt.
+
 Home-Technik besitzt zwei unterschiedliche Betrachtungen. Prüfe vor einer Fehlersuche, welche Ansicht du verwendest.
 
 | Betrachtung          | Grundlage                                                                      | Typischer Zweck                                                            |

@@ -3,6 +3,7 @@ import { electricalNodes } from "./cables";
 import { contactsFor, connectionPair } from "./contacts";
 import { deviceSymbolKind } from "../rendering/deviceAppearance";
 import { transformerVoltage } from "./transformers";
+import { fillCurrentDefault } from "./currentDefault";
 
 /** Resolve documented phase paths. N/PE and crossing geometry never carry circuit assignments. */
 export function resolveWiring(project: Project) {
@@ -243,5 +244,9 @@ export function fillConsumerDefaults(project: Project, before?: Project) {
     }
     if (device.ratedVoltage === null)
       device.ratedVoltage = outletVoltage ?? (device.phases === 1 ? circuit.nominalVoltage : null);
+  }
+  for (const device of Object.values(project.electrical.devices)) {
+    if (!before || JSON.stringify(before.electrical.devices[device.id]) !== JSON.stringify(device))
+      fillCurrentDefault(device);
   }
 }

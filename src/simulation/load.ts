@@ -1,4 +1,5 @@
 import type { ElectricalDevice } from "../electrical/models";
+import { hasAutomaticCurrent } from "../electrical/currentDefault";
 
 export interface LoadResult {
   power: number | null;
@@ -9,6 +10,8 @@ export interface LoadResult {
 }
 /** Ideale konstante Nennlast; sinusförmig, symmetrischer Drehstrom, induktive Blindleistung. */
 export function calculateLoad(device: ElectricalDevice, voltage: number, assumeUnity: boolean): LoadResult {
+  // A suggested current must not turn the cos φ = 1 assumption into a measured value.
+  if (hasAutomaticCurrent(device)) device = { ...device, ratedCurrent: null };
   const result: LoadResult = {
     power: device.ratedPower,
     current: null,
