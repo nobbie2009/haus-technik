@@ -166,9 +166,13 @@ Die Auswahl mehrerer Ausgänge beschreibt Anschlüsse des dokumentierten Geräts
 
 ## Kabelwege und Anschlussbelegung
 
-**Leitungsweg zeichnen** wählen, ein Startobjekt treffen, Zwischenpunkte setzen und am Ziel abschließen. Name, Kabeltyp, Aderanzahl, Querschnitt und Längenzuschlag in den Eigenschaften ergänzen. Kreuzende Linien sind nicht automatisch verbunden; für einen dokumentierten Abzweig eine Abzweigdose beziehungsweise Klemme verwenden.
+**Leitungsweg zeichnen** wählen, ein Startobjekt treffen, Zwischenpunkte setzen und am Ziel abschließen. Dabei öffnet sich automatisch **Anschlüsse verbinden** mit den passenden Kontaktvorschlägen. Am Sicherungskasten den Abgang auswählen, Belegung und gegebenenfalls Verbraucherzuordnung prüfen und speichern. Leitungsweg samt Zwischenpunkten und Anschluss werden gemeinsam angelegt; ein zweiter Anschlussvorgang ist nicht nötig. **Abbrechen** verwirft den noch ungespeicherten Leitungsweg. Das funktioniert auch mit dem Stromanschluss eines Netzwerkgeräts. Name, Kabeltyp, Aderanzahl, Querschnitt und Längenzuschlag in den Eigenschaften ergänzen. Kreuzende Linien sind nicht automatisch verbunden; für einen dokumentierten Abzweig eine Abzweigdose beziehungsweise Klemme verwenden.
 
 Für verschiedene Geschosse **Anschlussdialog öffnen** verwenden und Start/Ziel über die Listen auswählen. Die Etagenangaben helfen bei gleichen Gerätenamen. Ohne konkrete Aderpaare wird ein Leitungsweg dokumentiert. Für die separate Leiterprüfung müssen passende Kontaktpaare angegeben sein.
+
+Nach Auswahl der Endobjekte werden passende Kontakte automatisch vorgeschlagen: **N → N**, **PE → PE** sofern an beiden Enden vorhanden, und der eindeutige Außenleiter. N und PE erscheinen kompakt; zum Ändern oder Entfernen die jeweilige Zeile aufklappen. **Kontaktvorschläge übernehmen** ersetzt die aktuelle Bearbeitung erneut durch die Vorschläge.
+
+Einphasige Stromkreise und eindeutig dokumentierte einphasige Anschlüsse einer Abzweigdose bieten nur den zugehörigen Außenleiter an. Bei unbekannter oder mehrdeutiger Versorgung weiterhin die Kontaktbelegung prüfen; eine ungeklärte Drehstrom-Phasenauswahl wird nicht geraten. Die globale Netzspannung bleibt davon unabhängig. Bereits gespeicherte Kontakte werden nicht stillschweigend entfernt. Die Auswahllisten verhindern neue N-/PE-/Außenleiter-Verwechslungen und doppelte Kontaktbelegung innerhalb derselben Leitung.
 
 ## Eine Leitung an eine bestimmte Sicherung anschließen
 
@@ -232,7 +236,17 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 5. Verbindung speichern und prüfen. Ein Port kann nicht gleichzeitig mehrfach belegt werden; bei einem fehlenden Port die dokumentierte Anschlusszahl kontrollieren.
 6. Unter **Hausakte → Internet & WLAN** Anschlussdaten, SSID, Frequenzbänder, IP-/MAC-Adresse und Empfangsnotizen ergänzen.
 
-![Router und weitere Netzwerkkomponenten besitzen einen eigenen Planungsbereich.](bilder/network-editor-desktop.png)
+## Netzwerkgerät an eine Steckdose anschließen
+
+1. Router, Switch oder anderes Netzwerkgerät auswählen und **Mit Steckdose verbinden** anklicken. Alternativ mit dem elektrischen Anschlusswerkzeug das Netzwerkgerät im Plan treffen oder im Anschlussdialog unter **Netzwerkgeräte · Stromanschluss einrichten** auswählen. Dabei wird einmalig sein Stromanschluss eingerichtet; ein Abbruch der anschließenden Leitungsbearbeitung lässt diesen noch unverbundenen Anschluss bestehen.
+2. Im Anschlussdialog die Steckdose als anderes Endobjekt auswählen. L und N werden vorgeschlagen. Die Zuordnung **Verbraucher dieser Steckdose zuordnen (Simulation)** ist für diesen Ablauf bereits aktiviert und bleibt abwählbar.
+3. **Verbinden und zuordnen** speichern. Am Netzwerkgerät wird die zugeordnete Steckdose angezeigt.
+4. Unter **Stromanschluss konfigurieren** Typenschildwerte, Leistung und bei Bedarf **PE-Anschluss vorhanden** einstellen. Neue Netzwerk-Stromanschlüsse starten als einphasiges L/N-Modell ohne PE; die Einstellung an das dokumentierte Gerät beziehungsweise Netzteil anpassen. Ein reiner Datenport oder PoE wird dadurch nicht zu einem Netzspannungsanschluss.
+5. Nach Änderung des PE-Anschlusses **Mit Steckdose verbinden** erneut öffnen und **Kontaktvorschläge übernehmen** wählen. PE wird nur vorgeschlagen, wenn beide Enden ihn anbieten. Vorhandene belegte Kontakte müssen vor dem Entfernen ihrer Geräteanschlüsse ausdrücklich gelöst werden.
+
+Ein bestehender Steckdosenanschluss wird zur Bearbeitung wieder geöffnet. Der Stromanschluss folgt dem Namen, der Position und dem Geschoss des Netzwerkgeräts; beim Löschen des Geräts werden sein Stromanschluss und dessen Leitungen ebenfalls entfernt. Die Angaben werden mit dem Projekt gespeichert und exportiert. Lastberechnungen benötigen weiterhin passende Leistungsangaben.
+
+![Ein Netzwerkgerät mit konfiguriertem PE-Anschluss wird an die Steckdose angeschlossen. L, N und PE werden automatisch vorgeschlagen.](bilder/network-editor-desktop.png)
 
 Die Verbindung beschreibt die dokumentierte Verkabelung. Die App sucht keine Geräte im Heimnetz, prüft keine tatsächliche Erreichbarkeit und berechnet keine WLAN-Abdeckung oder PoE-Versorgung. Ein per WLAN angebundener Client muss nicht zusätzlich eine erfundene Kabelverbindung erhalten. Entsprechende Prüfhinweise anhand deiner realen Dokumentation bewerten.
 
@@ -654,6 +668,8 @@ Nach der ersten Ablesung ist sie gesperrt, damit bestehende Werte nicht umgedeut
 ## Warum versorgt mein gezeichnetes Kabel den Verbraucher nicht?
 
 Geometrischer Leitungsweg, funktionale Versorgung und konkrete Aderbelegung sind getrennte Angaben. Anschluss und Stromkreis für die Versorgungssimulation prüfen; Kontaktpaare für die Leiterprüfung erfassen.
+
+Netzwerkgeräte über **Mit Steckdose verbinden** anschließen. N und vorhandener PE werden vorbelegt; für die Versorgung die angebotene Verbraucherzuordnung bestätigen. Einphasige Verbindungen benötigen keine zusätzlichen L2-/L3-Paare.
 
 Im **Sicherungskasten öffnen** zeigt das Versorgungsschema die Schutzkette. Unter **Leitungen und Anschlüsse** die Leitung anklicken und **Anschlussbelegung bearbeiten** öffnen. Eine sichtbare Schema-Linie allein bedeutet noch keine dokumentierte Aderbelegung.
 

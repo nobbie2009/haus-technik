@@ -14,6 +14,19 @@ export function DeviceFields({ id }: { id: string }) {
   const circuitId = deviceCircuitId(project, device);
   return (
     <>
+      <label className="connection-assignment">
+        <input
+          type="checkbox"
+          checked={device.metadata.hasProtectiveEarth !== false}
+          disabled={locked}
+          onChange={(e) =>
+            change((d) => {
+              d.electrical.devices[id]!.metadata.hasProtectiveEarth = e.target.checked;
+            })
+          }
+        />
+        PE-Anschluss vorhanden
+      </label>
       <ConsumerFields id={id} />
       <TextField
         label="Gerätetyp"

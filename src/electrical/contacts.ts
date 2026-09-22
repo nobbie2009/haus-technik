@@ -88,7 +88,9 @@ export function contactsFor(project: Project, id: string): Contact[] {
       role: "line",
     })),
     { id: "N", label: "N · Neutralleiter", role: "neutral" },
-    { id: "PE", label: "PE · sofern am Gerät vorhanden", role: "protective" },
+    ...(item.metadata.hasProtectiveEarth === false
+      ? []
+      : [{ id: "PE", label: "PE · sofern am Gerät vorhanden", role: "protective" as const }]),
   ];
 }
 

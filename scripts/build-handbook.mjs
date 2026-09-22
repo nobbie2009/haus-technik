@@ -58,8 +58,10 @@ const html = sections
       const width = data.readUInt32BE(16),
         height = data.readUInt32BE(20);
       pictures++;
-      const capturedVersion = file.endsWith("contact-dialog-desktop.png")
-        ? "0.51.0"
+      const capturedVersion = ["contact-dialog-desktop.png", "network-editor-desktop.png"].some((name) =>
+        file.endsWith(name),
+      )
+        ? "0.52.0"
         : file.endsWith("board-equipment-desktop.png")
           ? "0.50.0"
           : "0.48.0";

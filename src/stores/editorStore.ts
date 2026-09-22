@@ -22,6 +22,7 @@ interface EditorState {
     endNodeId: string;
     cableId: string | null;
     preserveSelection?: boolean;
+    path?: Vec2[];
   } | null;
   furnitureType: string;
   siteKind: SiteKind;

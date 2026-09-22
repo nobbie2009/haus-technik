@@ -60,7 +60,7 @@ test("Grafischer Sicherungskasten bearbeitet Schutzkette und Leitungen in Unterd
   await board.getByRole("button", { name: "Leitung verbinden", exact: true }).click();
   await page.getByLabel("Zielobjekt", { exact: true }).selectOption(outlet);
   await page.getByLabel("Start · Sicherung / Stromkreis", { exact: true }).selectOption("input");
-  await page.getByRole("button", { name: "Leitungsweg speichern", exact: true }).click();
+  await page.getByRole("button", { name: "Belegung speichern", exact: true }).click();
   await expect(board.getByRole("heading", { name: "Leitungen und Anschlüsse · 2" })).toBeVisible();
   await board.getByLabel("Neue Sicherung", { exact: true }).selectOption("C16-3");
   await board.getByRole("button", { name: "Sicherung hinzufügen", exact: true }).click();

@@ -6,6 +6,11 @@ import { NumberField, SelectField } from "../electrical/ElectricalFields";
 import { isTvKind, tvDefaults } from "../../network/tv";
 import { networkPorts } from "../../network/model";
 import { TvFields } from "./TvFields";
+import { useState } from "react";
+import { networkPower, ensureNetworkPower } from "../../network/power";
+import { useEditorStore } from "../../stores/editorStore";
+import { DeviceFields } from "../electrical/DeviceFields";
+import { Modal } from "../dialogs/Modal";
 
 export function NetworkProperties({ id }: { id: string }) {
   const project = useProjectStore((s) => s.project),
@@ -14,10 +19,61 @@ export function NetworkProperties({ id }: { id: string }) {
     node = book.networkNodes.find((n) => n.id === id)!;
   const locked = networkLayer(project)?.locked ?? false;
   const tv = isTvKind(node.kind);
+  const power = networkPower(project, id);
+  const [powerOpen, setPowerOpen] = useState(false);
   const change = (mutate: (node: NetworkNode) => void) =>
     commit("Netzwerkgerät bearbeiten", (p) => changeNetworkNode(p, id, mutate));
   return (
     <>
+      <h3>Stromversorgung</h3>
+      <p className="field-hint">
+        Für einen Netzanschluss einen Stromanschluss einrichten und mit einer Steckdose verbinden. Reine
+        Datenports oder PoE sind keine Netzspannungsanschlüsse.
+      </p>
+      <button
+        disabled={locked}
+        onClick={() => {
+          let deviceId = power?.id ?? "";
+          if (
+            !deviceId &&
+            !commit("Netzwerk-Stromanschluss einrichten", (d) => {
+              deviceId = ensureNetworkPower(d, id);
+            })
+          )
+            return;
+          const cable = Object.values(project.electrical.cables).find(
+            (c) =>
+              c.connectionAssignment === "outlet" && (c.startNodeId === deviceId || c.endNodeId === deviceId),
+          );
+          useEditorStore.setState({
+            connectionRequest: {
+              startNodeId: cable?.startNodeId ?? deviceId,
+              endNodeId: cable?.endNodeId ?? "",
+              cableId: cable?.id ?? null,
+              preserveSelection: true,
+            },
+          });
+        }}
+      >
+        Mit Steckdose verbinden
+      </button>
+      {power && (
+        <>
+          <p className="field-hint">
+            {power.connectionPointId
+              ? `Steckdose: ${project.electrical.outlets[power.connectionPointId]?.label}`
+              : "Noch keiner Steckdose zugeordnet"}
+          </p>
+          <button onClick={() => setPowerOpen(true)}>Stromanschluss konfigurieren</button>
+          {powerOpen && (
+            <Modal title={`Stromanschluss · ${node.name}`} onClose={() => setPowerOpen(false)}>
+              <fieldset disabled={locked}>
+                <DeviceFields id={power.id} />
+              </fieldset>
+            </Modal>
+          )}
+        </>
+      )}
       <TextField
         label={tv ? "TV-/SAT-Name" : "Netzwerkname"}
         value={node.name}

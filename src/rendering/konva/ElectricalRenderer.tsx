@@ -12,6 +12,7 @@ import { deviceAppearance } from "../deviceAppearance";
 import { DeviceSymbol } from "./DeviceSymbol";
 import { consumerShape, consumerLibrary } from "../../electrical/consumerLibrary";
 import { useProjectStore } from "../../stores/projectStore";
+import { networkLayer } from "../../network/model";
 
 function ElectricalSymbol({ kind, selected }: { kind: ElectricalKind; selected: boolean }) {
   const color = selected ? "#087e68" : "#9b4b18";
@@ -97,7 +98,12 @@ export function ElectricalRenderer({
         ] as const
       ).flatMap((kind) =>
         Object.values(project.electrical[kind])
-          .filter((item) => item.floorId === floorId && project.layers[item.layerId]?.visible)
+          .filter(
+            (item) =>
+              item.floorId === floorId &&
+              project.layers[item.layerId]?.visible &&
+              !(item.metadata.networkNodeId && networkLayer(project)?.visible),
+          )
           .map((item) => {
             const p = worldToScreen(item.position, viewport);
             const shape = kind === "devices" ? consumerShape(item) : null;

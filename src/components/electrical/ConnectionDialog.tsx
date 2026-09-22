@@ -7,35 +7,11 @@ import { useProjectStore } from "../../stores/projectStore";
 import { addCable, electricalNodes } from "../../electrical/cables";
 import { connectionPair, contactsFor, setCableContacts } from "../../electrical/contacts";
 import type { Cable } from "../../electrical/models";
-import type { Project } from "../../models/project";
+import { connectionContacts, suggestContacts as suggested } from "../../electrical/contactSuggestions";
 import { newId } from "../../utils/uuid";
-import { boardCircuit, suggestBoardContacts, assignBoardTarget } from "../../electrical/boardConnection";
-
-function suggested(project: Project, start: string, end: string): Cable["conductorConnections"] {
-  const pair = connectionPair(project, start, end);
-  if (!pair) return [];
-  const values =
-    pair.kind === "switch"
-      ? [["L_OUT", "L"]]
-      : pair.device.phases === 1
-        ? [
-            ["L", "L"],
-            ["N", "N"],
-          ]
-        : [
-            ["L1", "L1"],
-            ["L2", "L2"],
-            ["L3", "L3"],
-          ];
-  const startIds = new Set(contactsFor(project, start).map((c) => c.id)),
-    endIds = new Set(contactsFor(project, end).map((c) => c.id));
-  return values
-    .map(([other, device]) => ({
-      startContactId: pair.device.id === start ? device! : other!,
-      endContactId: pair.device.id === start ? other! : device!,
-    }))
-    .filter((row) => startIds.has(row.startContactId) && endIds.has(row.endContactId));
-}
+import { boardCircuit, assignBoardTarget } from "../../electrical/boardConnection";
+import { networkNodeTable } from "../../network/model";
+import { ensureNetworkPower, networkPower } from "../../network/power";
 
 export function ConnectionDialog() {
   const request = useEditorStore((s) => s.connectionRequest)!;
@@ -63,7 +39,11 @@ export function ConnectionDialog() {
       existing?.conductorConnections ?? suggested(project, request.startNodeId, request.endNodeId),
     ),
   );
-  const [assign, setAssign] = useState(!!existing && existing.connectionAssignment !== "none");
+  const [assign, setAssign] = useState(
+    existing
+      ? existing.connectionAssignment !== "none"
+      : !!connectionPair(project, request.startNodeId, request.endNodeId)?.device.metadata.networkNodeId,
+  );
   const [error, setError] = useState<string | null>(null);
   const all = electricalNodes(project);
   const boardIds = [startId, endId].filter((id) => !!project.electrical.distributionBoards[id]);
@@ -81,14 +61,19 @@ export function ConnectionDialog() {
       previewError = e instanceof Error ? e.message : "Abgang nicht verfügbar.";
     }
   }
+  const boardPorts: Record<string, string | null> = {};
+  for (const id of boardIds)
+    if (boardChoices[id]) boardPorts[id] = departures.find((d) => d.boardId === id)?.circuitId ?? null;
+  const available = connectionContacts(preview, startId, endId, boardPorts, existing?.id);
   const selectedContacts = (id: string) => {
-    const contacts = contactsFor(preview, id);
-    if (!project.electrical.distributionBoards[id]) return contacts;
-    const departure = departures.find((d) => d.boardId === id);
-    if (!boardChoices[id]) return [];
-    return contacts.filter((c) =>
-      departure ? c.id.startsWith(`${departure.circuitId}:`) : c.id.startsWith("IN_"),
-    );
+    const filtered = id === startId ? available.start : available.end;
+    // Existing documented contacts remain visible until deliberately changed.
+    const saved =
+      existing?.conductorConnections.map((r) => (id === startId ? r.startContactId : r.endContactId)) ?? [];
+    return [
+      ...filtered,
+      ...contactsFor(preview, id).filter((c) => saved.includes(c.id) && !filtered.some((f) => f.id === c.id)),
+    ];
   };
   const departure = departures[0];
   const targetId = departure?.boardId === startId ? endId : startId;
@@ -105,16 +90,14 @@ export function ConnectionDialog() {
     setAssignTarget(false);
     setError(null);
     if (!value || value === "input") {
-      setRows([]);
+      setRows(value ? suggested(preview, startId, endId, { ...boardPorts, [id]: null }, existing?.id) : []);
       return;
     }
     const draft = structuredClone(project);
     reservedIds.current[id] ??= newId();
     const circuitId = boardCircuit(draft, id, value, reservedIds.current[id]!);
     setRows(
-      circuitId
-        ? suggestBoardContacts(draft, id, id === startId ? endId : startId, circuitId, id === endId)
-        : [],
+      circuitId ? suggested(draft, startId, endId, { ...boardPorts, [id]: circuitId }, existing?.id) : [],
     );
   };
   const nodes = Object.values(all).filter((item) => project.layers[item.layerId]?.visible);
@@ -122,23 +105,29 @@ export function ConnectionDialog() {
   const stale = project !== initialProject.current;
   const close = () => useEditorStore.getState().cancel();
   const selectEnd = (side: "start" | "end", value: string) => {
+    if (stale) return;
+    let selectionPreview = preview;
+    if (value.startsWith("network:")) {
+      const networkId = value.slice(8);
+      let powerId = "";
+      if (
+        !useProjectStore.getState().commit("Netzwerk-Stromanschluss einrichten", (d) => {
+          powerId = ensureNetworkPower(d, networkId);
+        })
+      )
+        return;
+      const fresh = useProjectStore.getState().project;
+      initialProject.current = fresh;
+      selectionPreview = structuredClone(preview);
+      selectionPreview.electrical.devices[powerId] = fresh.electrical.devices[powerId]!;
+      value = powerId;
+    }
     const a = side === "start" ? value : startId,
       b = side === "end" ? value : endId;
     if (side === "start") setStart(value);
     else setEnd(value);
-    const kept = departures.find((d) => d.boardId === a || d.boardId === b);
-    setRows(
-      kept
-        ? suggestBoardContacts(
-            preview,
-            kept.boardId,
-            kept.boardId === a ? b : a,
-            kept.circuitId,
-            kept.boardId === b,
-          )
-        : suggested(project, a, b),
-    );
-    setAssign(false);
+    setRows(suggested(selectionPreview, a, b, boardPorts, existing?.id));
+    setAssign(!!connectionPair(selectionPreview, a, b)?.device.metadata.networkNodeId);
     setAssignTarget(false);
     setError(null);
   };
@@ -181,7 +170,7 @@ export function ConnectionDialog() {
           if (!node || draft.layers[node.layerId]!.locked || !draft.layers[node.layerId]!.visible)
             throw new Error("Endobjekte müssen vorhanden, sichtbar und entsperrt sein.");
         }
-        if (!id) id = addCable(draft, startId, endId, []);
+        if (!id) id = addCable(draft, startId, endId, request.path ?? []);
         for (const boardId of boardIds)
           boardCircuit(draft, boardId, boardChoices[boardId]!, reservedIds.current[boardId]!);
         for (const row of rows) {
@@ -207,7 +196,13 @@ export function ConnectionDialog() {
   };
   return (
     <Modal title="Anschlüsse verbinden" onClose={close} className="connection-dialog">
-      <p>Endobjekte und Kontakte prüfen. Erst „Speichern“ verändert das Projekt.</p>
+      <p>Endobjekte und Kontakte prüfen. Leitung und Anschluss werden gemeinsam gespeichert.</p>
+      {request.path && (
+        <p className="field-hint">
+          Gezeichneter Leitungsweg mit {request.path.length} Zwischenpunkten. Die Endobjekte sind durch den
+          Verlauf festgelegt.
+        </p>
+      )}
       <div className="connection-endpoints">
         {(["start", "end"] as const).map((side) => {
           const id = side === "start" ? startId : endId;
@@ -216,7 +211,7 @@ export function ConnectionDialog() {
               <SelectField
                 label={side === "start" ? "Startobjekt" : "Zielobjekt"}
                 value={id}
-                disabled={!!existing}
+                disabled={!!existing || !!request.path}
                 onChange={(value) => selectEnd(side, value)}
               >
                 <option value="">Objekt wählen</option>
@@ -225,6 +220,19 @@ export function ConnectionDialog() {
                     {node.label} · {node.name} · {project.floors[node.floorId]!.name}
                   </option>
                 ))}
+                <optgroup label="Netzwerkgeräte · Stromanschluss einrichten">
+                  {Object.values(networkNodeTable(project))
+                    .filter((n) => project.layers[n.layerId]?.visible && !networkPower(project, n.id))
+                    .map((n) => (
+                      <option
+                        key={n.id}
+                        value={`network:${n.id}`}
+                        disabled={project.layers[n.layerId]?.locked}
+                      >
+                        {n.name} · {project.floors[n.floorId]?.name}
+                      </option>
+                    ))}
+                </optgroup>
               </SelectField>
               {project.electrical.distributionBoards[id] && (
                 <>
@@ -303,6 +311,14 @@ export function ConnectionDialog() {
           setError(null);
         }}
       />
+      <button
+        onClick={() => {
+          setRows(suggested(preview, startId, endId, boardPorts, existing?.id));
+          setError(null);
+        }}
+      >
+        Kontaktvorschläge übernehmen
+      </button>
       {canAssignTarget && (
         <label className="connection-assignment">
           <input type="checkbox" checked={assignTarget} onChange={(e) => setAssignTarget(e.target.checked)} />

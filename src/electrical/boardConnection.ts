@@ -1,6 +1,6 @@
 import type { Project } from "../models/project";
 import type { Cable } from "./models";
-import { contactsFor } from "./contacts";
+import { suggestContacts } from "./contactSuggestions";
 
 /** Resolves a selection on a draft, so cancelling the dialog never creates a circuit. */
 export function boardCircuit(
@@ -46,31 +46,9 @@ export function suggestBoardContacts(
   circuitId: string,
   reverse: boolean,
 ): Cable["conductorConnections"] {
-  const source = contactsFor(project, boardId).filter((c) => c.id.startsWith(`${circuitId}:`));
-  const target = contactsFor(project, otherId);
-  const three = project.electrical.circuits[circuitId]?.phase === "L1/L2/L3";
-  // A single-phase target on a three-phase departure needs an explicit phase choice.
-  if (three && target.some((c) => c.id === "L" || c.id === "PRI_L")) return [];
-  const pairs = source.flatMap((s) => {
-    const pin = s.id.split(":").at(-1)!;
-    const phase = project.electrical.circuits[circuitId]?.phase;
-    const t = target.find(
-      (c) =>
-        c.id === pin ||
-        c.id === `IN_${pin}` ||
-        c.id === `PRI_${pin}` ||
-        (pin === "L" && ["L1", "L2", "L3"].includes(phase ?? "") && c.id === phase),
-    );
-    return t && t.role === s.role
-      ? [{ startContactId: reverse ? t.id : s.id, endContactId: reverse ? s.id : t.id }]
-      : [];
+  return suggestContacts(project, reverse ? otherId : boardId, reverse ? boardId : otherId, {
+    [boardId]: circuitId,
   });
-  // Junctions use L1/L2/L3 even for a one-phase branch. No phase is guessed.
-  return pairs.some((p) =>
-    source.some((s) => s.role === "line" && s.id === (reverse ? p.endContactId : p.startContactId)),
-  )
-    ? pairs
-    : [];
 }
 
 /** Explicit independent circuit assignment; cable removal does not erase this object setting. */

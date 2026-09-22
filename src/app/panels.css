@@ -762,6 +762,15 @@
   margin: 18px 0;
   min-width: 0;
 }
+.automatic-contact {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.automatic-contact summary {
+  cursor: pointer;
+  min-height: 32px;
+}
 .contact-row {
   min-width: 0;
   display: grid;

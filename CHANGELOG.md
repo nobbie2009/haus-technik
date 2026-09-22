@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.52.0 · 22.09.2026
+
+- Leitungsverlegung und Anschließen zusammenführen: Am Ziel den Anschlussdialog mit Kontaktvorschlägen öffnen und Leitungsweg samt Zwischenpunkten und Belegung gemeinsam speichern oder verwerfen.
+- Netzwerkgeräte über einen eigenen Stromanschluss mit Steckdosen verbinden, einschließlich Verbraucherzuordnung und konfigurierbarem PE. Anschluss beim Zeichnen erkennen und beim Verschieben, Umbenennen oder Löschen mit dem Netzwerkgerät zusammenführen.
+- Passende Leiterverbindungen automatisch vorschlagen: N zu N, vorhandenen PE zu PE und eindeutige Außenleiter. Einphasige Stromkreise sowie eindeutig dokumentierte einphasige Abzweigdosen auf die passende Phase begrenzen; Drehstrom unverändert auswählbar halten.
+- N/PE kompakt mit aufklappbarer Bearbeitung darstellen, Kontaktvorschläge erneut übernehmen können und unvereinbare Leiterarten beziehungsweise doppelt belegte Kontakte aus der Auswahl nehmen. Handbuch, FAQ und Abbildungen aktualisieren.
+
 ## 0.51.0 · 22.09.2026
 
 - Beim Anschließen eines Sicherungskastens zuerst Sicherung beziehungsweise Stromkreis auswählen. Eingebaute Sicherungen ohne Stromkreis erhalten beim Speichern automatisch einen Abgang; Abbrechen erzeugt keine Einträge. Kontakte zeigen Sicherungskennzeichnung, Stromkreis und Leiter.

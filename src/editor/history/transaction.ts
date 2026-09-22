@@ -12,6 +12,7 @@ import type { Project } from "../../models/project";
 import type { FloorElement } from "../../models/common";
 import type { ProjectMutation } from "../types";
 import { parseProject } from "../../core/validation";
+import { syncNetworkPower } from "../../network/power";
 
 function geometrySignature(project: Project, entity: FloorElement): string {
   let dependencies: unknown[] = [];
@@ -106,6 +107,7 @@ function assertLocks(before: Project, after: Project): void {
 export function transact(before: Project, mutate: ProjectMutation): Project {
   const draft = structuredClone(before);
   mutate(draft);
+  syncNetworkPower(draft, before);
   for (const cable of Object.values(before.electrical.cables))
     if (!draft.electrical.cables[cable.id]) detachConnectionAssignment(draft, cable);
   syncMountings(before, draft);

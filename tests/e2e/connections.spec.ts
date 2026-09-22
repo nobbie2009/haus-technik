@@ -68,12 +68,12 @@ test("Anschlüsse ziehen, Kontakte bestätigen, simulieren und atomar rückgäng
   await expect(dialog).not.toBeVisible();
   expect(await exported(page)).toEqual(before);
   await drag(true);
-  await page.getByLabel("Verbindung 1 · Startkontakt", { exact: true }).selectOption("N");
+  await expect(
+    page.getByLabel("Verbindung 1 · Startkontakt", { exact: true }).locator('option[value="N"]'),
+  ).toHaveCount(0);
   await page
     .getByRole("checkbox", { name: "Verbraucher diesem Lichtschalter zuordnen (Simulation)", exact: true })
     .check();
-  await dialog.getByRole("button", { name: "Verbinden und zuordnen", exact: true }).click();
-  await expect(dialog.getByRole("alert")).toContainText("Unvereinbare Kontakte");
   await page.getByLabel("Verbindung 1 · Startkontakt", { exact: true }).selectOption("L");
   await page.screenshot({ path: "test-results/contact-dialog-desktop.png" });
   await page.setViewportSize({ width: 1024, height: 768 });
