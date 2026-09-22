@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.55.0 · 22.09.2026
+
+- PoE-Switch, frei konfigurierbaren PoE-Verbraucher und Reolink Video Doorbell PoE in der Netzwerkbibliothek ergänzen. Bestehende Netzwerkgeräte können ebenfalls als PoE-Quelle oder Verbraucher konfiguriert werden.
+- Direkte Ethernet-Verbindungen bestimmen automatisch Switch und Port. PoE/PoE+, abschaltbare Ports, Gerätebedarf und gemeinsames Leistungsbudget prüfen; Spannung, Leistung und daraus berechneten Planungsstrom anzeigen. Doorbell mit 48 V und konservativen 12 W vorbelegen. Keine zweite Stromleitung zum PoE-Verbraucher nötig.
+- Anleitung mit Bedienablauf, Abbildung und FAQ erweitern. Planungsgrenzen für Patchpanel-Durchleitung und 230-V-Simulation ausdrücklich dokumentieren.
+
 ## 0.54.0 · 22.09.2026
 
 - Verbraucherstrom in Ampere automatisch aus Leistung, Spannung, Phasen und Leistungsfaktor vorbelegen. Automatische Werte bei Änderungen nachführen und manuelle Eingaben erhalten. Fehlenden Leistungsfaktor ausdrücklich als Schätzung mit cos φ = 1 kennzeichnen und in der Simulation weiterhin als Annahme behandeln.

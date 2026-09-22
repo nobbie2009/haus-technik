@@ -240,7 +240,22 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 5. Verbindung speichern und prüfen. Ein Port kann nicht gleichzeitig mehrfach belegt werden; bei einem fehlenden Port die dokumentierte Anschlusszahl kontrollieren.
 6. Unter **Hausakte → Internet & WLAN** Anschlussdaten, SSID, Frequenzbänder, IP-/MAC-Adresse und Empfangsnotizen ergänzen.
 
-## Netzwerkgerät an eine Steckdose anschließen
+## PoE-Switch und Reolink Doorbell
+
+1. Unter **Netzwerk → Netzwerkgerät platzieren** einen **Switch mit PoE** und eine **Reolink Video Doorbell PoE** auswählen und platzieren. Für andere Kameras oder Geräte gibt es **PoE-Verbraucher**. Vorhandene Access Points oder Switches lassen sich über **PoE-Funktion** umstellen.
+2. Am Switch das **PoE-Gesamtbudget (W)** aus seinem Datenblatt eintragen. Anfangs steht es auf 0 (unbekannt); der Switch bestätigt dann noch keine Versorgung. Unter **PoE-Ports aktivieren** einzelne Ports ausschalten und den unterstützten **PoE-Standard** wählen.
+3. Unter **Ports, Kabel & WLAN → Ports verbinden** Switch und Verbraucher mit ihren Ports verbinden. Dieselbe Ethernetleitung überträgt Daten und ordnet die PoE-Quelle zu. Eine zusätzliche elektrische Leitung oder zweite Versorgungszuordnung entfällt.
+4. Am Verbraucher Quelle, Port und Prüfergebnis ansehen. Bei Bedarf Eingangsport, Leistung und Nennspannung ändern. Der Planungsstrom wird unmittelbar als Leistung / Spannung berechnet.
+
+Die Vorlage gilt für die **Reolink Video Doorbell PoE**, nicht für WLAN- oder Akkuvarianten. Sie verwendet aktives **IEEE 802.3af, 48 V** und **12 W als konservativen Planungswert**, somit **0,25 A**. Der Hersteller nennt weniger als 12 W, keinen konstanten Durchschnittswert: [Reolink Doorbell PoE](https://reolink.com/us/product/reolink-video-doorbell-poe/) und [Leistungsangaben](https://support.reolink.com/articles/900000593323-What-is-the-Power-Consumption-of-Reolink-PoE-Cameras/).
+
+Für das Switch-Budget reserviert die Planung konservativ **15,4 W je PoE-Gerät** beziehungsweise **30 W je PoE+-Gerät**, einschließlich Reserve für Leitungsverluste. Die zulässige Verbraucherleistung beträgt 12,95 beziehungsweise 25,5 W. Deshalb sind beispielsweise zwei Doorbells bei 30 W Gesamtbudget noch nicht als gemeinsam versorgt bestätigt. Abgeschaltete Ports, fehlende Leistungsangaben, ungeeignete Standards und Budgetüberschreitungen werden angezeigt.
+
+**Grenzen:** Die Prüfung gilt für direkte Ethernet-Verbindungen vom PoE-Switch zum Verbraucher. Eine interne Durchleitung über Patchpanel oder Netzwerkdosen ist noch nicht modelliert. Passive 24-V-Einspeisung und PoE++ sind nicht unterstützt. Das Ergebnis ist eine Planungsprüfung, keine Aussage über einen tatsächlich eingeschalteten Switch. PoE-Lasten werden nicht automatisch in die 230-V-Lastsimulation übernommen; deren Eingangsleistung einschließlich Eigenverbrauch und Netzteilverlusten am Switch gesondert dokumentieren. Ein vorhandener separater Stromanschluss muss vor einem Wechsel zum PoE-Verbraucher entfernt werden.
+
+![Reolink-Doorbell mit PoE-Leistung, Nennspannung, berechnetem Strom und automatisch zugeordnetem Switch-Port.](bilder/poe-desktop.png)
+
+## Netzanschluss für Router und Switch
 
 1. Router, Switch oder anderes Netzwerkgerät auswählen und **Mit Steckdose verbinden** anklicken. Alternativ mit dem elektrischen Anschlusswerkzeug das Netzwerkgerät im Plan treffen oder im Anschlussdialog unter **Netzwerkgeräte · Stromanschluss einrichten** auswählen. Dabei wird einmalig sein Stromanschluss eingerichtet; ein Abbruch der anschließenden Leitungsbearbeitung lässt diesen noch unverbundenen Anschluss bestehen.
 2. Im Anschlussdialog die Steckdose als anderes Endobjekt auswählen. L und N werden vorgeschlagen. Beim Speichern übernimmt die App die Steckdosen- und Simulationszuordnung automatisch; ein separates Häkchen entfällt.
@@ -605,6 +620,10 @@ Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten P
 
 # FAQ und gezielte Fehlerhilfe {#faq}
 
+## Wie versorge ich meine Reolink-Türklingel über PoE?
+
+Die Vorlage **Reolink Video Doorbell PoE** und einen **Switch mit PoE** im Netzwerk platzieren. Am Switch sein tatsächliches PoE-Budget eintragen und beide über **Ports, Kabel & WLAN** verbinden. Switch und Port werden automatisch aus der Leitung abgeleitet. Steht dort kein passendes Budget, ist ein Port ausgeschaltet oder benötigt das Gerät PoE+ statt PoE, wird die Ursache in den Eigenschaften angezeigt. Die WLAN- und Akku-Türklingeln benötigen andere Vorlagen. Einzelheiten im [Netzwerkkapitel](#netzwerk).
+
 ## Wo liegen meine Hausdaten?
 
 Standardmäßig in der IndexedDB dieses Browsers unter genau der verwendeten App-Adresse. Gemeinsam bereitgestellte Projekte liegen zusätzlich auf deinem eingerichteten Hausserver. JSON-Dateien sind separate Sicherungen. Diese Speicherorte ersetzen einander nicht vollständig.
@@ -826,6 +845,7 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | Phase                       | Dokumentierte Zuordnung L1/L2/L3 in der [Elektrik](#elektrik)                            |
 | Planvorlage                 | Skaliertes Hintergrundbild in der [Hausakte](#hausakte)                                  |
 | Port / Patchpanel           | Anschlüsse und Verbindungen im [Netzwerk](#netzwerk)                                     |
+| PoE / Reolink / Türklingel  | Versorgung über Ethernet, Switch-Budget und Verbraucher im [Netzwerk](#netzwerk)         |
 | Projektschlüssel            | Zugang zum [gemeinsamen Projektdienst](#gemeinsame-projekte)                             |
 | QR-Code                     | Verweis auf Projekt und Akte, siehe [QR-Aufkleber](#hausalltag)                          |
 | Raster / Fangpunkt          | Unterstützung beim [genauen Zeichnen](#grundriss)                                        |

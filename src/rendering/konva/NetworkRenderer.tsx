@@ -8,6 +8,9 @@ import { isTvKind, tvCatalog } from "../../network/tv";
 const symbols: Record<NetworkKind, string> = {
   router: "R",
   switch: "SW",
+  poeSwitch: "SW+",
+  poeDevice: "PoE",
+  poeDoorbell: "DB",
   socket: "LAN",
   patchPanel: "PP",
   accessPoint: "AP",

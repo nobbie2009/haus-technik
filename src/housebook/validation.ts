@@ -108,6 +108,18 @@ export function housebookIssues(project: Project): { path: string; message: stri
       if (new Set(ids).size !== ids.length)
         issues.push({ path: "metadata.housebook", message: "Doppelte ID in der Hausakte." });
       const used = new Set<string>();
+      for (const node of networkNodes) {
+        if (
+          node.poe &&
+          (node.poe.inputPort > node.ports ||
+            node.poe.enabledPorts.some((port) => port > node.ports) ||
+            new Set(node.poe.enabledPorts).size !== node.poe.enabledPorts.length)
+        )
+          issues.push({
+            path: "metadata.housebook",
+            message: "PoE-Port muss am Gerät vorhanden und eindeutig sein.",
+          });
+      }
       for (const link of networkLinks) {
         const from = networkNodes.find((n) => n.id === link.from),
           to = networkNodes.find((n) => n.id === link.to);

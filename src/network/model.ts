@@ -3,12 +3,16 @@ import type { Vec2, EntityTable, FloorElement } from "../models/common";
 import { bookSchema, housebook, setHousebook, networkLabels, type Housebook } from "../housebook/model";
 import { newId } from "../utils/uuid";
 import { isTvKind, tvCatalog, tvDefaults } from "./tv";
+import { poeDefaults } from "./poe";
 
 export type NetworkNode = Housebook["networkNodes"][number];
 export type NetworkKind = NetworkNode["kind"];
 export const networkPorts: Record<NetworkKind, number> = {
   router: 4,
   switch: 8,
+  poeSwitch: 8,
+  poeDevice: 1,
+  poeDoorbell: 1,
   patchPanel: 24,
   socket: 2,
   accessPoint: 1,
@@ -64,6 +68,7 @@ export function addNetworkNode(project: Project, floorId: string, position: Vec2
     position: { ...position },
     name: `${networkLabels[kind]} ${number}`,
     ports: networkPorts[kind],
+    ...(poeDefaults(kind, networkPorts[kind]) ? { poe: poeDefaults(kind, networkPorts[kind]) } : {}),
     ...(isTvKind(kind) ? { tv: tvDefaults(kind) } : {}),
   });
   setHousebook(project, book);

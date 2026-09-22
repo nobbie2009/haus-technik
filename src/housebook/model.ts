@@ -76,6 +76,9 @@ export const bookSchema = z.strictObject({
           "socket",
           "patchPanel",
           "switch",
+          "poeSwitch",
+          "poeDevice",
+          "poeDoorbell",
           "router",
           "accessPoint",
           "repeater",
@@ -95,6 +98,17 @@ export const bookSchema = z.strictObject({
           .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
           .optional(),
         ports: z.number().int().min(1).max(256),
+        poe: z
+          .strictObject({
+            role: z.enum(["source", "consumer"]),
+            standard: z.enum(["af", "at"]),
+            budgetW: n.nonnegative(),
+            powerW: n.nonnegative(),
+            voltageV: n.positive(),
+            inputPort: z.number().int().min(1).max(256),
+            enabledPorts: z.array(z.number().int().min(1).max(256)).max(256),
+          })
+          .optional(),
         tv: z
           .strictObject({
             portNames: z.array(name).max(256),
@@ -152,6 +166,9 @@ export const networkLabels = {
   socket: "Netzwerkdose",
   patchPanel: "Patchpanel",
   switch: "Switch",
+  poeSwitch: "Switch mit PoE",
+  poeDevice: "PoE-Verbraucher",
+  poeDoorbell: "Reolink Video Doorbell PoE",
   router: "Router",
   accessPoint: "Access Point",
   repeater: "WLAN-Repeater",

@@ -217,7 +217,12 @@ export function ConnectionDialog() {
                 ))}
                 <optgroup label="Netzwerkgeräte · Stromanschluss einrichten">
                   {Object.values(networkNodeTable(project))
-                    .filter((n) => project.layers[n.layerId]?.visible && !networkPower(project, n.id))
+                    .filter(
+                      (n) =>
+                        project.layers[n.layerId]?.visible &&
+                        !networkPower(project, n.id) &&
+                        n.poe?.role !== "consumer",
+                    )
                     .map((n) => (
                       <option
                         key={n.id}

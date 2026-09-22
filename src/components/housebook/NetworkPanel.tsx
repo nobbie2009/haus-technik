@@ -7,6 +7,7 @@ import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
 import { housebook, networkLabels, type Housebook } from "../../housebook/model";
 import { Field, updateBook } from "./shared";
+import { poeDefaults } from "../../network/poe";
 export function NetworkPanel({
   tvOnly = false,
   onDrawPath,
@@ -62,6 +63,7 @@ export function NetworkPanel({
                 ports,
                 position: { x, y },
                 floorId: previous?.floorId ?? editor.floorId,
+                poe: previous?.kind === kind ? previous.poe : poeDefaults(kind, ports),
               };
               if (isTvKind(kind))
                 Object.assign(node, {
@@ -69,6 +71,7 @@ export function NetworkPanel({
                 });
               if (previous) Object.assign(previous, node);
               else b.networkNodes.push(node);
+              if (!node.poe) delete (previous ?? node).poe;
             })
           )
             setEditing(null);
