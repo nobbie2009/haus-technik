@@ -170,7 +170,18 @@ Die Auswahl mehrerer Ausgänge beschreibt Anschlüsse des dokumentierten Geräts
 
 Für verschiedene Geschosse **Anschlussdialog öffnen** verwenden und Start/Ziel über die Listen auswählen. Die Etagenangaben helfen bei gleichen Gerätenamen. Ohne konkrete Aderpaare wird ein Leitungsweg dokumentiert. Für die separate Leiterprüfung müssen passende Kontaktpaare angegeben sein.
 
-![Der Anschlussdialog verbindet ausdrücklich gewählte Geräte und Kontakte.](bilder/contact-dialog-desktop.png)
+## Eine Leitung an eine bestimmte Sicherung anschließen
+
+1. Im Kasten **Leitung verbinden** öffnen oder im Plan den Anschlussdialog starten. Start- und Zielobjekt wählen; der Sicherungskasten darf auf beiden Seiten stehen.
+2. Am Kasten **Start · Sicherung / Stromkreis** beziehungsweise **Ziel · Sicherung / Stromkreis** wählen. Die Liste zeigt eingebaute Sicherungen mit Kennzeichnung, Typ und Amperewert sowie vorhandene Stromkreise. **Einspeisung des Kastens · IN** ist für die Zuleitung bestimmt.
+3. Hat die gewählte Sicherung noch keinen Stromkreis, wird beim Speichern ein **Abgang** dafür angelegt. Abbrechen verändert das Projekt nicht. Bei vorhandenen Stromkreisen den passenden Eintrag wählen.
+4. Die Kontaktliste zeigt nur die Leiter des gewählten Abgangs. Passende einfache Kontaktpaare werden vorgeschlagen; Zuordnung prüfen und gegebenenfalls ergänzen. Bei mehrdeutiger Phasenwahl die Außenleiter ausdrücklich festlegen. Für den Abgang muss mindestens ein Außenleiter verbunden sein. N und PE sind zugehörige Leiter, keine geschalteten Pole der Sicherung.
+5. Für direkte Verbraucher, Steckdosen, einfache Schalter oder Trafos bei Bedarf **Endobjekt zusätzlich diesem Stromkreis zuordnen** aktivieren. Damit wird auch die Versorgungssimulation zugeordnet. Bestehende andere Anschlüsse zuerst bewusst lösen; sie werden nicht überschrieben. Diese eigenständige Objektzuordnung bleibt nach dem Löschen der Leitung erhalten.
+6. **Belegung speichern** übernimmt Leitung, Kontakte und gegebenenfalls den neuen Stromkreis zusammen. Im Kasten erscheint der Abgang unter seiner Sicherung. **Rückgängig** nimmt diesen Speicherschritt gemeinsam zurück.
+
+Eine Abzweigdose erhält die dokumentierten Kontaktpaare und den Stromkreis an ihrer Leitung. Dahinter angeschlossene Verbraucher werden nicht automatisch dem Stromkreis zugeordnet. Beim Verbinden zweier Kästen den Abgang des versorgenden Kastens mit der **Einspeisung** des anderen verbinden; zwei Abgänge werden nicht miteinander verbunden.
+
+![Im Anschlussdialog zuerst Sicherung und Stromkreis auswählen, anschließend die zugehörigen Leiter und das Endobjekt verbinden.](bilder/contact-dialog-desktop.png)
 
 ## Lichtschalter und Schaltgruppen
 
@@ -645,6 +656,8 @@ Nach der ersten Ablesung ist sie gesperrt, damit bestehende Werte nicht umgedeut
 Geometrischer Leitungsweg, funktionale Versorgung und konkrete Aderbelegung sind getrennte Angaben. Anschluss und Stromkreis für die Versorgungssimulation prüfen; Kontaktpaare für die Leiterprüfung erfassen.
 
 Im **Sicherungskasten öffnen** zeigt das Versorgungsschema die Schutzkette. Unter **Leitungen und Anschlüsse** die Leitung anklicken und **Anschlussbelegung bearbeiten** öffnen. Eine sichtbare Schema-Linie allein bedeutet noch keine dokumentierte Aderbelegung.
+
+Beim Anschluss am Kasten zuerst **Sicherung / Stromkreis** auswählen. Fehlt zu einer eingebauten Sicherung noch der Stromkreis, entsteht er beim Speichern. Für die Versorgung eines direkt angeschlossenen Endobjekts zusätzlich dessen Stromkreiszuordnung im Dialog bestätigen.
 
 ## Warum leuchtet die Lampe in der Simulation nicht?
 

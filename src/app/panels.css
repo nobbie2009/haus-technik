@@ -728,6 +728,7 @@
   accent-color: #087e68;
 }
 .connection-dialog {
+  overflow-wrap: anywhere;
   width: min(880px, 94vw);
 }
 .connection-endpoints {
@@ -762,6 +763,7 @@
   min-width: 0;
 }
 .contact-row {
+  min-width: 0;
   display: grid;
   grid-template-columns: 18px 1fr 1fr auto;
   align-items: center;
@@ -807,6 +809,21 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 18px;
+}
+@media (max-width: 600px) {
+  .connection-endpoints,
+  .contact-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .contact-row {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .connection-dialog select {
+    min-width: 0;
+    max-width: 100%;
+  }
 }
 .switch-chain {
   padding: 10px;

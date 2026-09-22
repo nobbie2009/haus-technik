@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.51.0 · 22.09.2026
+
+- Beim Anschließen eines Sicherungskastens zuerst Sicherung beziehungsweise Stromkreis auswählen. Eingebaute Sicherungen ohne Stromkreis erhalten beim Speichern automatisch einen Abgang; Abbrechen erzeugt keine Einträge. Kontakte zeigen Sicherungskennzeichnung, Stromkreis und Leiter.
+- Leitungen dem gewählten Abgang zuordnen und direkte Verbraucher, Steckdosen, einfache Schalter oder Trafos auf Wunsch demselben Stromkreis zuweisen. Bestehende abweichende Anschlüsse bleiben geschützt. Einspeisung getrennt anbieten und versehentliches Verbinden zweier Abgänge verhindern. Handbuch und Anschlussabbildung aktualisieren.
+
 ## 0.50.0 · 22.09.2026
 
 - Sicherungskästen in einem grafischen Popup verwalten: Schutzketten, Stromkreise und Klingeltrafos mit sichtbaren Verbindungen sowie zugehörige Leitungen anzeigen. Komponenten per Klick in einem weiteren Popup konfigurieren und neue Sicherungen beziehungsweise Trafos direkt hinzufügen.

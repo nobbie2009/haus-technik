@@ -30,7 +30,7 @@ export function contactsFor(project: Project, id: string): Contact[] {
         .flatMap((c) =>
           standard(`${c.id}:`, c.phase === "L1/L2/L3").map((port) => ({
             ...port,
-            label: `${c.label || c.name} · ${port.id.split(":").at(-1)}`,
+            label: `${c.protectionDeviceId ? (project.electrical.protectionDevices[c.protectionDeviceId]?.label ?? "Schutzgerät fehlt") : "Ohne Sicherung"} · ${c.label} · ${c.name} · ${port.id.split(":").at(-1)}`,
           })),
         ),
     ];
