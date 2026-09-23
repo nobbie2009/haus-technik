@@ -20,7 +20,7 @@ export function confirmNetworkRoute(point: Vec2, hitPoint = point) {
     return;
   }
   const target = nodes
-    .filter((n) => n.floorId === editor.floorId && !isTvKind(n.kind))
+    .filter((n) => n.floorId === editor.floorId && !isTvKind(n.kind) && n.kind !== "zigbee")
     .sort(
       (a, b) =>
         Math.hypot(a.position.x - hitPoint.x, a.position.y - hitPoint.y) -

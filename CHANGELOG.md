@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.58.0 · 23.09.2026
+
+- Zigbee2MQTT über Home Assistants MQTT-Schnittstelle auslesen und Geräte anhand ihrer IEEE-Adresse dauerhaft im Grundriss platzieren.
+- Start-/stoppbare Live-Anzeige im 5-/10-Sekunden-Intervall sowie manuelle Topologie-Scans ergänzen. Gerichtete Funklinien mit LQI, Routenzielen, Etagenhinweisen und Gerätedetails anzeigen. Projektwechsel beendet den Empfang; Zugangsdaten bleiben außerhalb der Projektdatei.
+- Anleitung, FAQ und Beispielabbildung mit Voraussetzungen, Bedienung und Grenzen der Funknetzauswertung ergänzen.
+
 ## 0.57.0 · 22.09.2026
 
 - Gemeinsame Projekte: Zugriffsschlüssel und Abgleichverbindungen auf eigenen Geräten dauerhaft merken, gespeicherten Zugang entfernen und Eingabe auf Wunsch anzeigen. Falsche Schlüssel werden nicht gespeichert; blockierter Browserspeicher wird sichtbar gemeldet.

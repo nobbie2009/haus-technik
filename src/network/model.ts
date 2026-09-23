@@ -13,6 +13,7 @@ export const networkPorts: Record<NetworkKind, number> = {
   poeSwitch: 8,
   poeDevice: 1,
   poeDoorbell: 1,
+  zigbee: 1,
   patchPanel: 24,
   socket: 2,
   accessPoint: 1,
@@ -52,13 +53,26 @@ export function networkNodeTable(project: Project): EntityTable<NetworkNode & Fl
     book.data.networkNodes.map((node) => [node.id, { ...node, layerId, metadata: {} }]),
   );
 }
-export function addNetworkNode(project: Project, floorId: string, position: Vec2, kind: NetworkKind): string {
+export function addNetworkNode(
+  project: Project,
+  floorId: string,
+  position: Vec2,
+  kind: NetworkKind,
+  zigbeeAddress?: string,
+): string {
   const layerId = ensureNetworkLayer(project);
   if (!project.layers[layerId]!.visible || project.layers[layerId]!.locked)
     throw new Error("Bitte die Netzwerkebene einblenden und entsperren.");
   if (!project.floors[floorId]) throw new Error("Geschoss fehlt.");
   const book = housebook(project),
     id = newId();
+  const zigbeeDevice =
+    kind === "zigbee" ? book.zigbee?.devices.find((d) => d.address === zigbeeAddress) : undefined;
+  if (
+    kind === "zigbee" &&
+    (!zigbeeDevice || book.networkNodes.some((n) => n.zigbeeAddress === zigbeeAddress))
+  )
+    throw new Error("Ein noch nicht platziertes Gerät aus der Zigbee2MQTT-Liste auswählen.");
   let number = 1;
   while (book.networkNodes.some((n) => n.name === `${networkLabels[kind]} ${number}`)) number++;
   book.networkNodes.push({
@@ -66,7 +80,8 @@ export function addNetworkNode(project: Project, floorId: string, position: Vec2
     kind,
     floorId,
     position: { ...position },
-    name: `${networkLabels[kind]} ${number}`,
+    name: zigbeeDevice?.name || `${networkLabels[kind]} ${number}`,
+    ...(zigbeeDevice ? { zigbeeAddress: zigbeeDevice.address } : {}),
     ports: networkPorts[kind],
     ...(poeDefaults(kind, networkPorts[kind]) ? { poe: poeDefaults(kind, networkPorts[kind]) } : {}),
     ...(isTvKind(kind) ? { tv: tvDefaults(kind) } : {}),

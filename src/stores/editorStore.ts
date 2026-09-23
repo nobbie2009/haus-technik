@@ -11,6 +11,7 @@ import type { DrawingDraft, Selection, Tool } from "../editor/types";
 import { useProjectStore } from "./projectStore";
 
 interface EditorState {
+  zigbeePlacementAddress: string | null;
   networkStartId: string | null;
   networkRoute: { floorId: string; position: Vec2 }[];
   networkRequest: { from: string; to: string; route: { floorId: string; position: Vec2 }[] } | null;
@@ -93,6 +94,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       cableStartId: null,
       networkCableId: null,
       networkStartId: null,
+      zigbeePlacementAddress: null,
       networkRoute: [],
       networkRequest: null,
       connectionRequest: null,
@@ -108,6 +110,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   cableStartId: null,
   networkCableId: null,
   networkStartId: null,
+  zigbeePlacementAddress: null,
   networkRoute: [],
   networkRequest: null,
   utilityMedium: "cold",
@@ -152,6 +155,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       cableStartId: null,
       networkCableId: null,
       networkStartId: null,
+      zigbeePlacementAddress: null,
       networkRoute: [],
       networkRequest: null,
       connectionRequest: null,
@@ -184,6 +188,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       cableStartId: null,
       networkCableId: null,
       networkStartId: null,
+      zigbeePlacementAddress: null,
       networkRoute: [],
       networkRequest: null,
       connectionRequest: null,
@@ -200,6 +205,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       cableStartId: null,
       networkCableId: null,
       networkStartId: null,
+      zigbeePlacementAddress: null,
       networkRoute: [],
       networkRequest: null,
       connectionRequest: null,

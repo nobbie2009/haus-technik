@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { tvCatalog } from "../network/tv";
+import { zigbeeSchema } from "../network/zigbeeModel";
 import type { Entity, JsonValue } from "../models/common";
 import type { Project } from "../models/project";
 import type { SimulationScenario } from "../simulation/models";
@@ -62,6 +63,7 @@ export const assetSchema = z.strictObject({
     .default(null),
 });
 export const bookSchema = z.strictObject({
+  zigbee: zigbeeSchema.optional(),
   version: z.literal(1),
   backgrounds: z.record(id, backgroundSchema),
   scenarios: z.array(z.strictObject({ id, name, scenario: scenarioSchema })).max(50),
@@ -79,6 +81,7 @@ export const bookSchema = z.strictObject({
           "poeSwitch",
           "poeDevice",
           "poeDoorbell",
+          "zigbee",
           "router",
           "accessPoint",
           "repeater",
@@ -98,6 +101,10 @@ export const bookSchema = z.strictObject({
           .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
           .optional(),
         ports: z.number().int().min(1).max(256),
+        zigbeeAddress: z
+          .string()
+          .regex(/^0x[0-9a-f]{16}$/)
+          .optional(),
         poe: z
           .strictObject({
             role: z.enum(["source", "consumer"]),
@@ -173,6 +180,7 @@ export const networkLabels = {
   poeSwitch: "Switch mit PoE",
   poeDevice: "PoE-Verbraucher",
   poeDoorbell: "Reolink Video Doorbell PoE",
+  zigbee: "Zigbee-Gerät",
   router: "Router",
   accessPoint: "Access Point",
   repeater: "WLAN-Repeater",

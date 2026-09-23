@@ -4,6 +4,7 @@ import { housebook } from "../../housebook/model";
 import { networkLayer, type NetworkKind } from "../../network/model";
 import { useEditorStore } from "../../stores/editorStore";
 import { isTvKind, tvCatalog } from "../../network/tv";
+import { ZigbeeLinks } from "./ZigbeeLinks";
 
 const symbols: Record<NetworkKind, string> = {
   router: "R",
@@ -11,6 +12,7 @@ const symbols: Record<NetworkKind, string> = {
   poeSwitch: "SW+",
   poeDevice: "PoE",
   poeDoorbell: "DB",
+  zigbee: "ZB",
   socket: "LAN",
   patchPanel: "PP",
   accessPoint: "AP",
@@ -119,6 +121,7 @@ export function NetworkRenderer({ project }: { project: Project }) {
   );
   return (
     <Group opacity={layer?.opacity ?? 1}>
+      <ZigbeeLinks project={project} />
       {editor.tool === "networkCable" &&
         editor.networkStartId &&
         routeView(

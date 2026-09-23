@@ -221,7 +221,8 @@ export function ConnectionDialog() {
                       (n) =>
                         project.layers[n.layerId]?.visible &&
                         !networkPower(project, n.id) &&
-                        n.poe?.role !== "consumer",
+                        n.poe?.role !== "consumer" &&
+                        n.kind !== "zigbee",
                     )
                     .map((n) => (
                       <option

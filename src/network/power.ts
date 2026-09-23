@@ -11,6 +11,8 @@ export function ensureNetworkPower(project: Project, nodeId: string) {
   if (!node || project.layers[node.layerId]?.locked)
     throw new Error("Netzwerkgerät fehlt oder seine Ebene ist gesperrt.");
   const existing = networkPower(project, nodeId);
+  if (node.kind === "zigbee")
+    throw new Error("Zigbee-Gerät dokumentiert Funkverbindungen, keinen Netzanschluss.");
   if (node.poe?.role === "consumer")
     throw new Error("PoE-Verbraucher über eine Netzwerkleitung mit einem PoE-Switch verbinden.");
   if (existing) return existing.id;
@@ -40,7 +42,7 @@ export function syncNetworkPower(project: Project, before?: Project) {
       removed = true;
       continue;
     }
-    if (node.poe?.role === "consumer")
+    if (node.poe?.role === "consumer" || node.kind === "zigbee")
       throw new Error("Vor dem Wechsel zu PoE den separaten Stromanschluss entfernen.");
     if (
       project.layers[node.layerId]?.locked &&

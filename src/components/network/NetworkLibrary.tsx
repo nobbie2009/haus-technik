@@ -8,6 +8,7 @@ import { Modal } from "../dialogs/Modal";
 import { NetworkPanel } from "../housebook/NetworkPanel";
 import { SelectField } from "../electrical/ElectricalFields";
 import { isTvKind, tvCatalog } from "../../network/tv";
+import { ZigbeeControls } from "./ZigbeePanel";
 
 export function NetworkLibrary() {
   const tool = useEditorStore((s) => s.tool);
@@ -18,6 +19,7 @@ export function NetworkLibrary() {
   const [tvOpen, setTvOpen] = useState(false);
   return (
     <section className="network-library" aria-label="Netzwerkgeräte">
+      <ZigbeeControls />
       <SelectField
         label="Netzwerkgerät platzieren"
         value={isTvKind(kind) ? "" : kind}
@@ -29,8 +31,11 @@ export function NetworkLibrary() {
         <option value="" disabled>
           Netzwerkgerät wählen
         </option>
+        <option value="zigbee" disabled>
+          Zigbee-Gerät aus Geräteliste
+        </option>
         {Object.entries(networkLabels)
-          .filter(([id]) => !isTvKind(id))
+          .filter(([id]) => !isTvKind(id) && id !== "zigbee")
           .map(([id, label]) => (
             <option key={id} value={id}>
               {label}

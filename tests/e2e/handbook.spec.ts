@@ -15,7 +15,7 @@ test("Handbuch aus der App: Kapitel, Bilder, Umlautsuche und sichere Texteingabe
   await book.waitForURL("**/handbuch/index.html");
   await expect(book.getByRole("heading", { level: 1 })).toContainText("Schritt für Schritt");
   await expect(book.locator("main article")).toHaveCount(31);
-  await expect(book.locator("figure img")).toHaveCount(28);
+  await expect(book.locator("figure img")).toHaveCount(29);
   const brokenImages = await book.evaluate(async () => {
     return (
       await Promise.all(

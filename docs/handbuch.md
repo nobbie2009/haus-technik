@@ -231,7 +231,27 @@ Eine Szenarioänderung überschreibt nicht die Bestandsdaten. Eine Projektänder
 
 Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist damit kein Möbelersatz und muss nicht über die Elektrikebene angelegt werden.
 
-## Ein kleines Hausnetz erfassen
+## Zigbee2MQTT auf dem Grundriss anzeigen
+
+**Voraussetzung:** Zigbee2MQTT und Home Assistant verwenden denselben MQTT-Broker. Unter **Hausakte → Home Assistant** die erreichbare Basisadresse und einen Token mit **Administratorrechten** hinterlegen. Die MQTT-WebSocket-Schnittstelle verlangt diese Rechte. Eine separate Z2M-Webadresse ist nicht nötig. Eine über HTTPS geöffnete Hausplanung benötigt auch eine HTTPS-Adresse für Home Assistant.
+
+1. **Netzwerk → Zigbee2MQTT · Geräte & Karte** öffnen. Falls dein MQTT-Basistopic anders heißt, `zigbee2mqtt` ändern.
+2. **Anzeige aktualisieren** auf 5 oder 10 Sekunden stellen und **Geräte auslesen & Live starten** wählen. Die App empfängt veröffentlichte Geräte und Zustände; sie erzwingt keine Messung an schlafenden Sensoren.
+3. Bei einem Gerät **Platzieren** wählen und dessen Standort im aktuellen Geschoss anklicken. Für weitere Geräte den Dialog erneut öffnen. Platzierte Geräte lassen sich auswählen und verschieben. Die IEEE-Adresse erhält die Zuordnung auch bei einer Z2M-Umbenennung; der eigene Planname bleibt erhalten.
+4. **Topologie jetzt scannen** liefert Verbindungslinien und Routenziele. Ein Scan kann 10 Sekunden bis 2 Minuten dauern und Zigbee vorübergehend verlangsamen. Die App startet deshalb keinen automatischen Dauerscan. Bei ausbleibender Antwort wird nach drei Minuten der Empfang mit einer Meldung beendet.
+5. Beide Endgeräte platzieren, damit ihre Linie erscheint. LQI reicht von 0 bis 255; höher ist besser. Rot unter 80, Orange unter 150 und Grün ab 150 sind **Orientierungsfarben**, keine universellen Grenzwerte. Pfeile zeigen die gemeldete Richtung; kräftige Linien kennzeichnen Routeneinträge. Bei Geräteauswahl werden nur dessen Verbindungen angezeigt. Für andere Etagen erscheinen Geräte- und Geschossnamen.
+6. Die Eigenschaften zeigen Gerätetyp, Modell, Geräte-LQI, Batterie, Verfügbarkeit und Linkdetails mit Tiefe, Beziehungscode und Routenzielen. Geräte-LQI aus Zustandsnachrichten und gerichtete Link-LQI aus dem letzten Scan sind unterschiedliche Messwerte.
+7. **Zigbee-Aktualisierung stoppen** im Menüband beendet Empfang und Anzeigetimer. Das Schließen des Dialogs allein lässt die Aktualisierung weiterlaufen. Projektwechsel und Neuladen stoppen ebenfalls. Ein bereits an Z2M gesendeter Scan wird dadurch nicht auf dem Coordinator abgebrochen.
+
+**Speicherung:** Geräteliste, Basistopic, Platzierungen und letzter Kartenstand werden im Projekt gesichert. Laufende Zustandswerte bleiben nur in der Sitzung; es entsteht keine Messwerthistorie. Der Home-Assistant-Token bleibt in den lokalen Verbindungseinstellungen und wird nicht in die Hausdatei exportiert. Löschen eines Planobjekts entfernt nur seine Platzierung, kein Gerät aus Zigbee2MQTT. Dieselbe IEEE-Adresse kann nicht doppelt platziert werden.
+
+**Lücken richtig beurteilen:** Fehlende Linien können an nicht platzierten Nachbarn, schlafenden Geräten, fehlenden Scanantworten oder einem alten Kartenstand liegen. Die Ansicht berechnet keine Funkabdeckung und beweist kein Funkloch. Unvollständige Scans zeigen die gemeldeten Gerätefehler. Verfügbarkeit bleibt unbekannt, wenn Z2M keine Availability-Nachrichten veröffentlicht. Empfangszeiten geben an, wann die App eine Nachricht erhielt; zwischengespeicherte Nachrichten müssen keine neue Gerätemessung sein.
+
+![Zwei platzierte Zigbee-Geräte mit gerichteter LQI-Verbindung und Gerätedetails im Grundriss.](bilder/zigbee-desktop.png)
+
+Grundlagen: [Zigbee2MQTT-Netzwerkkarte und Scanverhalten](https://www.zigbee2mqtt.io/guide/usage/mqtt_topics_and_messages.html#zigbee2mqtt-bridge-request-networkmap), [Home-Assistant-WebSocket-API](https://developers.home-assistant.io/docs/api/websocket/).
+
+## Ethernet-Geräte erfassen
 
 1. **Netzwerk** öffnen und einen Router platzieren.
 2. Switch, Patchpanel, Netzwerkdosen und Access Points entsprechend deinem Bestand ergänzen.
@@ -637,6 +657,14 @@ Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten P
 
 # FAQ und gezielte Fehlerhilfe {#faq}
 
+## Warum wird Zigbee nicht alle fünf Sekunden neu gescannt?
+
+Das Intervall aktualisiert empfangene Gerätezustände. Ein vollständiger Scan belastet das Funknetz und kann bis zu zwei Minuten dauern. Deshalb löst nur **Topologie jetzt scannen** eine neue Karte aus. Datum und Details des letzten Kartenstands bleiben sichtbar. Siehe [Zigbee2MQTT im Netzwerkkapitel](#netzwerk).
+
+## Zigbee2MQTT meldet einen abgelehnten Zugriff oder keine Geräte – was prüfen?
+
+Unter **Hausakte → Home Assistant** Adresse und Token prüfen: Der Benutzer benötigt für MQTT-Abonnements Administratorrechte. Die MQTT-Integration muss mit dem Z2M-Broker verbunden sein. Im Zigbee-Dialog das korrekte Basistopic eintragen. Bei HTTPS auch Home Assistant über HTTPS ansprechen.
+
 ## Kann ich Netzwerkkabel wie Stromleitungen zeichnen und die Etage wechseln?
 
 Ja: **Netzwerkkabel verlegen** wählen, Startgerät und Wegpunkte anklicken. Am Steigschacht über das Menüband das Geschoss wechseln und dort weiterzeichnen. Ein Klick auf das Zielgerät öffnet die Anschlusseinstellungen; erst deren Bestätigung speichert Leitung und Ports zusammen. Siehe [Netzwerk](#netzwerk).
@@ -871,6 +899,7 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | Planvorlage                 | Skaliertes Hintergrundbild in der [Hausakte](#hausakte)                                  |
 | Port / Patchpanel           | Anschlüsse und Verbindungen im [Netzwerk](#netzwerk)                                     |
 | PoE / Reolink / Türklingel  | Versorgung über Ethernet, Switch-Budget und Verbraucher im [Netzwerk](#netzwerk)         |
+| Zigbee / Z2M / LQI          | Geräteplatzierung, Live-Anzeige und Topologie im [Netzwerk](#netzwerk)                   |
 | Projektschlüssel            | Zugang zum [gemeinsamen Projektdienst](#gemeinsame-projekte)                             |
 | QR-Code                     | Verweis auf Projekt und Akte, siehe [QR-Aufkleber](#hausalltag)                          |
 | Raster / Fangpunkt          | Unterstützung beim [genauen Zeichnen](#grundriss)                                        |

@@ -238,6 +238,8 @@ export function duplicateSelection(
   const book = housebook(project);
   for (const selected of selection.filter((s) => s.kind === "networkNodes")) {
     const original = book.networkNodes.find((n) => n.id === selected.id)!;
+    if (original.zigbeeAddress)
+      throw new Error("Zigbee-Geräte sind eindeutig. Ein weiteres Gerät aus der Z2M-Liste platzieren.");
     const id = newId();
     book.networkNodes.push({
       ...structuredClone(original),

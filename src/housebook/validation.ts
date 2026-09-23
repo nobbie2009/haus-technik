@@ -108,6 +108,15 @@ export function housebookIssues(project: Project): { path: string; message: stri
       if (new Set(ids).size !== ids.length)
         issues.push({ path: "metadata.housebook", message: "Doppelte ID in der Hausakte." });
       const used = new Set<string>();
+      const zigbeeAddresses = networkNodes.flatMap((n) => (n.zigbeeAddress ? [n.zigbeeAddress] : []));
+      if (
+        new Set(zigbeeAddresses).size !== zigbeeAddresses.length ||
+        networkNodes.some((n) => (n.kind === "zigbee") !== Boolean(n.zigbeeAddress))
+      )
+        issues.push({
+          path: "metadata.housebook",
+          message: "Zigbee-Gerät benötigt eine eindeutige IEEE-Adresse.",
+        });
       for (const node of networkNodes) {
         if (
           node.poe &&
@@ -121,6 +130,11 @@ export function housebookIssues(project: Project): { path: string; message: stri
           });
       }
       for (const link of networkLinks) {
+        if (networkNodes.some((n) => (n.id === link.from || n.id === link.to) && n.kind === "zigbee"))
+          issues.push({
+            path: "metadata.housebook",
+            message: "Zigbee-Funkgeräte können nicht mit Netzwerkkabeln verbunden werden.",
+          });
         if (link.route?.some((point) => !project.floors[point.floorId]) || (link.route && link.path?.length))
           issues.push({
             path: "metadata.housebook.networkLinks",

@@ -13,6 +13,7 @@ import { DeviceFields } from "../electrical/DeviceFields";
 import { Modal } from "../dialogs/Modal";
 import { PoeFields } from "./PoeFields";
 import { poeDefaults } from "../../network/poe";
+import { ZigbeeProperties } from "./ZigbeeProperties";
 
 export function NetworkProperties({ id }: { id: string }) {
   const project = useProjectStore((s) => s.project),
@@ -25,6 +26,7 @@ export function NetworkProperties({ id }: { id: string }) {
   const [powerOpen, setPowerOpen] = useState(false);
   const change = (mutate: (node: NetworkNode) => void) =>
     commit("Netzwerkgerät bearbeiten", (p) => changeNetworkNode(p, id, mutate));
+  if (node.kind === "zigbee") return <ZigbeeProperties node={node} locked={locked} change={change} />;
   return (
     <>
       <PoeFields node={node} book={book} locked={locked} change={change} />
@@ -126,7 +128,7 @@ export function NetworkProperties({ id }: { id: string }) {
         }
       >
         {Object.entries(networkLabels)
-          .filter(([id]) => isTvKind(id) === tv)
+          .filter(([id]) => id !== "zigbee" && isTvKind(id) === tv)
           .map(([id, label]) => (
             <option key={id} value={id}>
               {label}

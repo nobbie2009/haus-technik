@@ -37,7 +37,7 @@ export function NetworkPanel({
     [signalDbm, setSignalDbm] = useState(-60),
     [measurementNotes, setMeasurementNotes] = useState("");
   const [editingLink, setEditingLink] = useState<string | null>(null);
-  const nodes = book.networkNodes.filter((n) => !tvOnly || isTvKind(n.kind));
+  const nodes = book.networkNodes.filter((n) => n.kind !== "zigbee" && (!tvOnly || isTvKind(n.kind)));
   const wifiSources = book.networkNodes.filter((n) => ["router", "accessPoint", "repeater"].includes(n.kind));
   return (
     <section>
@@ -92,7 +92,7 @@ export function NetworkPanel({
               }}
             >
               {Object.entries(networkLabels)
-                .filter(([id]) => !tvOnly || isTvKind(id))
+                .filter(([id]) => id !== "zigbee" && (!tvOnly || isTvKind(id)))
                 .map(([id, label]) => (
                   <option key={id} value={id}>
                     {label}

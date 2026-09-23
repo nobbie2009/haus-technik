@@ -158,7 +158,13 @@ export function useCanvasInteraction() {
       const position = updateCursor(world, false);
       if (
         useProjectStore.getState().commit("Netzwerkgerät platzieren", (draft) => {
-          id = addNetworkNode(draft, editor.floorId, position, editor.networkKind);
+          id = addNetworkNode(
+            draft,
+            editor.floorId,
+            position,
+            editor.networkKind,
+            editor.zigbeePlacementAddress ?? undefined,
+          );
         })
       )
         useEditorStore.setState({ selection: [{ kind: "networkNodes", id }], tool: "select" });
