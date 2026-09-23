@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.59.0 · 23.09.2026
+
+- Zigbee-Batteriestände und gemeldete Batteriewarnungen in Geräteliste, Grundriss und Eigenschaften anzeigen; Empfangszeit und gespeicherte MQTT-Nachrichten kennzeichnen, fehlende Werte von 0 % unterscheiden.
+- Zigbee-Geräte Räumen zuordnen und den Raumnamen direkt am Gerät bearbeiten. Zuordnung mit dem Projekt speichern.
+- Raumzuordnungen mit lesender Vorschau gezielt an Home Assistant übertragen: Geräte über ihre IEEE-Kennung erkennen, bestehende Bereiche nutzen oder neue anlegen. Veraltete Vorschauen und Teilerfolge erkennbar melden; keine automatische Rückschreibung oder Umbenennung bestehender HA-Bereiche.
+- Handbuch, FAQ und Beispielabbildung aktualisieren; Browserabläufe einschließlich HA-Übertragung mit simulierten Antworten prüfen.
+
 ## 0.58.0 · 23.09.2026
 
 - Zigbee2MQTT über Home Assistants MQTT-Schnittstelle auslesen und Geräte anhand ihrer IEEE-Adresse dauerhaft im Grundriss platzieren.

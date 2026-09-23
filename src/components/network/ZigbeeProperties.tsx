@@ -5,6 +5,8 @@ import { useZigbeeStore } from "../../stores/zigbeeStore";
 import { emptyZigbee } from "../../network/zigbeeModel";
 import { NumberField } from "../electrical/ElectricalFields";
 import { TextField } from "../Fields";
+import { ZigbeeRoom } from "./ZigbeeRoom";
+import { batteryLabel } from "../../network/zigbeeBattery";
 
 export function ZigbeeProperties({
   node,
@@ -40,6 +42,7 @@ export function ZigbeeProperties({
         <br />
         {node.zigbeeAddress}
       </p>
+      <ZigbeeRoom key={node.id} node={node} locked={locked} change={change} />
       {(["x", "y"] as const).map((axis) => (
         <NumberField
           key={axis}
@@ -60,7 +63,17 @@ export function ZigbeeProperties({
       </p>
       {live && (
         <p>
-          Geräte-LQI: {live.lqi ?? "unbekannt"} · Batterie: {live.battery ?? "unbekannt"} %<br />
+          Geräte-LQI: {live.lqi ?? "unbekannt"} · {batteryLabel(live)}
+          <br />
+          {live.batteryReceivedAt && (
+            <>
+              Batteriewert empfangen: {new Date(live.batteryReceivedAt).toLocaleString("de-DE")}
+              {live.batteryRetained
+                ? " (gespeicherte MQTT-Nachricht; Messzeit unbekannt)"
+                : " (Empfangszeit, nicht Messzeit)"}
+              <br />
+            </>
+          )}
           Nachricht empfangen: {new Date(live.receivedAt).toLocaleTimeString("de-DE")}
         </p>
       )}

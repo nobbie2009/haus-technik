@@ -4,6 +4,8 @@ test("Z2M über Home Assistant lesen, platzieren, manuell scannen und stoppen", 
   const first = "0x0000000000000001",
     second = "0x0000000000000002";
   let scans = 0;
+  let areaWrites = 0;
+  let assignedArea: string | null = null;
   await page.addInitScript(() =>
     localStorage.setItem(
       "home-technik.home-assistant.connection.v1",
@@ -39,6 +41,37 @@ test("Z2M über Home Assistant lesen, platzieren, manuell scannen und stoppen", 
           },
         ]);
         send("Sensor Garten", { linkquality: 60, battery: 85 });
+      } else if (msg.type === "config/area_registry/list") {
+        ws.send(
+          JSON.stringify({
+            id: msg.id,
+            type: "result",
+            success: true,
+            result: [{ area_id: "demo-room", name: "Arbeitszimmer" }],
+          }),
+        );
+      } else if (msg.type === "config/device_registry/list") {
+        ws.send(
+          JSON.stringify({
+            id: msg.id,
+            type: "result",
+            success: true,
+            result: [
+              {
+                id: "demo-device",
+                name: "Sensor Garten",
+                area_id: assignedArea,
+                identifiers: [["mqtt", `zigbee2mqtt_${second}`]],
+              },
+            ],
+          }),
+        );
+      } else if (msg.type === "config/device_registry/update") {
+        expect(msg.device_id).toBe("demo-device");
+        expect(msg.area_id).toBe("demo-room");
+        assignedArea = msg.area_id;
+        areaWrites++;
+        ws.send(JSON.stringify({ id: msg.id, type: "result", success: true, result: {} }));
       } else if (msg.type === "ping") ws.send(JSON.stringify({ type: "pong", id: msg.id }));
       else if (msg.type === "call_service") {
         scans++;
@@ -70,6 +103,12 @@ test("Z2M über Home Assistant lesen, platzieren, manuell scannen und stoppen", 
   });
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
+  if (!(await page.getByTitle("Rechteckraum (R)").isVisible()))
+    await page.getByRole("button", { name: "Menüband", exact: true }).click();
+  await page.getByTitle("Rechteckraum (R)").click();
+  const roomBox = (await page.getByTestId("drawing-surface").boundingBox())!;
+  await page.mouse.click(roomBox.x + 140, roomBox.y + 160);
+  await page.mouse.click(roomBox.x + 540, roomBox.y + 430);
   await page.getByRole("tab", { name: "Netzwerk", exact: true }).click();
   await page.getByRole("button", { name: "Zigbee2MQTT · Geräte & Karte", exact: true }).click();
   let dialog = page.getByRole("dialog", { name: "Zigbee2MQTT im Hausplan", exact: true });
@@ -94,6 +133,18 @@ test("Z2M über Home Assistant lesen, platzieren, manuell scannen und stoppen", 
     await page.getByRole("button", { name: "Eigenschaften", exact: true }).click();
   await expect(page.getByText("Gemeldete Funkverbindungen (1)", { exact: true })).toBeVisible();
   await expect(page.getByText(/Geräte-LQI: 60/)).toBeVisible({ timeout: 12000 });
+  await page.getByLabel("Zigbee-Raum", { exact: true }).selectOption({ index: 1 });
+  await page.getByLabel("Raumname", { exact: true }).fill("Arbeitszimmer");
+  await page.getByLabel("Raumname", { exact: true }).press("Enter");
+  await page.getByRole("button", { name: "Raum an Home Assistant übertragen …", exact: true }).click();
+  const transfer = page.getByRole("dialog", { name: "Raumzuordnung an Home Assistant", exact: true });
+  await transfer.getByRole("button", { name: "Vorschau aus Home Assistant laden", exact: true }).click();
+  await expect(transfer.getByLabel("HA-Zielbereich")).toHaveValue("demo-room");
+  expect(areaWrites).toBe(0);
+  await transfer.getByRole("button", { name: "Jetzt übertragen", exact: true }).click();
+  await expect(transfer.getByRole("status")).toHaveText("Raumzuordnung in Home Assistant gespeichert.");
+  expect(areaWrites).toBe(1);
+  await transfer.getByRole("button", { name: "Dialog schließen", exact: true }).click();
   await page.screenshot({ path: "test-results/zigbee-desktop.png" });
   await page.getByRole("button", { name: "Zigbee-Aktualisierung stoppen", exact: true }).click();
   await expect(page.getByRole("button", { name: "Zigbee2MQTT · Geräte & Karte", exact: true })).toBeVisible();
@@ -102,5 +153,10 @@ test("Z2M über Home Assistant lesen, platzieren, manuell scannen und stoppen", 
   await page.getByRole("tab", { name: "Netzwerk", exact: true }).click();
   await page.getByRole("button", { name: "Zigbee2MQTT · Geräte & Karte", exact: true }).click();
   await expect(page.getByRole("button", { name: "Im Plan auswählen", exact: true })).toHaveCount(2);
+  await page.getByRole("button", { name: "Im Plan auswählen", exact: true }).nth(1).click();
+  if (!(await page.getByLabel("Zigbee-Planname", { exact: true }).isVisible()))
+    await page.getByRole("button", { name: "Eigenschaften", exact: true }).click();
+  await expect(page.getByLabel("Raumname", { exact: true })).toHaveValue("Arbeitszimmer");
+  expect(areaWrites).toBe(1);
   expect(scans).toBe(1);
 });

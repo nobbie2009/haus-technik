@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { readBattery, type BatteryState } from "../network/zigbeeBattery";
 import { ZigbeeClient, type ZigbeeConnection } from "../network/zigbeeClient";
 import {
   emptyZigbee,
@@ -10,7 +11,7 @@ import {
 import { useProjectStore } from "./projectStore";
 import { housebook, setHousebook } from "../housebook/model";
 
-interface LiveDevice {
+interface LiveDevice extends BatteryState {
   lqi: number | null;
   battery: number | null;
   availability: string;
@@ -176,6 +177,9 @@ export const useZigbeeStore = create<State>((set, get) => ({
             const old = live[device.address] ?? {
               lqi: null,
               battery: null,
+              batteryLow: null,
+              batteryReceivedAt: null,
+              batteryRetained: false,
               availability: "unbekannt",
               receivedAt: "",
             };
@@ -185,10 +189,7 @@ export const useZigbeeStore = create<State>((set, get) => ({
                 typeof value.linkquality === "number" && value.linkquality >= 0 && value.linkquality <= 255
                   ? value.linkquality
                   : old.lqi,
-              battery:
-                typeof value.battery === "number" && value.battery >= 0 && value.battery <= 100
-                  ? value.battery
-                  : old.battery,
+              ...readBattery(value, old, retained),
               availability:
                 available && ["online", "offline"].includes(String(value.state ?? payload))
                   ? String(value.state ?? payload)

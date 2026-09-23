@@ -5,6 +5,8 @@ import { networkLayer, type NetworkKind } from "../../network/model";
 import { useEditorStore } from "../../stores/editorStore";
 import { isTvKind, tvCatalog } from "../../network/tv";
 import { ZigbeeLinks } from "./ZigbeeLinks";
+import { useZigbeeStore } from "../../stores/zigbeeStore";
+import { batteryLabel } from "../../network/zigbeeBattery";
 
 const symbols: Record<NetworkKind, string> = {
   router: "R",
@@ -60,6 +62,7 @@ function NetworkSymbol({ kind, selected = false }: { kind: NetworkKind; selected
   );
 }
 export function NetworkRenderer({ project }: { project: Project }) {
+  const zigbee = useZigbeeStore();
   const editor = useEditorStore(),
     book = housebook(project),
     layer = networkLayer(project);
@@ -186,6 +189,15 @@ export function NetworkRenderer({ project }: { project: Project }) {
               selected={editor.selection.some((s) => s.kind === "networkNodes" && s.id === n.id)}
             />
             <Text x={24} y={-6} text={n.name} fontSize={12} fill="#7556a2" />
+            {n.kind === "zigbee" && zigbee.projectId === project.id && zigbee.live[n.zigbeeAddress!] && (
+              <Text
+                x={24}
+                y={10}
+                text={batteryLabel(zigbee.live[n.zigbeeAddress!])}
+                fontSize={11}
+                fill={zigbee.live[n.zigbeeAddress!]?.batteryLow ? "#b33e35" : "#7556a2"}
+              />
+            )}
           </Group>
         ))}
       {book.wifiMeasurements

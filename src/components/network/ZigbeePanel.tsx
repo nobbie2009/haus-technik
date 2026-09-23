@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { batteryLabel } from "../../network/zigbeeBattery";
 import { useZigbeeStore } from "../../stores/zigbeeStore";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
@@ -129,7 +130,7 @@ function ZigbeePanel({ onPlace }: { onPlace: () => void }) {
                     ? `Platziert: ${project.floors[placed.floorId]?.name}`
                     : "Noch nicht platziert"} · {live?.availability ?? "Status unbekannt"}
                   {live?.lqi != null && ` · Geräte-LQI ${live.lqi}`}
-                  {live?.battery != null && ` · Batterie ${live.battery} %`}
+                  {` · ${batteryLabel(live)}`}
                 </span>
                 <button
                   onClick={() => {

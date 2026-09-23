@@ -59,7 +59,7 @@ const html = sections
         height = data.readUInt32BE(20);
       pictures++;
       const capturedVersion = file.endsWith("zigbee-desktop.png")
-        ? "0.58.0"
+        ? "0.59.0"
         : file.endsWith("shared-access-phone.png")
           ? "0.57.0"
           : file.endsWith("network-route-dialog.png")

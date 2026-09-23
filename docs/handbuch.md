@@ -243,11 +243,19 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 6. Die Eigenschaften zeigen Gerätetyp, Modell, Geräte-LQI, Batterie, Verfügbarkeit und Linkdetails mit Tiefe, Beziehungscode und Routenzielen. Geräte-LQI aus Zustandsnachrichten und gerichtete Link-LQI aus dem letzten Scan sind unterschiedliche Messwerte.
 7. **Zigbee-Aktualisierung stoppen** im Menüband beendet Empfang und Anzeigetimer. Das Schließen des Dialogs allein lässt die Aktualisierung weiterlaufen. Projektwechsel und Neuladen stoppen ebenfalls. Ein bereits an Z2M gesendeter Scan wird dadurch nicht auf dem Coordinator abgebrochen.
 
-**Speicherung:** Geräteliste, Basistopic, Platzierungen und letzter Kartenstand werden im Projekt gesichert. Laufende Zustandswerte bleiben nur in der Sitzung; es entsteht keine Messwerthistorie. Der Home-Assistant-Token bleibt in den lokalen Verbindungseinstellungen und wird nicht in die Hausdatei exportiert. Löschen eines Planobjekts entfernt nur seine Platzierung, kein Gerät aus Zigbee2MQTT. Dieselbe IEEE-Adresse kann nicht doppelt platziert werden.
+**Batterien:** Geräteliste, Grundriss und Eigenschaften zeigen den von Z2M gemeldeten Prozentwert (`battery`) und eine gemeldete Batteriewarnung (`battery_low`). **0 %** bedeutet leer, **unbekannt** bedeutet keine Prozentangabe. Die Eigenschaften zeigen die Empfangszeit der letzten Batterienachricht. Andere Zustandsnachrichten aktualisieren diese Zeit nicht. Gespeicherte MQTT-Nachrichten werden gekennzeichnet; die Empfangszeit ist keine Messzeit. Schlafende Sensoren melden oft nur selten neue Werte, unabhängig vom Anzeigeintervall.
+
+**Raum benennen und zuordnen:** Einen Raum unter **Haus / Raum** zeichnen. Danach das platzierte Zigbee-Gerät auswählen und in seinen Eigenschaften **Raumzuordnung** wählen. Angeboten werden die Räume derselben Etage. **Raumname** ändert den Namen dieses Raums für alle zugeordneten Geräte; das Feld gibt es auch direkt in den Raumeigenschaften. Verschieben ändert eine ausdrückliche Raumzuordnung nicht. Nach Löschen eines Raums oder einem Etagenwechsel gegebenenfalls neu zuordnen.
+
+**Raum nach Home Assistant übertragen:** Bei einem zugeordneten Gerät **Raum an Home Assistant übertragen …** öffnen und **Vorschau aus Home Assistant laden** drücken. Das liest zunächst ausschließlich die HA-Geräte und Bereiche. Das Gerät muss durch aktivierte MQTT-Discovery in HA vorhanden sein; die App prüft seine eindeutige IEEE-Kennung. In der Vorschau den bisherigen Bereich kontrollieren und einen vorhandenen **HA-Zielbereich** wählen oder mit dem App-Raumnamen einen neuen anlegen. Erst **Jetzt übertragen** schreibt die Gerätezuordnung. Administratorrechte sind erforderlich. Falls zwischen Vorschau und Übertragung eine Zuordnung geändert wurde, die Vorschau erneut laden. Wurde ein Bereich angelegt, die Gerätezuordnung aber nicht bestätigt, diesen vorhandenen Bereich beim nächsten Versuch auswählen.
+
+Lokales Umbenennen löst keine automatische Übertragung aus. Bestehende HA-Bereiche werden nicht umbenannt; sie können weitere Geräte enthalten. Nach einer lokalen Umbenennung bewusst einen bestehenden Bereich auswählen oder einen neuen erstellen. Eigene Bereichszuordnungen einzelner HA-Entitäten haben Vorrang vor dem Gerätebereich. Die App überträgt keine Grundrissgeometrie, Positionen oder Etagen nach HA. Das Schließen des Übertragungsdialogs beendet die Verbindung, kann eine bereits an HA gesendete Änderung aber nicht zurücknehmen.
+
+**Speicherung:** Geräteliste, Basistopic, Platzierungen, Raumzuordnungen und letzter Kartenstand werden im Projekt gesichert. Laufende Zustandswerte bleiben nur in der Sitzung; es entsteht keine Messwerthistorie. Der Home-Assistant-Token bleibt in den lokalen Verbindungseinstellungen und wird nicht in die Hausdatei exportiert. Löschen eines Planobjekts entfernt nur seine Platzierung, kein Gerät aus Zigbee2MQTT. Dieselbe IEEE-Adresse kann nicht doppelt platziert werden.
 
 **Lücken richtig beurteilen:** Fehlende Linien können an nicht platzierten Nachbarn, schlafenden Geräten, fehlenden Scanantworten oder einem alten Kartenstand liegen. Die Ansicht berechnet keine Funkabdeckung und beweist kein Funkloch. Unvollständige Scans zeigen die gemeldeten Gerätefehler. Verfügbarkeit bleibt unbekannt, wenn Z2M keine Availability-Nachrichten veröffentlicht. Empfangszeiten geben an, wann die App eine Nachricht erhielt; zwischengespeicherte Nachrichten müssen keine neue Gerätemessung sein.
 
-![Zwei platzierte Zigbee-Geräte mit gerichteter LQI-Verbindung und Gerätedetails im Grundriss.](bilder/zigbee-desktop.png)
+![Zigbee-Geräte mit LQI-Verbindung, Batteriestand und Raumzuordnung mit HA-Übertragung.](bilder/zigbee-desktop.png)
 
 Grundlagen: [Zigbee2MQTT-Netzwerkkarte und Scanverhalten](https://www.zigbee2mqtt.io/guide/usage/mqtt_topics_and_messages.html#zigbee2mqtt-bridge-request-networkmap), [Home-Assistant-WebSocket-API](https://developers.home-assistant.io/docs/api/websocket/).
 
@@ -657,6 +665,14 @@ Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten P
 
 # FAQ und gezielte Fehlerhilfe {#faq}
 
+## Warum fehlt der Batteriestand oder ändert er sich nicht?
+
+Die App zeigt die von Z2M veröffentlichten Werte. Manche Geräte melden nur eine Batteriewarnung, andere senden Prozentwerte selten oder erst nach dem Aufwachen. „Unbekannt“ ist kein leerer Akku. Nach einem Neuladen muss erst wieder eine Nachricht eintreffen. Siehe [Batterien und Zigbee](#netzwerk).
+
+## Kann ich Räume aus dem Plan nach Home Assistant übertragen?
+
+Ja: Gerät auswählen, einen Raum zuordnen und **Raum an Home Assistant übertragen …** öffnen. Vorschau lesen, Zielbereich wählen und ausdrücklich übertragen. Raumnamen bearbeitest du direkt am Raum oder beim zugeordneten Zigbee-Gerät. Es gibt keine automatische beidseitige Synchronisierung; bestehende HA-Bereiche werden nicht umbenannt. Siehe [Raumzuordnung und Übertragung](#netzwerk).
+
 ## Warum wird Zigbee nicht alle fünf Sekunden neu gescannt?
 
 Das Intervall aktualisiert empfangene Gerätezustände. Ein vollständiger Scan belastet das Funknetz und kann bis zu zwei Minuten dauern. Deshalb löst nur **Topologie jetzt scannen** eine neue Karte aus. Datum und Details des letzten Kartenstands bleiben sichtbar. Siehe [Zigbee2MQTT im Netzwerkkapitel](#netzwerk).
@@ -847,81 +863,81 @@ Erst unabhängig sichern und prüfen. Das Löschen kann lokale Projekte, Wiederh
 
 Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausführlichen Erklärungen im Handbuch.
 
-| Stichwort                   | Bedeutung und Kapitel                                                                    |
-| --------------------------- | ---------------------------------------------------------------------------------------- |
-| Ablesung                    | Datierter kumulierter [Zählerstand](#zaehler)                                            |
-| Abzweigdose                 | Dokumentierter Verbindungspunkt im [Elektrikplan](#elektrik)                             |
-| Access Point / AP           | WLAN-Zugangspunkt im [Netzwerk](#netzwerk)                                               |
-| Ader / Anschlussbelegung    | Konkrete Kontaktpaare für die [Leiterprüfung](#simulation)                               |
-| Akte                        | Ergänzende Angaben zum Objekt in der [Hausakte](#hausakte)                               |
-| Anschlusshöhe               | Höhenangabe relativ zum Geschoss bei [Rohrkomponenten](#rohrnetze)                       |
-| Außenbereich                | Grundstück und Technik im [Garten](#grundstueck)                                         |
-| Backup                      | Unabhängig aufbewahrte [Sicherung](#sicherung)                                           |
-| Balkonkraftwerk / BKW       | Dokumentierte [Solaranlage](#solar)                                                      |
-| Batteriespeicher            | Kapazität in Wh in der [Solarakte](#solar)                                               |
-| Baustellennotiz             | Foto, Aufgabe und Messwert in der [Baustellenansicht](#baustelle)                        |
-| Bestand / Rückbau / Geplant | [Umbauzustände](#planung) in der Objektakte                                              |
-| Bezugspunkt                 | Benannte Fotostelle in [Leitungsfotos](#fotos)                                           |
-| Bemaßung                    | Automatische und eigene [Planmaße](#grundriss)                                           |
-| Browser-Origin              | Kombination aus Protokoll, Host und Port; relevant für [Speicherung](#sicherung)         |
-| CSV                         | Tabellarische [Ausgabe](#ausgabe)                                                        |
-| DN                          | Dokumentierte Rohrnennweite im [Rohrnetz](#rohrnetze)                                    |
-| Drehung                     | Ausrichtung von [Möbeln und Objekten](#moebel)                                           |
-| Ebene                       | Sichtbarkeit und Bearbeitungssperre im [Menüband](#geschosse)                            |
-| Einspeisung                 | Ausgang der dokumentierten [Versorgung](#elektrik)                                       |
-| Ertragszähler               | Zähler für dokumentierten [Solarertrag](#solar)                                          |
-| Etagenleitung               | Verbindung zwischen [Geschossen](#rohrnetze)                                             |
-| FI / RCD / FI-LS            | Grafische [Schutzgeräte](#elektrik) im Popup und in der Leiterprüfung                    |
-| Fotozoom                    | Vergrößerung von [Leitungsfotos](#fotos)                                                 |
-| Gartenleitung               | Mediengetrennte Dokumentation im [Außenbereich](#grundstueck)                            |
-| Gerätebibliothek            | Wiederverwendbare [Verbrauchervorlagen](#geraetebibliothek)                              |
-| Geschoss                    | Horizontale Planungsebene mit [Höhenangaben](#geschosse)                                 |
-| GPS                         | Punktweise [Standortaufnahme](#gps)                                                      |
-| Grundstücksgrenze           | Gezeichneter Umriss im [Grundstücksplan](#grundstueck)                                   |
-| Hauschronik                 | Reparaturen und Ereignisse im [Hausalltag](#hausalltag)                                  |
-| Home Assistant / HA         | Lesender [Zustandsabruf](#home-assistant)                                                |
-| Hutschiene                  | Reale Montageposition; Kennzeichnungen im [Kasten](#elektrik) ausdrücklich dokumentieren |
-| ICS                         | Datei für [Wartungstermine](#planung)                                                    |
-| IndexedDB                   | Lokale Browserdatenbank für [Projekte](#sicherung)                                       |
-| JSON                        | Weiterbearbeitbare [Projektdatei](#sicherung)                                            |
-| Kalibrierung                | Bekannte Strecke im [Foto](#fotos) oder in einer Grundrissvorlage                        |
-| Klingeltrafo                | Transformator mit dokumentierten [Ausgängen](#elektrik)                                  |
-| Koax / LNB / Multischalter  | Komponenten der [TV-/SAT-Dokumentation](#tv)                                             |
-| Konflikt                    | Unterschiedliche gleichzeitige [Projektänderungen](#gemeinsame-projekte)                 |
-| kWh / Wh                    | Energie beziehungsweise Speicherkapazität, siehe [Solar](#solar) und [Zähler](#zaehler)  |
-| Leitungsweg                 | Gezeichneter Verlauf, getrennt von [Versorgungszuordnung](#elektrik)                     |
-| Menüband / Ribbon           | Obere [Werkzeuggruppen](#oberflaeche)                                                    |
-| Montagehöhe                 | Abstand über Boden in der [Wandansicht](#wandansicht)                                    |
-| Nordrichtung                | Ausrichtung für die [GPS-Referenz](#gps)                                                 |
-| Objektliste                 | Alternative zur Auswahl im [Plan](#oberflaeche)                                          |
-| PDF                         | Lesbare und druckbare [Ausgabe](#ausgabe)                                                |
-| Phase                       | Dokumentierte Zuordnung L1/L2/L3 in der [Elektrik](#elektrik)                            |
-| Planvorlage                 | Skaliertes Hintergrundbild in der [Hausakte](#hausakte)                                  |
-| Port / Patchpanel           | Anschlüsse und Verbindungen im [Netzwerk](#netzwerk)                                     |
-| PoE / Reolink / Türklingel  | Versorgung über Ethernet, Switch-Budget und Verbraucher im [Netzwerk](#netzwerk)         |
-| Zigbee / Z2M / LQI          | Geräteplatzierung, Live-Anzeige und Topologie im [Netzwerk](#netzwerk)                   |
-| Projektschlüssel            | Zugang zum [gemeinsamen Projektdienst](#gemeinsame-projekte)                             |
-| QR-Code                     | Verweis auf Projekt und Akte, siehe [QR-Aufkleber](#hausalltag)                          |
-| Raster / Fangpunkt          | Unterstützung beim [genauen Zeichnen](#grundriss)                                        |
-| Raumvorlage                 | Wiederverwendbarer Raum in der [Hausakte](#hausakte)                                     |
-| Referenzstrecke             | Bekannter Bildabstand zur [Kalibrierung](#fotos)                                         |
-| Relais / Taster             | Unterstützte [Schaltmodelle](#simulation)                                                |
-| Router / Repeater / SSID    | [Internet und WLAN](#netzwerk)                                                           |
-| Rückgängig / Undo           | Abgeschlossene [Änderung zurücknehmen](#tastatur)                                        |
-| Sicherungskasten-Aushang    | Dokumentierte Stromkreise als [PDF](#ausgabe)                                            |
-| Sperre                      | Schutz einer [Ebene](#geschosse) vor Änderungen                                          |
-| SVG                         | Skalierbare [Grafikdatei](#ausgabe)                                                      |
-| Synchronisierung / Abgleich | Bewusster gemeinsamer [Projektstand](#gemeinsame-projekte)                               |
-| Token                       | Lokaler Zugang für [Home Assistant](#home-assistant)                                     |
-| Treppe                      | Richtung und Darstellung im [Nachbargeschoss](#geschosse)                                |
-| Unterverteilung             | Nachgeordneter [Sicherungskasten](#elektrik)                                             |
-| Verbrauch                   | Differenz gültiger [Ablesungen](#zaehler)                                                |
-| Versionsstand               | Bewusst gesicherter [Projektzustand](#sicherung)                                         |
-| Vorlauf / Rücklauf          | Getrennte Medien im [Heizungsnetz](#rohrnetze)                                           |
-| Wandansicht                 | Frontansicht mit [Montagepunkten](#wandansicht)                                          |
-| Wartungskalender            | Fälligkeiten und [Tagesauswahl](#planung)                                                |
-| Wechselrichter / Wp         | [Solar-Komponenten und Leistungsangaben](#solar)                                         |
-| Wiederherstellung           | Frühere [lokale Stände](#sicherung)                                                      |
+| Stichwort                                  | Bedeutung und Kapitel                                                                                   |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Ablesung                                   | Datierter kumulierter [Zählerstand](#zaehler)                                                           |
+| Abzweigdose                                | Dokumentierter Verbindungspunkt im [Elektrikplan](#elektrik)                                            |
+| Access Point / AP                          | WLAN-Zugangspunkt im [Netzwerk](#netzwerk)                                                              |
+| Ader / Anschlussbelegung                   | Konkrete Kontaktpaare für die [Leiterprüfung](#simulation)                                              |
+| Akte                                       | Ergänzende Angaben zum Objekt in der [Hausakte](#hausakte)                                              |
+| Anschlusshöhe                              | Höhenangabe relativ zum Geschoss bei [Rohrkomponenten](#rohrnetze)                                      |
+| Außenbereich                               | Grundstück und Technik im [Garten](#grundstueck)                                                        |
+| Backup                                     | Unabhängig aufbewahrte [Sicherung](#sicherung)                                                          |
+| Balkonkraftwerk / BKW                      | Dokumentierte [Solaranlage](#solar)                                                                     |
+| Batteriespeicher                           | Kapazität in Wh in der [Solarakte](#solar)                                                              |
+| Baustellennotiz                            | Foto, Aufgabe und Messwert in der [Baustellenansicht](#baustelle)                                       |
+| Bestand / Rückbau / Geplant                | [Umbauzustände](#planung) in der Objektakte                                                             |
+| Bezugspunkt                                | Benannte Fotostelle in [Leitungsfotos](#fotos)                                                          |
+| Bemaßung                                   | Automatische und eigene [Planmaße](#grundriss)                                                          |
+| Browser-Origin                             | Kombination aus Protokoll, Host und Port; relevant für [Speicherung](#sicherung)                        |
+| CSV                                        | Tabellarische [Ausgabe](#ausgabe)                                                                       |
+| DN                                         | Dokumentierte Rohrnennweite im [Rohrnetz](#rohrnetze)                                                   |
+| Drehung                                    | Ausrichtung von [Möbeln und Objekten](#moebel)                                                          |
+| Ebene                                      | Sichtbarkeit und Bearbeitungssperre im [Menüband](#geschosse)                                           |
+| Einspeisung                                | Ausgang der dokumentierten [Versorgung](#elektrik)                                                      |
+| Ertragszähler                              | Zähler für dokumentierten [Solarertrag](#solar)                                                         |
+| Etagenleitung                              | Verbindung zwischen [Geschossen](#rohrnetze)                                                            |
+| FI / RCD / FI-LS                           | Grafische [Schutzgeräte](#elektrik) im Popup und in der Leiterprüfung                                   |
+| Fotozoom                                   | Vergrößerung von [Leitungsfotos](#fotos)                                                                |
+| Gartenleitung                              | Mediengetrennte Dokumentation im [Außenbereich](#grundstueck)                                           |
+| Gerätebibliothek                           | Wiederverwendbare [Verbrauchervorlagen](#geraetebibliothek)                                             |
+| Geschoss                                   | Horizontale Planungsebene mit [Höhenangaben](#geschosse)                                                |
+| GPS                                        | Punktweise [Standortaufnahme](#gps)                                                                     |
+| Grundstücksgrenze                          | Gezeichneter Umriss im [Grundstücksplan](#grundstueck)                                                  |
+| Hauschronik                                | Reparaturen und Ereignisse im [Hausalltag](#hausalltag)                                                 |
+| Home Assistant / HA                        | Lesender [Zustandsabruf](#home-assistant)                                                               |
+| Hutschiene                                 | Reale Montageposition; Kennzeichnungen im [Kasten](#elektrik) ausdrücklich dokumentieren                |
+| ICS                                        | Datei für [Wartungstermine](#planung)                                                                   |
+| IndexedDB                                  | Lokale Browserdatenbank für [Projekte](#sicherung)                                                      |
+| JSON                                       | Weiterbearbeitbare [Projektdatei](#sicherung)                                                           |
+| Kalibrierung                               | Bekannte Strecke im [Foto](#fotos) oder in einer Grundrissvorlage                                       |
+| Klingeltrafo                               | Transformator mit dokumentierten [Ausgängen](#elektrik)                                                 |
+| Koax / LNB / Multischalter                 | Komponenten der [TV-/SAT-Dokumentation](#tv)                                                            |
+| Konflikt                                   | Unterschiedliche gleichzeitige [Projektänderungen](#gemeinsame-projekte)                                |
+| kWh / Wh                                   | Energie beziehungsweise Speicherkapazität, siehe [Solar](#solar) und [Zähler](#zaehler)                 |
+| Leitungsweg                                | Gezeichneter Verlauf, getrennt von [Versorgungszuordnung](#elektrik)                                    |
+| Menüband / Ribbon                          | Obere [Werkzeuggruppen](#oberflaeche)                                                                   |
+| Montagehöhe                                | Abstand über Boden in der [Wandansicht](#wandansicht)                                                   |
+| Nordrichtung                               | Ausrichtung für die [GPS-Referenz](#gps)                                                                |
+| Objektliste                                | Alternative zur Auswahl im [Plan](#oberflaeche)                                                         |
+| PDF                                        | Lesbare und druckbare [Ausgabe](#ausgabe)                                                               |
+| Phase                                      | Dokumentierte Zuordnung L1/L2/L3 in der [Elektrik](#elektrik)                                           |
+| Planvorlage                                | Skaliertes Hintergrundbild in der [Hausakte](#hausakte)                                                 |
+| Port / Patchpanel                          | Anschlüsse und Verbindungen im [Netzwerk](#netzwerk)                                                    |
+| PoE / Reolink / Türklingel                 | Versorgung über Ethernet, Switch-Budget und Verbraucher im [Netzwerk](#netzwerk)                        |
+| Zigbee / Z2M / LQI / Batterie / HA-Bereich | Geräteplatzierung, Batteriestände, Raumzuordnung, HA-Übertragung und Topologie im [Netzwerk](#netzwerk) |
+| Projektschlüssel                           | Zugang zum [gemeinsamen Projektdienst](#gemeinsame-projekte)                                            |
+| QR-Code                                    | Verweis auf Projekt und Akte, siehe [QR-Aufkleber](#hausalltag)                                         |
+| Raster / Fangpunkt                         | Unterstützung beim [genauen Zeichnen](#grundriss)                                                       |
+| Raumvorlage                                | Wiederverwendbarer Raum in der [Hausakte](#hausakte)                                                    |
+| Referenzstrecke                            | Bekannter Bildabstand zur [Kalibrierung](#fotos)                                                        |
+| Relais / Taster                            | Unterstützte [Schaltmodelle](#simulation)                                                               |
+| Router / Repeater / SSID                   | [Internet und WLAN](#netzwerk)                                                                          |
+| Rückgängig / Undo                          | Abgeschlossene [Änderung zurücknehmen](#tastatur)                                                       |
+| Sicherungskasten-Aushang                   | Dokumentierte Stromkreise als [PDF](#ausgabe)                                                           |
+| Sperre                                     | Schutz einer [Ebene](#geschosse) vor Änderungen                                                         |
+| SVG                                        | Skalierbare [Grafikdatei](#ausgabe)                                                                     |
+| Synchronisierung / Abgleich                | Bewusster gemeinsamer [Projektstand](#gemeinsame-projekte)                                              |
+| Token                                      | Lokaler Zugang für [Home Assistant](#home-assistant)                                                    |
+| Treppe                                     | Richtung und Darstellung im [Nachbargeschoss](#geschosse)                                               |
+| Unterverteilung                            | Nachgeordneter [Sicherungskasten](#elektrik)                                                            |
+| Verbrauch                                  | Differenz gültiger [Ablesungen](#zaehler)                                                               |
+| Versionsstand                              | Bewusst gesicherter [Projektzustand](#sicherung)                                                        |
+| Vorlauf / Rücklauf                         | Getrennte Medien im [Heizungsnetz](#rohrnetze)                                                          |
+| Wandansicht                                | Frontansicht mit [Montagepunkten](#wandansicht)                                                         |
+| Wartungskalender                           | Fälligkeiten und [Tagesauswahl](#planung)                                                               |
+| Wechselrichter / Wp                        | [Solar-Komponenten und Leistungsangaben](#solar)                                                        |
+| Wiederherstellung                          | Frühere [lokale Stände](#sicherung)                                                                     |
 
 ## Grenzen der Dokumentation
 

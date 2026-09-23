@@ -101,6 +101,7 @@ export const bookSchema = z.strictObject({
           .strictObject({ ssid: text, band: text, ip: text, mac: text, location: text, notes: text })
           .optional(),
         ports: z.number().int().min(1).max(256),
+        roomId: id.optional(),
         zigbeeAddress: z
           .string()
           .regex(/^0x[0-9a-f]{16}$/)
