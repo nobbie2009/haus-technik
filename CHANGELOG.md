@@ -1,5 +1,12 @@
 # Änderungen
 
+## 0.60.0 · 25.09.2026
+
+- Nach jedem Tabwechsel das Auswahlwerkzeug aktivieren; laufende Platzierungen beenden. Im Auswahlmodus lässt sich die Ansicht durch Ziehen auf freier Fläche mit Maus oder Finger verschieben.
+- Möbelkatalog auf 39 Standardvorlagen erweitern. Eigene Möbel projektübergreifend im Browser speichern, suchen, bearbeiten, aus platzierten Möbeln übernehmen sowie mit Importvorschau per JSON zwischen Geräten übertragen.
+- Kopierte Herstellermaße mit Einheiten in Millimeter übernehmen und vor dem Speichern prüfen. Hersteller und Produktquelle erhalten; platzierte Möbel bleiben von späteren Vorlagenänderungen unabhängig. Kein automatischer Webseiten- oder 3D-Import.
+- Anleitung, FAQ und Katalogabbildung ergänzen; Tests auf die bewusste Werkzeugwahl umstellen.
+
 ## 0.59.0 · 23.09.2026
 
 - Zigbee-Batteriestände und gemeldete Batteriewarnungen in Geräteliste, Grundriss und Eigenschaften anzeigen; Empfangszeit und gespeicherte MQTT-Nachrichten kennzeichnen, fehlende Werte von 0 % unterscheiden.

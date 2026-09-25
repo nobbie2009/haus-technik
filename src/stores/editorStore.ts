@@ -78,18 +78,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       consumerEntryId: null,
       solarPlacement: null,
       selection: [],
-      tool:
-        category === "site"
-          ? "site"
-          : category === "building"
-            ? "select"
-            : category === "furniture"
-              ? "furniture"
-              : category === "network"
-                ? "network"
-                : category === "utilities"
-                  ? "select"
-                  : "electrical",
+      tool: "select",
       draft: emptyDraft(),
       cableStartId: null,
       networkCableId: null,

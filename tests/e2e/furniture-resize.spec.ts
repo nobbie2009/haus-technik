@@ -15,6 +15,7 @@ test("Möbel mit Eck- und Seitengriffen skalieren, abbrechen und rückgängig ma
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Möbel", exact: true }).click();
+  await page.getByRole("button", { name: "Möbel im Plan platzieren", exact: true }).click();
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.mouse.click(box.x + 330, box.y + 270);
   await page.getByTitle("Auswahl (V)").click();

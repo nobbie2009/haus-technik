@@ -18,6 +18,7 @@ test("Grundstück und Weg zeichnen, Referenzpunkt setzen und Router daran ausric
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Grundstück", exact: true }).click();
+  await page.getByLabel("Außenobjekt", { exact: true }).selectOption("boundary");
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   for (const [x, y] of [
     [160, 200],
@@ -43,6 +44,7 @@ test("Grundstück und Weg zeichnen, Referenzpunkt setzen und Router daran ausric
     y: boundary.vertices[0]!.y - 1000,
   });
   await page.getByRole("tab", { name: "Netzwerk", exact: true }).click();
+  await page.getByRole("button", { name: "Im Grundriss platzieren", exact: true }).click();
   await page.mouse.click(box.x + 232, box.y + 271);
   expect(housebook(await exported(page)).networkNodes[0]!.position).toEqual(reference.vertices[0]);
   await page.getByRole("tab", { name: "Grundstück", exact: true }).click();

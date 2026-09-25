@@ -32,11 +32,13 @@ test("Tabs begrenzen Auswahl und Bearbeitung auch bei überlappenden Objekten", 
   await page.getByRole("tab", { name: "Möbel", exact: true }).click();
   await expect(page.getByLabel("Raumname", { exact: true })).not.toBeVisible();
   await expect(page.getByTitle("Wand (W)")).toHaveCount(0);
+  await page.getByRole("button", { name: "Möbel im Plan platzieren", exact: true }).click();
   await page.mouse.click(box.x + 300, box.y + 320);
   await expect(page.getByLabel("Objektname", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
   await expect(page.getByLabel("Objektname", { exact: true })).not.toBeVisible();
   await expect(page.getByLabel("Objektvorlage")).toHaveCount(0);
+  await page.getByLabel("Elektroobjekt", { exact: true }).selectOption("outlets");
   await page.mouse.click(box.x + 300, box.y + 320);
   const before = await exported(page);
   await page.getByTitle("Auswahl (V)").click();

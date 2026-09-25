@@ -6,6 +6,22 @@ import { hitTest } from "../../src/editor/interaction/hitTest";
 import { useEditorStore } from "../../src/stores/editorStore";
 
 describe("Getrennte Bearbeitungsbereiche", () => {
+  it("startet jeden Tab in Auswahl und beendet laufende Platzierungen", () => {
+    for (const category of ["building", "furniture", "electrical", "network", "site", "utilities"] as const) {
+      useEditorStore.setState({
+        tool: "electrical",
+        cableStartId: "pending",
+        draft: { points: [{ x: 10, y: 20 }], cursor: null, input: "" },
+      });
+      useEditorStore.getState().setCategory(category);
+      expect(useEditorStore.getState()).toMatchObject({
+        category,
+        tool: "select",
+        cableStartId: null,
+        draft: { points: [] },
+      });
+    }
+  });
   it("selektiert an derselben Position ausschließlich Objekte des aktiven Bereichs", () => {
     const { project, room } = rectangleFixture();
     const position = { x: 2000, y: 1600 };
@@ -37,7 +53,7 @@ describe("Getrennte Bearbeitungsbereiche", () => {
     expect(useEditorStore.getState()).toMatchObject({
       category: "furniture",
       selection: [],
-      tool: "furniture",
+      tool: "select",
       draft: { points: [] },
     });
     useEditorStore.setState({ selection: [{ kind: "furniture", id: crypto.randomUUID() }] });

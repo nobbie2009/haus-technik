@@ -114,6 +114,20 @@ Treppe platzieren, auswählen und in den Eigenschaften die Richtung **hoch** ode
 
 Unter **Möbel** eine Vorlage wie Tisch, Schrank, Sofa, Bett oder Serverrack auswählen und im Plan platzieren. Bei einem freien Objekt Namen und Maße selbst vergeben. Vorlagenmaße sind Ausgangswerte und keine vermessenen Herstellerdaten.
 
+**Tabwechsel und Verschieben:** Jeder Tab startet mit **Auswahl**. Eine Platzierung beginnt erst nach bewusster Werkzeug- oder Vorlagenwahl. Für die bereits gewählte Möbelvorlage **Möbel im Plan platzieren** drücken. Im Auswahlmodus lässt sich die Ansicht durch Ziehen auf einer freien Fläche mit Maus oder einem Finger verschieben. Ein kurzer Klick hebt die Auswahl auf. Getroffene Objekte bleiben auswählbar und verschiebbar; eine Raumfläche zählt im Bereich Haus / Raum als Raumobjekt. Für das Verschieben der Ansicht über Objekten weiterhin das Handwerkzeug, die mittlere Maustaste oder die Leertaste verwenden.
+
+## Globaler Möbelkatalog und Herstellermaße
+
+**Möbel → Globaler Möbelkatalog** enthält 39 Standardvorlagen, darunter Büro-, Bad-, Küchen-, Garten- und Lagermöbel. Über die Suche nach Namen filtern. Die Standardmaße sind anpassbare Planungsbeispiele, keine Herstellerzusagen.
+
+Eigene Vorlagen unter **Meine Möbel** anlegen: Namen, Hersteller, optional einen Produktlink, Grundform sowie Breite, Tiefe und Höhe in Millimeter eingeben und **Vorlage speichern**. Ein im Plan ausgewähltes Möbel lässt sich mit **Ausgewähltes Möbel übernehmen** als Vorlage vorbereiten. Gespeicherte Vorlagen können bearbeitet, platziert und entfernt werden. Bereits platzierte Möbel behalten ihre eigenen Maße, auch wenn die Vorlage später geändert oder gelöscht wird.
+
+Für IKEA oder andere Hersteller **Maße von IKEA oder anderen Quellen übernehmen** öffnen. Nur die Produktmaße von der Produktseite kopieren, keine Verpackungsmaße. Unterstützt werden benannte Maße mit Einheit wie `Breite: 80 cm, Tiefe: 28 cm, Höhe: 202 cm` sowie eine einzelne Maßfolge `80 × 28 × 202 cm`. Bei dieser Folge wird **Breite × Tiefe × Höhe** angenommen. **Maße vorschlagen** rechnet in Millimeter um; Reihenfolge, Werte und gewählte Produktvariante anschließend selbst prüfen und speichern. Fehlende Einheiten und widersprüchliche Maßangaben werden abgewiesen. Der Produktlink wird als Quelle gespeichert, aber nicht automatisch abgerufen. Fotos und 3D-Modelle werden nicht importiert.
+
+Der eigene Katalog gilt **projektübergreifend in diesem Browser**. Mit **Möbelkatalog exportieren** eine JSON-Sicherung herunterladen. Auf einem anderen Gerät dieselbe Datei unter **Möbelkatalog importieren (JSON)** auswählen, die Vorschau prüfen und **Importierte Vorlagen übernehmen** drücken. Gleiche Kennungen mit gleichen Inhalten werden übersprungen, abweichende Inhalte als neue Kopie ergänzt. Bestehende Einträge werden nicht überschrieben. Grenzen: 1.000 eigene Vorlagen und 2 MB pro Katalog. Der Katalog wird nicht automatisch zwischen Geräten synchronisiert und ist nicht Bestandteil der Projektdatei; platzierte Möbel samt Maßen und Produktquelle sind dagegen im Projekt enthalten.
+
+![Globaler Möbelkatalog mit einer eigenen Regalvorlage und Eingabe von Herstellermaßen.](bilder/furniture-catalog.png)
+
 1. In den Auswahlmodus wechseln und das Möbel anklicken.
 2. An den Eck- oder Seitengriffen die Grundfläche verändern. Seitengriffe ändern die jeweilige Richtung; die Vorschau zeigt die neue Ausdehnung.
 3. Für exakte Maße Breite, Tiefe und Höhe rechts eingeben. Die Höhe ist eine gespeicherte Eigenschaft; der Plan bleibt eine Draufsicht.
@@ -665,6 +679,14 @@ Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten P
 
 # FAQ und gezielte Fehlerhilfe {#faq}
 
+## Warum platziert ein Tabwechsel jetzt kein Objekt mehr?
+
+Jeder Tab startet mit **Auswahl**. Zum Platzieren bewusst eine Vorlage oder das passende Werkzeug wählen. Eine freie Fläche im Auswahlmodus ziehen, um die Ansicht zu verschieben. Siehe [Möbel und Bedienung](#moebel).
+
+## Kann ich IKEA-Möbel importieren und auf dem iPad verwenden?
+
+Ja, als maßstäbliche 2D-Vorlage: Produktmaße kopieren, im globalen Möbelkatalog vorschlagen lassen, prüfen und speichern. Der Link allein lädt kein Modell. Eigene Vorlagen per Katalogdatei exportieren und auf dem iPad importieren. Siehe [Herstellermaße und globaler Katalog](#moebel).
+
 ## Warum fehlt der Batteriestand oder ändert er sich nicht?
 
 Die App zeigt die von Z2M veröffentlichten Werte. Manche Geräte melden nur eine Batteriewarnung, andere senden Prozentwerte selten oder erst nach dem Aufwachen. „Unbekannt“ ist kein leerer Akku. Nach einem Neuladen muss erst wieder eine Nachricht eintreffen. Siehe [Batterien und Zigbee](#netzwerk).
@@ -938,6 +960,8 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | Wartungskalender                           | Fälligkeiten und [Tagesauswahl](#planung)                                                               |
 | Wechselrichter / Wp                        | [Solar-Komponenten und Leistungsangaben](#solar)                                                        |
 | Wiederherstellung                          | Frühere [lokale Stände](#sicherung)                                                                     |
+
+Weitere Stichwörter: **Möbelkatalog, IKEA, Herstellermaße, Vorlagenimport, Freifläche und Tabwechsel** – siehe [Möbel und Bedienung](#moebel).
 
 ## Grenzen der Dokumentation
 

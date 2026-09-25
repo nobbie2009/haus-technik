@@ -533,6 +533,15 @@
   background: #13272866;
   backdrop-filter: blur(2px);
 }
+.modal.furniture-catalog-dialog {
+  width: min(800px, 94vw);
+}
+.furniture-catalog-dialog textarea {
+  min-height: 96px;
+}
+.furniture-catalog-dialog .home-row {
+  flex-wrap: wrap;
+}
 .modal-heading {
   display: flex;
   align-items: center;

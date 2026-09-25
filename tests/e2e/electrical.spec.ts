@@ -128,6 +128,7 @@ test("Version-2-Möbelprojekt migriert verlustfrei und erlaubt neue Elektroobjek
   expect(restored.id).toBe(current.id);
   expect(restored.schemaVersion).toBe(10);
   await page.getByRole("tab", { name: "Elektrik", exact: true }).click();
+  await page.getByLabel("Elektroobjekt", { exact: true }).selectOption("outlets");
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.mouse.click(box.x + 180, box.y + 220);
   await page.mouse.click(box.x + 220, box.y + 220);

@@ -1,9 +1,17 @@
 import { furnitureCatalog } from "../furniture/catalog";
 import { useEditorStore } from "../stores/editorStore";
+import { useState } from "react";
+import { FurnitureCatalogDialog } from "./FurnitureCatalogDialog";
+import { useFurnitureLibrary } from "../furniture/library";
 
 export function FurnitureLibrary() {
   const type = useEditorStore((s) => s.furnitureType);
-  const preset = furnitureCatalog.find((item) => item.type === type)!;
+  const entries = useFurnitureLibrary((s) => s.items);
+  const [open, setOpen] = useState(false);
+  const preset =
+    entries.find((item) => `library:${item.id}` === type) ??
+    furnitureCatalog.find((item) => item.type === type) ??
+    furnitureCatalog.at(-1)!;
   return (
     <div className="furniture-library">
       <label className="field">
@@ -21,8 +29,17 @@ export function FurnitureLibrary() {
               {item.name}
             </option>
           ))}
+          {entries.map((item) => (
+            <option key={item.id} value={`library:${item.id}`}>
+              {item.manufacturer ? `${item.manufacturer} · ` : ""}
+              {item.name}
+            </option>
+          ))}
         </select>
       </label>
+      <button onClick={() => useEditorStore.getState().setTool("furniture")}>Möbel im Plan platzieren</button>
+      <button onClick={() => setOpen(true)}>Globaler Möbelkatalog</button>
+      {open && <FurnitureCatalogDialog onClose={() => setOpen(false)} />}
       <p>
         {preset.width} × {preset.depth} × {preset.height} mm
       </p>

@@ -7,6 +7,7 @@ test("Router im Netzwerkbereich platzieren, verschieben, sperren und wieder lade
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Netzwerk", exact: true }).click();
   await expect(page.getByLabel("Netzwerkgerät platzieren", { exact: true })).toHaveValue("router");
+  await page.getByRole("button", { name: "Im Grundriss platzieren", exact: true }).click();
   const surface = page.getByTestId("drawing-surface"),
     box = (await surface.boundingBox())!;
   await page.mouse.click(box.x + 250, box.y + 240);

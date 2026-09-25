@@ -292,6 +292,9 @@ export function useCanvasInteraction() {
       if (hit && !event.shiftKey && !editor.multiSelect) {
         event.currentTarget.setPointerCapture(event.pointerId);
         gesture.current = { type: "move", screen, world, selection, moved: false };
+      } else if (!hit && !event.shiftKey && !editor.multiSelect) {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        gesture.current = { type: "pan", screen, world, selection: [], moved: false };
       }
       return;
     }

@@ -8,7 +8,7 @@ import type { Project } from "../../models/project";
 import type { Viewport } from "../../geometry/coordinates";
 import type { Selection } from "../../editor/types";
 import { worldToScreen } from "../../geometry/coordinates";
-import { furnitureCatalog } from "../../furniture/catalog";
+import { furniturePreset, useFurnitureLibrary } from "../../furniture/library";
 import { useEditorStore } from "../../stores/editorStore";
 
 function FurnitureShape({
@@ -224,8 +224,14 @@ export const FurnitureRenderer = memo(function FurnitureRenderer({
 
 export function FurniturePreview() {
   const editor = useEditorStore();
+  const entries = useFurnitureLibrary((s) => s.items);
   if (editor.tool !== "furniture" || !editor.draft.cursor) return null;
-  const preset = furnitureCatalog.find((item) => item.type === editor.furnitureType)!;
+  if (
+    editor.furnitureType.startsWith("library:") &&
+    !entries.some((i) => `library:${i.id}` === editor.furnitureType)
+  )
+    return null;
+  const preset = furniturePreset(editor.furnitureType);
   const item: Furniture = {
     ...preset,
     id: "preview",
