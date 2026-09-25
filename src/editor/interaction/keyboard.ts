@@ -11,6 +11,7 @@ import { confirmDrawing, updateCursor } from "./drawing";
 import { deleteSelected, duplicateSelected, fitView } from "./commands";
 import { moveSelection } from "../actions/edit";
 import type { Tool } from "../types";
+import { selectAllInView } from "./selectAll";
 
 export function useKeyboard(): void {
   useEffect(() => {
@@ -20,6 +21,16 @@ export function useKeyboard(): void {
       const editor = useEditorStore.getState();
       const project = useProjectStore.getState();
       const modifier = event.ctrlKey || event.metaKey;
+      if (modifier && !event.altKey && event.key.toLowerCase() === "a") {
+        event.preventDefault();
+        const selection = selectAllInView(project.project, editor.floorId, editor.category);
+        editor.setTool("select");
+        useEditorStore.setState({
+          selection,
+          message: `${selection.length} Objekte im aktuellen Tab ausgewählt.`,
+        });
+        return;
+      }
       if (modifier && ["z", "y", "s", "d"].includes(event.key.toLowerCase())) {
         event.preventDefault();
         if (event.key.toLowerCase() === "z") {

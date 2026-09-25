@@ -304,6 +304,7 @@ export function Toolbar() {
               ["Pfeiltasten", "Auswahl 10 mm verschieben"],
               ["Shift + Pfeiltasten", "Auswahl um eine Rasterweite verschieben"],
               ["Strg+Z / Strg+Y", "Rückgängig / Wiederholen"],
+              ["Strg+A", "Alles im aktuellen Tab und Geschoss auswählen"],
               ["Strg+D / Delete", "Duplizieren / Löschen"],
               ["Strg+S / Home", "Speichern / alles anzeigen"],
               ["Escape", "Aktuellen Zeichenvorgang abbrechen"],

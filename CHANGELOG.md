@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.63.0 · 25.09.2026
+
+- Strg+A (am Mac auch Command+A) wählt alle Objekte der sichtbaren Ebenen im aktuellen Tab und Geschoss aus und aktiviert das Auswahlwerkzeug. Andere Tabs, Geschosse und ausgeblendete Ebenen bleiben unberührt; sichtbare Abschnitte geschossübergreifender Leitungen werden berücksichtigt.
+- In Eingabefeldern bleibt die gewohnte Textauswahl erhalten. Tastenkürzelübersicht und Anleitung ergänzen.
+
 ## 0.62.0 · 25.09.2026
 
 - Separate Luftbild-Unterlage je Geschoss mit lokalem Bild-/PDF-Import, Quellenangabe, Deckkraft, Drehung sowie Ausrichtung an zwei Planpunkten ergänzen; bestehende Grundrissvorlagen erhalten.

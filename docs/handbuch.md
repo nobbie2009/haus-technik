@@ -734,25 +734,26 @@ Wird eine neuere Serverversion gemeldet, Eingaben sichern und die App neu laden.
 
 Tastenkürzel gelten im Editor, nicht beim Schreiben in ein Textfeld. Auf dem Mac kann je nach Browser die entsprechende Command-Taste anstelle von Strg verwendet werden; im Zweifel die sichtbaren Schaltflächen nutzen.
 
-| Eingabe             | Funktion                                                     |
-| ------------------- | ------------------------------------------------------------ |
-| V / H               | Auswahl / Ansicht verschieben                                |
-| W / R / P           | Wand / Rechteckraum / freier Raum                            |
-| M                   | Möbel beziehungsweise freie Objekte platzieren               |
-| E / L               | Elektrik platzieren / Leitungsweg zeichnen                   |
-| D / T / F           | Bemaßung / Tür / Fenster                                     |
-| Zahl + Enter        | Begonnene Wand auf genaue Länge in mm festlegen              |
-| Shift               | Rechtwinklig zeichnen beziehungsweise Mehrfachauswahl        |
-| Leertaste + Ziehen  | Zeichenfläche verschieben                                    |
-| Mausrad             | Zum Mauszeiger zoomen                                        |
-| Pfeiltasten         | Auswahl um 10 mm verschieben                                 |
-| Shift + Pfeiltasten | Auswahl um eine Rasterweite verschieben                      |
-| Strg+Z / Strg+Y     | Rückgängig / Wiederholen                                     |
-| Strg+D / Entf       | Duplizieren / Löschen                                        |
-| Strg+S / Pos1       | Speichern / alles anzeigen                                   |
-| Escape              | Aktuellen Vorgang abbrechen beziehungsweise Dialog schließen |
-| Ein Finger          | Auswählen, Punkt setzen oder Objekt verschieben              |
-| Zwei Finger im Plan | Ansicht verschieben und zoomen                               |
+| Eingabe             | Funktion                                                               |
+| ------------------- | ---------------------------------------------------------------------- |
+| V / H               | Auswahl / Ansicht verschieben                                          |
+| W / R / P           | Wand / Rechteckraum / freier Raum                                      |
+| M                   | Möbel beziehungsweise freie Objekte platzieren                         |
+| E / L               | Elektrik platzieren / Leitungsweg zeichnen                             |
+| D / T / F           | Bemaßung / Tür / Fenster                                               |
+| Zahl + Enter        | Begonnene Wand auf genaue Länge in mm festlegen                        |
+| Shift               | Rechtwinklig zeichnen beziehungsweise Mehrfachauswahl                  |
+| Leertaste + Ziehen  | Zeichenfläche verschieben                                              |
+| Mausrad             | Zum Mauszeiger zoomen                                                  |
+| Pfeiltasten         | Auswahl um 10 mm verschieben                                           |
+| Shift + Pfeiltasten | Auswahl um eine Rasterweite verschieben                                |
+| Strg+Z / Strg+Y     | Rückgängig / Wiederholen                                               |
+| Strg+A              | Alle Objekte sichtbarer Ebenen im aktuellen Tab und Geschoss auswählen |
+| Strg+D / Entf       | Duplizieren / Löschen                                                  |
+| Strg+S / Pos1       | Speichern / alles anzeigen                                             |
+| Escape              | Aktuellen Vorgang abbrechen beziehungsweise Dialog schließen           |
+| Ein Finger          | Auswählen, Punkt setzen oder Objekt verschieben                        |
+| Zwei Finger im Plan | Ansicht verschieben und zoomen                                         |
 
 Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten Punkt entfernen**, **Abbrechen**, **Rechtwinklig** und **Mehrfachauswahl** die entsprechenden Tastaturaktionen. Eine abgebrochene Geste soll keine Platzierung speichern. Bei Textmarkierungen darf der Zeiger über den Dialogrand hinausgezogen werden, ohne dass dies allein das Popup schließt.
 
