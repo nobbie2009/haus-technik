@@ -9,6 +9,8 @@ import { NetworkPanel } from "../housebook/NetworkPanel";
 import { SelectField } from "../electrical/ElectricalFields";
 import { isTvKind, tvCatalog } from "../../network/tv";
 import { ZigbeeControls } from "./ZigbeePanel";
+import { HaLiveControls } from "../housebook/HaLiveControls";
+import { WifiSurvey } from "./WifiSurvey";
 
 export function NetworkLibrary() {
   const tool = useEditorStore((s) => s.tool);
@@ -17,9 +19,16 @@ export function NetworkLibrary() {
   const editingCable = useEditorStore((s) => s.networkCableId);
   const [open, setOpen] = useState(false);
   const [tvOpen, setTvOpen] = useState(false);
+  const [wifiOpen, setWifiOpen] = useState(false);
   return (
     <section className="network-library" aria-label="Netzwerkgeräte">
       <ZigbeeControls />
+      <button onClick={() => setWifiOpen(true)}>WLAN-Messkarte</button>
+      {wifiOpen && <WifiSurvey onClose={() => setWifiOpen(false)} />}
+      <details>
+        <summary>Home-Assistant-Livewerte</summary>
+        <HaLiveControls />
+      </details>
       <SelectField
         label="Netzwerkgerät platzieren"
         value={isTvKind(kind) ? "" : kind}

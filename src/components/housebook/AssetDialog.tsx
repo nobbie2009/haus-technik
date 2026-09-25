@@ -6,6 +6,7 @@ import { elementTables } from "../../core/elementTables";
 import type { Selection } from "../../editor/types";
 import { asset, setAsset, statusLabels, type Asset } from "../../housebook/model";
 import { readPlanImage } from "../../housebook/images";
+import { changeNetworkNode } from "../../network/model";
 export function AssetDialog({ target, onClose }: { target: Selection; onClose: () => void }) {
   const project = useProjectStore((s) => s.project),
     entity = elementTables(project)[target.kind][target.id]!;
@@ -24,9 +25,14 @@ export function AssetDialog({ target, onClose }: { target: Selection; onClose: (
         onSubmit={(e) => {
           e.preventDefault();
           if (
-            useProjectStore
-              .getState()
-              .commit("Objektakte ändern", (p) => setAsset(elementTables(p)[target.kind][target.id]!, draft))
+            useProjectStore.getState().commit("Objektakte ändern", (p) => {
+              if (target.kind === "networkNodes")
+                changeNetworkNode(p, target.id, (n) => {
+                  n.metadata ??= {};
+                  setAsset({ id: n.id, metadata: n.metadata }, draft);
+                });
+              else setAsset(elementTables(p)[target.kind][target.id]!, draft);
+            })
           )
             onClose();
           else setError(useProjectStore.getState().error ?? "Speichern fehlgeschlagen.");

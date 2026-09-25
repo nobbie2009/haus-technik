@@ -1,4 +1,5 @@
 import { lazy, Suspense, useRef, useState, useEffect } from "react";
+const House3DDialog = lazy(() => import("./House3DDialog").then((m) => ({ default: m.House3DDialog })));
 const HousebookDialog = lazy(() =>
   import("./housebook/HousebookDialog").then((m) => ({ default: m.HousebookDialog })),
 );
@@ -42,6 +43,7 @@ export function Toolbar() {
   const [help, setHelp] = useState(false);
   const [book, setBook] = useState(false);
   const [construction, setConstruction] = useState(false);
+  const [three, setThree] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const showGrid = useEditorStore((s) => s.showGrid);
@@ -186,6 +188,14 @@ export function Toolbar() {
           <option value="m">m</option>
         </select>
         <div className="toolbar-spacer" />
+        <button disabled={!ready || busy} onClick={() => setThree(true)}>
+          3D-Hausansicht
+        </button>
+        {three && (
+          <Suspense fallback={<p>3D wird geladen …</p>}>
+            <House3DDialog key={project.id} onClose={() => setThree(false)} />
+          </Suspense>
+        )}
         <button disabled={!ready || busy} onClick={() => setBook(true)}>
           Hausakte
         </button>

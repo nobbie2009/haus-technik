@@ -50,7 +50,7 @@ export function networkNodeTable(project: Project): EntityTable<NetworkNode & Fl
   if (!book.success) return {};
   const layerId = networkLayer(project)?.id ?? "";
   return Object.fromEntries(
-    book.data.networkNodes.map((node) => [node.id, { ...node, layerId, metadata: {} }]),
+    book.data.networkNodes.map((node) => [node.id, { ...node, layerId, metadata: node.metadata ?? {} }]),
   );
 }
 export function addNetworkNode(

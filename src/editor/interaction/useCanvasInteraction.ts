@@ -44,11 +44,16 @@ export function useCanvasInteraction() {
   const project = useProjectStore((s) => s.project);
   const editor = useEditorStore();
   useEffect(() => {
+    let resizeFrame = 0;
     const observer = new ResizeObserver(([entry]) => {
-      if (entry)
-        useEditorStore.setState({
-          size: { width: entry.contentRect.width, height: entry.contentRect.height },
-        });
+      if (!entry) return;
+      const size = { width: entry.contentRect.width, height: entry.contentRect.height };
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        const previous = useEditorStore.getState().size;
+        if (previous.width !== size.width || previous.height !== size.height)
+          useEditorStore.setState({ size });
+      });
     });
     if (host.current) observer.observe(host.current);
     const element = host.current!;
@@ -67,6 +72,7 @@ export function useCanvasInteraction() {
     element.addEventListener("wheel", wheel, { passive: false });
     return () => {
       observer.disconnect();
+      cancelAnimationFrame(resizeFrame);
       element.removeEventListener("wheel", wheel);
     };
   }, []);

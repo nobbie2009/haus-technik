@@ -58,25 +58,27 @@ const html = sections
       const width = data.readUInt32BE(16),
         height = data.readUInt32BE(20);
       pictures++;
-      const capturedVersion = file.endsWith("zigbee-overview.png")
-        ? "0.61.1"
-        : file.endsWith("furniture-catalog.png")
-          ? "0.60.0"
-          : file.endsWith("zigbee-desktop.png")
-            ? "0.59.0"
-            : file.endsWith("shared-access-phone.png")
-              ? "0.57.0"
-              : file.endsWith("network-route-dialog.png")
-                ? "0.56.0"
-                : file.endsWith("poe-desktop.png")
-                  ? "0.55.0"
-                  : ["contact-dialog-desktop.png", "network-editor-desktop.png"].some((name) =>
-                        file.endsWith(name),
-                      )
-                    ? "0.53.0"
-                    : file.endsWith("board-equipment-desktop.png")
-                      ? "0.50.0"
-                      : "0.48.0";
+      const capturedVersion = file.includes("spatial-")
+        ? "0.62.0"
+        : file.endsWith("zigbee-overview.png")
+          ? "0.61.1"
+          : file.endsWith("furniture-catalog.png")
+            ? "0.60.0"
+            : file.endsWith("zigbee-desktop.png")
+              ? "0.59.0"
+              : file.endsWith("shared-access-phone.png")
+                ? "0.57.0"
+                : file.endsWith("network-route-dialog.png")
+                  ? "0.56.0"
+                  : file.endsWith("poe-desktop.png")
+                    ? "0.55.0"
+                    : ["contact-dialog-desktop.png", "network-editor-desktop.png"].some((name) =>
+                          file.endsWith(name),
+                        )
+                      ? "0.53.0"
+                      : file.endsWith("board-equipment-desktop.png")
+                        ? "0.50.0"
+                        : "0.48.0";
       return `<figure><a href="${file}" target="_blank" rel="noopener" aria-label="Bild in Originalgröße öffnen: ${alt}"><img src="${file}" alt="${alt}" width="${width}" height="${height}" loading="lazy" decoding="async"></a><figcaption>Abb. ${pictures} · ${alt} <span>Beispieldaten · Aufnahme ${capturedVersion} · zum Vergrößern öffnen</span></figcaption></figure>`;
     });
     body = body

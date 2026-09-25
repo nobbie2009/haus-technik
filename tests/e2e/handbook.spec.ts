@@ -14,8 +14,8 @@ test("Handbuch aus der App: Kapitel, Bilder, Umlautsuche und sichere Texteingabe
   book.on("pageerror", (e) => errors.push(e.message));
   await book.waitForURL("**/handbuch/index.html");
   await expect(book.getByRole("heading", { level: 1 })).toContainText("Schritt für Schritt");
-  await expect(book.locator("main article")).toHaveCount(31);
-  await expect(book.locator("figure img")).toHaveCount(31);
+  await expect(book.locator("main article")).toHaveCount(32);
+  await expect(book.locator("figure img")).toHaveCount(36);
   const brokenImages = await book.evaluate(async () => {
     return (
       await Promise.all(
@@ -71,7 +71,7 @@ test("Handbuch bleibt ohne JavaScript mit Bildern und Inhaltsverzeichnis lesbar"
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:5173/handbuch/index.html");
-  await expect(page.locator("main article")).toHaveCount(31);
+  await expect(page.locator("main article")).toHaveCount(32);
   await expect(page.getByText(/Ohne JavaScript bleiben/)).toBeVisible();
   await page
     .getByRole("navigation", { name: "Handbuchkapitel" })

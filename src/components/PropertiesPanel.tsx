@@ -7,6 +7,7 @@ import { CableProperties } from "./electrical/CableProperties";
 import { lazy, Suspense, useState } from "react";
 import { searchEntries } from "../housebook/search";
 import { AssetDialog } from "./housebook/AssetDialog";
+import { ReplaceDeviceDialog } from "./housebook/ReplaceDeviceDialog";
 import { ElectricalProperties } from "./electrical/ElectricalProperties";
 import { FurnitureProperties } from "./properties/FurnitureProperties";
 import { MousePointer2, Lock } from "lucide-react";
@@ -49,6 +50,7 @@ const HousebookDialog = lazy(() =>
 export function PropertiesPanel() {
   const [action, setAction] = useState<"connections" | "qr" | null>(null);
   const [assetOpen, setAssetOpen] = useState(false);
+  const [replaceOpen, setReplaceOpen] = useState(false);
   const project = useProjectStore((s) => s.project);
   const selection = useEditorStore((s) => s.selection);
   const floorId = useEditorStore((s) => s.floorId);
@@ -116,11 +118,26 @@ export function PropertiesPanel() {
               />
             </Suspense>
           )}
-          {selected && entity && selected.kind !== "networkNodes" && (
+          {selected && entity && (
             <button onClick={() => setAssetOpen(true)}>Objektakte und Umbauzustand</button>
           )}
           {assetOpen && selected && entity && (
             <AssetDialog key={selected.id} target={selected} onClose={() => setAssetOpen(false)} />
+          )}
+          {selected && (selected.kind === "devices" || selected.kind === "networkNodes") && (
+            <>
+              <button disabled={locked} onClick={() => setReplaceOpen(true)}>
+                Gerät ersetzen
+              </button>
+              {replaceOpen && (
+                <ReplaceDeviceDialog
+                  key={selected.id}
+                  kind={selected.kind}
+                  id={selected.id}
+                  onClose={() => setReplaceOpen(false)}
+                />
+              )}
+            </>
           )}
         </>
       ) : (

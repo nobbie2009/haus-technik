@@ -9,12 +9,14 @@ export function BackgroundImage({
   project,
   floorId,
   viewport,
+  aerial = false,
 }: {
   project: Project;
   floorId: string;
   viewport: Viewport;
+  aerial?: boolean;
 }) {
-  const bg = housebook(project).backgrounds[floorId],
+  const bg = (aerial ? housebook(project).aerials : housebook(project).backgrounds)?.[floorId],
     [image, setImage] = useState<HTMLImageElement | null>(null);
   useEffect(() => {
     setImage(null);
@@ -38,6 +40,7 @@ export function BackgroundImage({
       width={bg.width * viewport.scale}
       height={((bg.width * bg.pixelHeight) / bg.pixelWidth) * viewport.scale}
       opacity={bg.opacity}
+      rotation={bg.rotation ?? 0}
       listening={false}
     />
   );

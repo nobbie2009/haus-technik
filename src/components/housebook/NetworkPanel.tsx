@@ -186,6 +186,7 @@ export function NetworkPanel({
                   position: { ...editor.cursor },
                   sourceId,
                   signalDbm,
+                  measuredAt: new Date().toISOString(),
                   notes: measurementNotes,
                 });
               });

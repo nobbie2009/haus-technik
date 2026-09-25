@@ -1,4 +1,5 @@
 import { elementTables } from "../core/elementTables";
+import { useHomeAssistantStore } from "../stores/homeAssistantStore";
 import { categoryForObject } from "../editor/categories";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
@@ -21,6 +22,10 @@ export function App() {
     () => !window.matchMedia("(max-width: 900px), (pointer: coarse)").matches,
   );
   const project = useProjectStore((s) => s.project);
+  useEffect(() => {
+    useHomeAssistantStore.getState().stop(true);
+    return () => useHomeAssistantStore.getState().stop(true);
+  }, [project.id]);
   const error = useProjectStore((s) => s.error);
   const saveError = useProjectStore((s) => s.saveError);
   const message = useEditorStore((s) => s.message);

@@ -4,19 +4,35 @@ import { useEditorStore } from "../../stores/editorStore";
 import { housebook, type Background } from "../../housebook/model";
 import { readPlanImage } from "../../housebook/images";
 import { Field, updateBook } from "./shared";
-export function BackgroundPanel() {
+import { site } from "../../site/model";
+import { alignAerial } from "../../site/aerial";
+export function BackgroundPanel({ aerial = false }: { aerial?: boolean }) {
   const project = useProjectStore((s) => s.project),
     floorId = useEditorStore((s) => s.floorId);
-  const current = housebook(project).backgrounds[floorId];
+  const current = (aerial ? housebook(project).aerials : housebook(project).backgrounds)?.[floorId];
+  const referencePoints = Object.values(site(project).elements)
+    .filter((e) => e.floorId === floorId)
+    .flatMap((e) =>
+      e.vertices.map((position, i) => ({ id: `${e.id}:${i}`, name: `${e.name} · P${i + 1}`, position })),
+    );
   const [draft, setDraft] = useState<Background | null>(current ? structuredClone(current) : null);
   const [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [page, setPage] = useState(1);
   const [points, setPoints] = useState<{ x: number; y: number }[]>([]),
     [known, setKnown] = useState(1000);
+  const [anchors, setAnchors] = useState(["", ""]);
   return (
     <section>
-      <h3>Grundrissvorlage · {project.floors[floorId]?.name}</h3>
+      <h3>
+        {aerial ? "Luftbild-Unterlage" : "Grundrissvorlage"} · {project.floors[floorId]?.name}
+      </h3>
+      {aerial && (
+        <p>
+          Ein eigenes Luftbild oder ein zur Nutzung freigegebenes Orthofoto importieren. Es bleibt getrennt
+          von der Grundrissvorlage im Projekt gespeichert. Bildquelle und Aufnahmezeit unten notieren.
+        </p>
+      )}
       <p>
         Eine Bilddatei oder PDF-Seite hinterlegen. Zwei Punkte auf der Vorschau markieren und die tatsächliche
         Strecke in Millimetern eingeben. Alternativ die Gesamtbreite direkt setzen.
@@ -94,11 +110,82 @@ export function BackgroundPanel() {
             ))}
           </button>
           <div className="book-grid">
+            {aerial && (
+              <>
+                {[0, 1].map((i) => (
+                  <Field key={i} label={`Planpunkt für Bildpunkt ${i + 1}`}>
+                    <select
+                      value={anchors[i]}
+                      onChange={(e) => setAnchors(anchors.map((v, j) => (j === i ? e.target.value : v)))}
+                    >
+                      <option value="">Referenzpunkt wählen</option>
+                      {referencePoints.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                ))}
+                <button
+                  disabled={points.length !== 2 || anchors.some((a) => !a)}
+                  onClick={() => {
+                    try {
+                      setDraft(
+                        alignAerial(
+                          draft,
+                          points,
+                          anchors.flatMap((id) =>
+                            referencePoints.filter((p) => p.id === id).map((p) => p.position),
+                          ),
+                        ),
+                      );
+                      setError("");
+                    } catch (e) {
+                      setError(e instanceof Error ? e.message : "Ausrichten fehlgeschlagen.");
+                    }
+                  }}
+                >
+                  An zwei Planpunkten ausrichten
+                </button>
+                <Field label="Bildquelle / Aufnahmezeit">
+                  <input
+                    value={draft.source ?? ""}
+                    onChange={(e) => setDraft({ ...draft, source: e.target.value })}
+                  />
+                </Field>
+                <Field label="Drehung im Uhrzeigersinn (°)">
+                  <input
+                    type="number"
+                    min="-360"
+                    max="360"
+                    value={draft.rotation ?? 0}
+                    onChange={(e) => setDraft({ ...draft, rotation: Number(e.target.value) })}
+                  />
+                </Field>
+                <Field label="Bildecke auf Referenzpunkt setzen">
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const point = referencePoints.find((p) => p.id === e.target.value);
+                      if (point) setDraft({ ...draft, position: { ...point.position } });
+                    }}
+                  >
+                    <option value="">Referenzpunkt wählen</option>
+                    {referencePoints.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </>
+            )}
             <Field label="Bekannte Strecke (mm)">
               <input type="number" min="1" value={known} onChange={(e) => setKnown(Number(e.target.value))} />
             </Field>
             <button
-              disabled={points.length !== 2 || known <= 0}
+              disabled={points.length !== 2 || known <= 0 || !Number.isFinite(known)}
               onClick={() => {
                 const distance = Math.hypot(points[1]!.x - points[0]!.x, points[1]!.y - points[0]!.y);
                 if (distance < 2) {
@@ -160,7 +247,10 @@ export function BackgroundPanel() {
               onClick={() => {
                 if (
                   updateBook("Grundrissvorlage speichern", (b) => {
-                    b.backgrounds[floorId] = draft;
+                    if (aerial) {
+                      b.aerials ??= {};
+                      b.aerials[floorId] = draft;
+                    } else b.backgrounds[floorId] = draft;
                   })
                 )
                   setError("Vorlage gespeichert.");
@@ -172,7 +262,8 @@ export function BackgroundPanel() {
               onClick={() => {
                 if (
                   updateBook("Grundrissvorlage entfernen", (b) => {
-                    delete b.backgrounds[floorId];
+                    if (aerial) delete b.aerials?.[floorId];
+                    else delete b.backgrounds[floorId];
                   })
                 )
                   setDraft(null);

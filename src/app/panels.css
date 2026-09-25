@@ -1041,3 +1041,19 @@
   overflow-wrap: anywhere;
   line-height: 1.6;
 }
+.house-3d-dialog {
+  width: min(1100px, 96vw);
+}
+.house-3d-host {
+  width: 100%;
+  height: min(40vh, 400px);
+  min-height: 240px;
+  touch-action: none;
+}
+.aerial-dialog {
+  width: min(900px, 96vw);
+}
+.aerial-dialog .calibration-image {
+  max-width: 320px;
+  margin-inline: auto;
+}

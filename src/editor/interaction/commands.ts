@@ -1,4 +1,5 @@
 import { site } from "../../site/model";
+import { aerialCorners } from "../../site/aerial";
 import { utilities, pipeFloorPath } from "../../utilities/model";
 import { cableFloorPath } from "../../electrical/cables";
 import { housebook } from "../../housebook/model";
@@ -67,6 +68,8 @@ export function fitView(): void {
   );
   const book = housebook(project),
     background = book.backgrounds[editor.floorId];
+  const aerial = book.aerials?.[editor.floorId];
+  if (aerial?.visible) positions.push(...aerialCorners(aerial));
   if (background?.visible)
     positions.push(background.position, {
       x: background.position.x + background.width,

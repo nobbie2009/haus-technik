@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { elementTables } from "../../core/elementTables";
 import { asset } from "../../housebook/model";
@@ -7,12 +7,8 @@ import {
   loadHomeAssistantConnection,
   saveHomeAssistantConnection,
 } from "../../persistence/homeAssistantConnection";
-interface State {
-  entity_id: string;
-  state: string;
-  last_updated?: string;
-  attributes?: { unit_of_measurement?: string; friendly_name?: string };
-}
+import { useHomeAssistantStore } from "../../stores/homeAssistantStore";
+import { HaLiveControls } from "./HaLiveControls";
 export function HomeAssistantPanel() {
   const project = useProjectStore((s) => s.project);
   const [initial] = useState(() => {
@@ -29,13 +25,10 @@ export function HomeAssistantPanel() {
   });
   const [storageError, setStorageError] = useState(initial.error);
   const [url, setUrl] = useState(initial.url),
-    [token, setToken] = useState(initial.token),
-    [states, setStates] = useState<State[]>([]),
-    [error, setError] = useState(""),
-    [busy, setBusy] = useState(false),
-    [readAt, setReadAt] = useState("");
-  const controller = useRef<AbortController | null>(null);
-  useEffect(() => () => controller.current?.abort(), []);
+    [token, setToken] = useState(initial.token);
+  const live = useHomeAssistantStore();
+  const { states, busy } = live;
+  const readAt = live.readAt ? new Date(live.readAt).toLocaleTimeString("de-DE") : "";
   const remember = (url: string, token: string) => {
     try {
       saveHomeAssistantConnection({ url, token });
@@ -57,78 +50,12 @@ export function HomeAssistantPanel() {
         Zustände und Messwerte auf ausdrücklichen Abruf vergleichen. Die Verbindung sendet keine
         Steuerbefehle.
       </p>
+      <HaLiveControls />
       <form
-        onSubmit={async (e) => {
+        onSubmit={(e) => {
           e.preventDefault();
-          setBusy(true);
-          setError("");
-          controller.current?.abort();
-          const request = new AbortController();
-          controller.current = request;
-          const timeout = setTimeout(() => request.abort(), 15000);
-          try {
-            const base = new URL(url);
-            if (
-              !["http:", "https:"].includes(base.protocol) ||
-              base.username ||
-              base.password ||
-              base.search ||
-              base.hash
-            )
-              throw new Error(
-                "Eine HTTP-/HTTPS-Basisadresse ohne Zugangsdaten, Query oder Fragment eingeben.",
-              );
-            if (!token.trim()) throw new Error("Zugriffstoken fehlt.");
-            const response = await fetch(`${base.href.replace(/\/$/, "")}/api/states`, {
-              method: "GET",
-              headers: { Authorization: `Bearer ${token.trim()}`, Accept: "application/json" },
-              signal: request.signal,
-              credentials: "omit",
-              redirect: "error",
-              cache: "no-store",
-            });
-            if (!response.ok)
-              throw new Error(
-                `Home Assistant antwortet mit HTTP ${response.status}. Adresse und Leseberechtigung prüfen.`,
-              );
-            const data: unknown = await response.json();
-            if (
-              !Array.isArray(data) ||
-              !data.every(
-                (s) =>
-                  typeof s === "object" &&
-                  s !== null &&
-                  typeof s.entity_id === "string" &&
-                  typeof s.state === "string",
-              )
-            )
-              throw new Error("Die Antwort enthält keine gültige Entitätenliste.");
-            setStates(
-              data.map((s) => ({
-                entity_id: s.entity_id,
-                state: s.state,
-                last_updated: typeof s.last_updated === "string" ? s.last_updated : undefined,
-                attributes: {
-                  unit_of_measurement:
-                    typeof s.attributes?.unit_of_measurement === "string"
-                      ? s.attributes.unit_of_measurement
-                      : undefined,
-                },
-              })),
-            );
-            setReadAt(new Date().toLocaleTimeString("de-DE"));
-          } catch (error) {
-            setError(
-              error instanceof Error && error.name === "AbortError"
-                ? "Abruf abgebrochen oder Zeitlimit erreicht."
-                : error instanceof Error
-                  ? error.message
-                  : "Verbindung fehlgeschlagen.",
-            );
-          } finally {
-            clearTimeout(timeout);
-            setBusy(false);
-          }
+          remember(url, token);
+          live.start(live.seconds, true);
         }}
       >
         <div className="book-grid">
@@ -142,8 +69,7 @@ export function HomeAssistantPanel() {
               onChange={(e) => {
                 setUrl(e.target.value);
                 remember(e.target.value, token);
-                setStates([]);
-                setReadAt("");
+                live.stop(true);
               }}
             />
           </Field>
@@ -157,8 +83,7 @@ export function HomeAssistantPanel() {
               onChange={(e) => {
                 setToken(e.target.value);
                 remember(url, e.target.value);
-                setStates([]);
-                setReadAt("");
+                live.stop(true);
               }}
             />
           </Field>
@@ -168,12 +93,10 @@ export function HomeAssistantPanel() {
           <button
             type="button"
             onClick={() => {
-              controller.current?.abort();
+              live.stop(true);
               remember("", "");
               setUrl("");
               setToken("");
-              setStates([]);
-              setReadAt("");
             }}
           >
             Verbindung verwerfen
@@ -188,9 +111,11 @@ export function HomeAssistantPanel() {
         abfragen.
       </p>
       {storageError && <p role="alert">{storageError}</p>}
-      {error && <p role="alert">{error}</p>}
       {readAt && (
-        <p role="status">Zuletzt gelesen: {readAt}. Momentaufnahme, keine automatische Aktualisierung.</p>
+        <p role="status">
+          Zuletzt gelesen: {readAt}.{" "}
+          {live.running ? "Live-Aktualisierung aktiv." : "Momentaufnahme; Empfang gestoppt."}
+        </p>
       )}
       {!mapped.length && (
         <p>Noch keine Entitäten zugeordnet. Öffne eine Objektakte und trage die Entitäts-ID ein.</p>

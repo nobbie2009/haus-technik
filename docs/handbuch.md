@@ -140,6 +140,16 @@ Der eigene Katalog gilt **projektübergreifend in diesem Browser**. Mit **Möbel
 
 # Elektrik, Sicherungskasten und Klingeltrafo {#elektrik}
 
+## Ein Gerät austauschen
+
+Einen Verbraucher oder ein Netzwerkgerät im Plan auswählen und rechts **Gerät ersetzen** öffnen. Name, Hersteller, Modell und Seriennummer des Ersatzgeräts erfassen. Eine neue HA-Entität ausdrücklich eintragen; eine leere Eingabe entfernt die alte Zuordnung. Bei Zigbee das zuvor eingelesene Ersatzgerät aus der Liste wählen. Ein bereits anderweitig platziertes Zigbee-Gerät ist nicht auswählbar.
+
+Position, Geschoss, Raum, Objekt-ID, Gerätetyp und bestehende Leitungen bleiben erhalten. Der Ersatz muss denselben Anschlussstandard verwenden; ein Wechsel von Netzspannung zu PoE oder zu einer anderen Phasenzahl erfolgt nicht durch diesen Dialog. Bei einem Switch müssen alle belegten Portnummern weiterhin vorhanden sein. Die Vorschau nennt die Anzahl der erhaltenen Leitungen. PoE-Einstellungen bleiben erhalten und können danach in den Eigenschaften angepasst werden. Bei Verbrauchern die neue Leistung eintragen.
+
+**Gerät mit diesen Angaben ersetzen** übernimmt die Änderungen gemeinsam. Foto, Unterlagenlink und Wartungsdatum des alten Geräts werden geleert. Der letzte Austausch wird mit den bisherigen Modellangaben im Projekt dokumentiert. **Rückgängig** stellt den vorherigen Stand wieder her. Ein Zigbee-Tausch betrifft die Planzuordnung; das Anlernen oder Entfernen in Zigbee2MQTT erfolgt dort separat.
+
+![Gerätetausch mit neuen Stammdaten und Prüfung der belegten Ports.](bilder/spatial-replace.png)
+
 Dieses Kapitel beschreibt die Eingabe in die Software. Die eingezeichneten Zuordnungen sind deine Dokumentation und schalten keine reale Anlage.
 
 ## Versorgung in einer nachvollziehbaren Reihenfolge erfassen
@@ -338,9 +348,25 @@ Ein bestehender Steckdosenanschluss wird zur Bearbeitung wieder geöffnet. Der S
 
 ![Ein Netzwerkgerät mit konfiguriertem PE-Anschluss wird an die Steckdose angeschlossen. L, N und PE werden automatisch vorgeschlagen.](bilder/network-editor-desktop.png)
 
-Die Verbindung beschreibt die dokumentierte Verkabelung. Die App sucht keine Geräte im Heimnetz, prüft keine tatsächliche Erreichbarkeit und berechnet keine WLAN-Abdeckung oder PoE-Versorgung. Ein per WLAN angebundener Client muss nicht zusätzlich eine erfundene Kabelverbindung erhalten. Entsprechende Prüfhinweise anhand deiner realen Dokumentation bewerten.
+Die Verbindung beschreibt die dokumentierte Verkabelung. Die App sucht keine beliebigen Geräte im Heimnetz und berechnet keine WLAN-Abdeckung. Zigbee-Verfügbarkeit wird aus Z2M-Meldungen übernommen; die PoE-Prüfung bewertet die dokumentierte Planung. Ein per WLAN angebundener Client muss nicht zusätzlich eine erfundene Kabelverbindung erhalten. Entsprechende Prüfhinweise anhand deiner realen Dokumentation bewerten.
 
 **Gartenbeispiel:** Hausrouter, Netzwerkdose am Ausgang und Access Point im Gartenhaus erfassen. Den unterirdischen Verlauf zusätzlich mit Bezugspunkten, Abständen und Fotos dokumentieren. Eine Funknotiz kann festhalten, wo du Empfang gemessen hast; sie ist keine automatische Funkkarte.
+
+## WLAN-Messkarte
+
+Unter **Netzwerk → WLAN-Messkarte** das Messgeschoss und den sendenden Router, Access Point oder Repeater auswählen. Die Karte zeigt die Wände und die gespeicherten Messstellen. **Alle Sender anzeigen** dient dem Vergleich; zum Speichern einen konkreten Sender wählen.
+
+1. Die Messposition in der Karte antippen oder X/Y in Millimetern eingeben.
+2. Einen Namen und den tatsächlich gemessenen Empfangswert in dBm eintragen.
+3. Optional Download und Upload in Mbit/s sowie Messbedingungen ergänzen.
+4. **Neue Messung speichern** wählen. Die App speichert die Erfassungszeit mit dem Projekt.
+5. Eine gespeicherte Messung über **Bearbeiten** korrigieren und **Messung aktualisieren** wählen. Dabei wird auch die Erfassungszeit erneuert. Über **Löschen** entfernen; Änderungen sind rückgängig machbar.
+
+Grün kennzeichnet Werte ab −60 dBm, Gelb Werte ab −75 bis unter −60 dBm und Rot schwächere Werte. Dies sind Orientierungsklassen für dokumentierte Messpunkte, keine Garantie für eine bestimmte Übertragungsrate. Die farbigen Kreise stellen keine Reichweitenradien und keine interpolierte Funkabdeckung dar. Alte Messungen ohne Zeitstempel werden als **Messzeit unbekannt** angezeigt.
+
+Der Browser liest die WLAN-Signalstärke nicht automatisch aus. Werte aus einem WLAN-Messwerkzeug übernehmen und für Vergleiche dasselbe Endgerät sowie ähnliche Messbedingungen nutzen. Die Karte startet keinen Geschwindigkeitstest und sendet keine Testdaten ins Internet.
+
+![WLAN-Messkarte mit Senderauswahl, Empfangswerten und Übertragungsraten.](bilder/spatial-wifi.png)
 
 # Fernsehen, SAT und Koax {#tv}
 
@@ -349,6 +375,21 @@ Die Verbindung beschreibt die dokumentierte Verkabelung. Die App sucht keine Ger
 {{include:docs/tv-sat.md}}
 
 # Grundstück, Garten und unterirdische Leitungen {#grundstueck}
+
+## Luftbild als Unterlage
+
+**Grundstück → Luftbild-Unterlage** öffnen. PNG, JPEG, WebP oder eine PDF-Seite importieren. Ein selbst erstelltes Bild oder ein zur Nutzung freigegebenes Luftbild verwenden; Bildquelle und Aufnahmezeit notieren. Die App lädt keine Karten von Drittanbietern nach. Die Bilddatei wird im Projekt gespeichert und mit exportiert. Ein Luftbild ersetzt keine vermessene Grundstücksgrenze.
+
+Die Luftbild-Unterlage ist je Geschoss getrennt von der vorhandenen Grundrissvorlage gespeichert. Das Bild wird beim Import bei Bedarf auf maximal 2400 Pixel Kantenlänge verkleinert.
+
+- **Maßstab:** Zwei Punkte auf der Bildvorschau markieren, die bekannte Strecke in Millimetern eingeben und **Maßstab aus zwei Punkten setzen** drücken. Alternativ die Gesamtbreite eingeben.
+- **Vollständig ausrichten:** Zuerst Referenzpunkte oder Grundstücksecken im Plan anlegen. Zwei erkennbare Stellen in der Bildvorschau markieren und jeweils den passenden **Planpunkt für Bildpunkt 1/2** auswählen. **An zwei Planpunkten ausrichten** berechnet Position, Drehung und Maßstab zusammen. Die Punkte müssen verschieden sein und möglichst weit auseinanderliegen.
+- **Manuell korrigieren:** Drehung im Uhrzeigersinn, X/Y der linken oberen Bildecke und Deckkraft anpassen. Über die Referenzpunktauswahl lässt sich auch die Bildecke direkt auf einen vorhandenen Planpunkt setzen.
+- **Vorlage speichern** übernimmt die Einstellungen. Erst danach den Dialog schließen. Mit **Vorlage im Plan anzeigen** und erneutem Speichern ausblenden; **Vorlage entfernen** entfernt nur diese Unterlage. Rückgängig ist möglich.
+
+Die Unterlage dient derzeit der 2D-Bearbeitung. Plan-PDF und SVG sowie die 3D-Ansicht übernehmen das Luftbild noch nicht. Für ein großes Grundstück bei Bedarf **Ansicht einpassen** verwenden.
+
+![Separate Luftbild-Unterlage mit Quelle, Maßstab, Drehung und Referenzpunkten. Die Abbildung verwendet eine schematische Testgrafik.](bilder/spatial-aerial.png)
 
 ## Grenzen, Wege und Flächen zeichnen
 
@@ -638,7 +679,13 @@ Vor der Ausgabe Geschoss, Ebenen und gewünschten Planumfang kontrollieren. Fehl
 
 Unter **Hausakte → Home Assistant** Basisadresse und Zugriffstoken eintragen. Beide werden lokal in diesem Browser gespeichert und beim nächsten Öffnen wieder angeboten. Über **Verbindung verwerfen** beide Angaben entfernen.
 
-Objektakten können Entitäts-IDs enthalten. Der Abruf liest Zustände ausdrücklich auf Anforderung. Die Anwendung sendet darüber keine Steuerbefehle und aktualisiert die Daten nicht fortlaufend automatisch.
+Unter **Objektakte und Umbauzustand** eine Entitäts-ID wie `sensor.wohnzimmer_temperatur` zuordnen. Das ist auch bei Räumen und Netzwerkgeräten möglich. **Zustände jetzt abrufen** liest einmalig. Für wiederholte Abrufe **Livewerte-Intervall** auf 5 oder 10 Sekunden stellen und **Livewerte starten** drücken. Zwischen abgeschlossenen Abrufen liegt das gewählte Intervall; langsame Anfragen werden nicht überlappt.
+
+Der Empfang läuft bei geschlossenem Dialog weiter. Unter **Netzwerk → Home-Assistant-Livewerte** oder in der Hausakte **Livewerte stoppen** drücken. Bei Projektwechsel, Neuladen der App oder Änderung der Verbindung endet der Empfang; es gibt keinen automatischen Neustart. Die Funktion nutzt ausschließlich den lesenden Zustandsabruf und sendet keine Steuerbefehle.
+
+**Werte im Plan anzeigen** blendet Zustand beziehungsweise Zahlenwert mit Einheit und Empfangszeit neben zugeordneten Objekten ein. Die Objekt-Ebene muss sichtbar sein. Nach Stopp, einem Abruffehler oder mehr als 30 Sekunden ohne erfolgreichen Abruf zeigt die Beschriftung **Stand** statt **HA**. Fehlende Entitäten sowie `unknown` und `unavailable` erscheinen als **Nicht verfügbar**. Die Uhrzeit ist die Abrufzeit, nicht zwingend der Messzeitpunkt des Sensors. Livewerte werden nicht in die Projektdatei geschrieben.
+
+![Home-Assistant-Livewerte mit Start, Stopp, Intervall und zugeordnetem Raum.](bilder/spatial-live.png)
 
 1. Prüfen, ob der Browser die Home-Assistant-Adresse grundsätzlich erreichen kann.
 2. Basisadresse und gültigen Token in der App eintragen.
@@ -646,6 +693,22 @@ Objektakten können Entitäts-IDs enthalten. Der Abruf liest Zustände ausdrück
 4. Bei Verbindungsfehlern die passende CORS-Freigabe für die App-Adresse und einen möglichen HTTPS-/HTTP-Mischbetrieb prüfen.
 
 Adresse und Token sind Verbindungseinstellungen des Geräts, keine Projektinhalte. Sie werden weder über Projekt-JSON noch als Teil eines gemeinsamen Projekts auf andere Geräte übertragen. Auf einem neuen Gerät erneut eintragen. Einen Token nicht in Notizen oder exportierte Beispielprojekte kopieren.
+
+# 3D-Hausansicht {#haus-3d}
+
+In der oberen Leiste **3D-Hausansicht** öffnen. Das Modell entsteht aus denselben gespeicherten Punkten, Wänden, Öffnungen, Möbeln und Geräten wie der Grundriss. Änderungen werden weiter im Grundriss vorgenommen; es gibt keinen zweiten, getrennten 3D-Projektstand.
+
+1. Mit den Geschoss-Häkchen die gewünschten Etagen einblenden. Geschosshöhen und Geschossversätze kommen aus der bestehenden Planung.
+2. **Geschosse auseinanderziehen** erhöht nur den visuellen Abstand. Die gespeicherten Höhen bleiben unverändert.
+3. **Wanddeckkraft** reduzieren, um in Räume hineinzusehen.
+4. Ziehen dreht das Haus, Mausrad oder zwei Finger zoomen. Rechts ziehen beziehungsweise mit zwei Fingern verschieben ändert den Ausschnitt. Alternativ die Schaltflächen **Um 22,5° drehen**, **Näher**, **Weiter** und **Ansicht zurücksetzen** verwenden.
+5. Ein Objekt anklicken oder über **Objekt direkt auswählen** wählen. **Im Grundriss bearbeiten** schließt 3D, wechselt zum Geschoss und markiert das Objekt zur Bearbeitung.
+
+Wände berücksichtigen Tür- und Fensteröffnungen. Möbel und Geräte werden als vereinfachte Körper dargestellt; Treppen als vereinfachte Stufen. Geräte mit hinterlegter Montagehöhe übernehmen diese, andere stehen auf Bodenhöhe. Eine Höhe wird nicht aus einem Gerätefoto geschätzt. Dachformen, Leitungsverläufe, Luftbild-Unterlage und realistische Hersteller-3D-Modelle sind in dieser ersten Ansicht nicht enthalten.
+
+Die Darstellung benötigt WebGL und einen geeigneten Browser/Grafiktreiber. Falls WebGL nicht verfügbar ist, meldet die App dies im Dialog; der 2D-Grundriss bleibt nutzbar. Das Modell wird lokal erzeugt und nicht an einen 3D-Dienst hochgeladen.
+
+![3D-Hausansicht aus dem vorhandenen Grundriss mit transparenten Wänden und Objektauswahl.](bilder/spatial-3d.png)
 
 # Updates und Versionsanzeige {#updates}
 
@@ -710,6 +773,22 @@ Ja, als maßstäbliche 2D-Vorlage: Produktmaße kopieren, im globalen Möbelkata
 ## Warum fehlt der Batteriestand oder ändert er sich nicht?
 
 Die App zeigt die von Z2M veröffentlichten Werte. Manche Geräte melden nur eine Batteriewarnung, andere senden Prozentwerte selten oder erst nach dem Aufwachen. „Unbekannt“ ist kein leerer Akku. Nach einem Neuladen muss erst wieder eine Nachricht eintreffen. Siehe [Batterien und Zigbee](#netzwerk).
+
+## Kann ich Luftbilder hinterlegen und mein Haus in 3D ansehen?
+
+Ja. Unter **Grundstück → Luftbild-Unterlage** ein eigenes Bild importieren und über zwei Referenzpunkte ausrichten. Die **3D-Hausansicht** in der oberen Leiste verwendet die gespeicherte Hausgeometrie; sie zeigt das Luftbild noch nicht. Siehe [Luftbild-Unterlage](#grundstueck) und [3D-Hausansicht](#haus-3d).
+
+## Misst die WLAN-Karte den Empfang automatisch?
+
+Nein. Messwerte aus einem WLAN-Messwerkzeug eintragen. Die Farben kennzeichnen einzelne Messstellen, keine geschätzte Abdeckung. Siehe [WLAN-Messkarte](#netzwerk).
+
+## Muss ich nach einem Gerätetausch alle Kabel neu zeichnen?
+
+Nein. **Gerät ersetzen** erhält die Verbindungen und prüft bei Netzwerkgeräten die belegten Ports. Das Ersatzgerät muss denselben Anschlussstandard verwenden. Siehe [Gerätetausch](#elektrik).
+
+## Warum steht bei Home-Assistant-Werten „Stand“?
+
+Der Empfang wurde gestoppt, ein Abruf schlug fehl oder der letzte erfolgreiche Abruf liegt über 30 Sekunden zurück. Die letzte Momentaufnahme bleibt mit Zeitangabe sichtbar. Siehe [Home-Assistant-Livewerte](#home-assistant).
 
 ## Kann ich Räume aus dem Plan nach Home Assistant übertragen?
 
@@ -937,6 +1016,10 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | GPS                                        | Punktweise [Standortaufnahme](#gps)                                                                     |
 | Grundstücksgrenze                          | Gezeichneter Umriss im [Grundstücksplan](#grundstueck)                                                  |
 | Hauschronik                                | Reparaturen und Ereignisse im [Hausalltag](#hausalltag)                                                 |
+| Luftbild / Orthofoto                       | [Unterlage ausrichten](#grundstueck)                                                                    |
+| 3D / Hausmodell                            | [3D-Hausansicht](#haus-3d)                                                                              |
+| WLAN-Messkarte                             | [Messstellen und Signalstärke](#netzwerk)                                                               |
+| Gerät ersetzen                             | [Gerätetausch](#elektrik)                                                                               |
 | Home Assistant / HA                        | Lesender [Zustandsabruf](#home-assistant)                                                               |
 | Hutschiene                                 | Reale Montageposition; Kennzeichnungen im [Kasten](#elektrik) ausdrücklich dokumentieren                |
 | ICS                                        | Datei für [Wartungstermine](#planung)                                                                   |

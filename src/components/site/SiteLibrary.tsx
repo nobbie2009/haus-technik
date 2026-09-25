@@ -1,4 +1,5 @@
 import { Modal } from "../dialogs/Modal";
+import { BackgroundPanel } from "../housebook/BackgroundPanel";
 import { GpsSurveyDialog } from "./GpsSurveyDialog";
 import { useState } from "react";
 import { useEditorStore } from "../../stores/editorStore";
@@ -12,6 +13,7 @@ export function SiteLibrary() {
     project = useProjectStore((s) => s.project);
   const [offsetOpen, setOffsetOpen] = useState(false);
   const [gpsOpen, setGpsOpen] = useState(false);
+  const [aerialOpen, setAerialOpen] = useState(false);
   const [reference, setReference] = useState(""),
     [dx, setDx] = useState(0),
     [dy, setDy] = useState(0);
@@ -21,6 +23,12 @@ export function SiteLibrary() {
   const minimum = siteClosed(editor.siteKind) ? 3 : 2;
   return (
     <section className="site-library" aria-label="Grundstück planen">
+      <button onClick={() => setAerialOpen(true)}>Luftbild-Unterlage</button>
+      {aerialOpen && (
+        <Modal title="Luftbild-Unterlage" className="aerial-dialog" onClose={() => setAerialOpen(false)}>
+          <BackgroundPanel key={`${project.id}:${editor.floorId}`} aerial />
+        </Modal>
+      )}
       <button className="full-width" onClick={() => setGpsOpen(true)}>
         Per GPS erfassen
       </button>

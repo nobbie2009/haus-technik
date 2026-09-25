@@ -1,5 +1,14 @@
 # Änderungen
 
+## 0.62.0 · 25.09.2026
+
+- Separate Luftbild-Unterlage je Geschoss mit lokalem Bild-/PDF-Import, Quellenangabe, Deckkraft, Drehung sowie Ausrichtung an zwei Planpunkten ergänzen; bestehende Grundrissvorlagen erhalten.
+- Home-Assistant-Zustände nach ausdrücklichem Start im Abstand von 5 oder 10 Sekunden lesen und mit Empfangszeit im Plan anzeigen. Empfang stoppen, bei Projektwechsel beenden und ältere Momentaufnahmen kennzeichnen; keine Zugangsdaten oder Livewerte in Projektexporte aufnehmen. Objektakten auch für Netzwerkgeräte speichern.
+- WLAN-Messkarte mit Sender- und Geschossauswahl, farbigen Messstellen, bearbeitbaren Empfangs- und Geschwindigkeitswerten sowie Erfassungszeit ergänzen. Ausschließlich dokumentierte Messungen anzeigen, keine automatische WLAN-Messung oder geschätzte Funkabdeckung.
+- Verbraucher und Netzwerkgeräte einschließlich Zigbee an ihrer bestehenden Position ersetzen. Verbindungen erhalten, belegte Ports prüfen und Stammdaten gezielt erneuern; Austausch rückgängig machen können.
+- Lokal erzeugte 3D-Hausansicht mit Wänden, Öffnungen, vereinfachten Möbeln, Treppen und Geräten ergänzen. Geschosse ausblenden oder auseinanderziehen, Wände transparent schalten und ausgewählte Objekte im Grundriss bearbeiten.
+- Anleitung, FAQ und Stichwortverzeichnis um die fünf Funktionen sowie fünf Beispielabbildungen erweitern. Speicherung, Referenzpunkt-Ausrichtung, Gerätetausch, Livewert-Abbruch und Desktop-/Touch-Bedienung prüfen.
+
 ## 0.61.2 · 25.09.2026
 
 - iPad-Prüfung für das Zeichnen und Anschließen einer Leitung an die bewusste Werkzeugwahl nach Tabwechsel anpassen. Der Test wählt jetzt zuerst Steckdosen aus; damit blockiert die veraltete Platzierungsannahme die Veröffentlichung nicht mehr.

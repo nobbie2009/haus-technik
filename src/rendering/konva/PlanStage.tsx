@@ -1,4 +1,5 @@
 import { SiteRenderer } from "./SiteRenderer";
+import { HaLiveOverlay } from "./HaLiveOverlay";
 import { WallDimensionEditor } from "../../components/WallDimensionEditor";
 import { NetworkRenderer } from "./NetworkRenderer";
 import { UtilityRenderer } from "./UtilityRenderer";
@@ -80,6 +81,7 @@ export function PlanStage() {
         </Layer>
         <Layer listening={false}>
           <BackgroundImage project={preview} floorId={editor.floorId} viewport={editor.viewport} />
+          <BackgroundImage project={preview} floorId={editor.floorId} viewport={editor.viewport} aerial />
           <SiteRenderer project={preview} />
           <FloorRenderer
             project={preview}
@@ -140,6 +142,7 @@ export function PlanStage() {
           <InteractionOverlay />
           <NetworkRenderer project={preview} />
           <HousebookOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
+          <HaLiveOverlay project={preview} floorId={editor.floorId} viewport={editor.viewport} />
           <ConnectionOverlay project={preview} />
         </Layer>
       </Stage>

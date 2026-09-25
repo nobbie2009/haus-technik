@@ -96,7 +96,8 @@ export function housebookIssues(project: Project): { path: string; message: stri
               (n) => n.id === m.sourceId && ["router", "accessPoint", "repeater"].includes(n.kind),
             ),
         ) ||
-        Object.keys(result.data.backgrounds).some((id) => !project.floors[id])
+        Object.keys(result.data.backgrounds).some((id) => !project.floors[id]) ||
+        Object.keys(result.data.aerials ?? {}).some((id) => !project.floors[id])
       )
         issues.push({
           path: "metadata.housebook",

@@ -40,6 +40,8 @@ export const backgroundSchema = z.strictObject({
   position: point,
   opacity: n.min(0).max(1),
   visible: z.boolean(),
+  rotation: n.min(-360).max(360).optional(),
+  source: z.string().max(2000).optional(),
 });
 export const assetSchema = z.strictObject({
   status: z.enum(["existing", "planned", "remove", "completed"]).default("existing"),
@@ -66,11 +68,13 @@ export const bookSchema = z.strictObject({
   zigbee: zigbeeSchema.optional(),
   version: z.literal(1),
   backgrounds: z.record(id, backgroundSchema),
+  aerials: z.record(id, backgroundSchema).optional(),
   scenarios: z.array(z.strictObject({ id, name, scenario: scenarioSchema })).max(50),
   networkNodes: z
     .array(
       z.strictObject({
         id,
+        metadata: z.record(z.string(), z.json()).optional(),
         name,
         floorId: id,
         position: point,
@@ -158,6 +162,9 @@ export const bookSchema = z.strictObject({
         position: point,
         sourceId: id,
         signalDbm: z.number().finite().min(-120).max(0),
+        measuredAt: z.iso.datetime().optional(),
+        downloadMbps: n.nonnegative().max(100000).optional(),
+        uploadMbps: n.nonnegative().max(100000).optional(),
         notes: text,
       }),
     )
