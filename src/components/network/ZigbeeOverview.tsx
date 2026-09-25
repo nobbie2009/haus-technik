@@ -170,8 +170,42 @@ function OverviewWindow() {
                   const value = live[d.address];
                   const node = book.networkNodes.find((n) => n.zigbeeAddress === d.address);
                   const room = node?.roomId ? project.rooms[node.roomId] : undefined;
+                  const showInPlan = () => {
+                    if (!node) return;
+                    useProjectStore.getState().commit("Netzwerkebene einblenden", (p) => {
+                      const layer = Object.values(p.layers).find((l) => l.kind === "network");
+                      if (layer) layer.visible = true;
+                    });
+                    const editor = useEditorStore.getState();
+                    editor.setCategory("network");
+                    editor.setFloor(node.floorId);
+                    useEditorStore.setState({
+                      selection: [{ kind: "networkNodes", id: node.id }],
+                      viewport: {
+                        ...editor.viewport,
+                        originPx: {
+                          x: editor.size.width / 2 - node.position.x * editor.viewport.scale,
+                          y: editor.size.height / 2 + node.position.y * editor.viewport.scale,
+                        },
+                      },
+                    });
+                  };
                   return (
-                    <article key={d.address} className="zigbee-health-device">
+                    <article
+                      key={d.address}
+                      className={`zigbee-health-device${node ? " zigbee-health-selectable" : ""}`}
+                      role={node ? "button" : undefined}
+                      tabIndex={node ? 0 : undefined}
+                      aria-label={node ? `Im Plan zeigen: ${node.name}` : undefined}
+                      onClick={node ? showInPlan : undefined}
+                      onKeyDown={(e) => {
+                        if (node && (e.key === "Enter" || e.key === " ")) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          showInPlan();
+                        }
+                      }}
+                    >
                       <strong>{node?.name ?? d.name}</strong>
                       {node?.name && node.name !== d.name && <small>Z2M: {d.name}</small>}
                       <small>
@@ -206,25 +240,7 @@ function OverviewWindow() {
                         </small>
                       )}
                       {node && (
-                        <button
-                          onClick={() => {
-                            const editor = useEditorStore.getState();
-                            editor.setCategory("network");
-                            editor.setFloor(node.floorId);
-                            useEditorStore.setState({
-                              selection: [{ kind: "networkNodes", id: node.id }],
-                              viewport: {
-                                ...editor.viewport,
-                                originPx: {
-                                  x: editor.size.width / 2 - node.position.x * editor.viewport.scale,
-                                  y: editor.size.height / 2 + node.position.y * editor.viewport.scale,
-                                },
-                              },
-                            });
-                          }}
-                        >
-                          Im Plan zeigen: {node.name}
-                        </button>
+                        <small className="zigbee-health-action">Gerät anklicken → im Plan markieren</small>
                       )}
                     </article>
                   );

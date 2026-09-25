@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.61.1 · 25.09.2026
+
+- In allen Gruppen der schwebenden Zigbee-Übersicht den gesamten Eintrag eines platzierten Geräts anklickbar machen. Klick, Enter oder Leertaste wechseln zum Geschoss, blenden die Netzwerkebene ein, zentrieren und markieren das Gerät.
+- Anleitung und Abbildung aktualisieren; Geschosswechsel und Auswahl auch bei zuvor ausgeblendeter Netzwerkebene prüfen.
+
 ## 0.61.0 · 25.09.2026
 
 - Schwebende, verschiebbare und einklappbare Zigbee-Übersicht ergänzen. Router, niedrige Batteriestände, offline gemeldete Geräte und unbekannte Erreichbarkeit gruppieren; Suche und Sprung zum Gerät im Plan unterstützen.

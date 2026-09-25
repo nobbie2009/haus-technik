@@ -1,4 +1,7 @@
 import { test, expect } from "@playwright/test";
+import { createProject } from "../../src/core/projectFactory";
+import { housebook, setHousebook } from "../../src/housebook/model";
+import { addNetworkNode } from "../../src/network/model";
 
 test("Schwebende Zigbee-Übersicht zeigt Router, Batterien und Offline-Zeiten ohne den Plan zu blockieren", async ({
   page,
@@ -64,7 +67,7 @@ test("Schwebende Zigbee-Übersicht zeigt Router, Batterien und Offline-Zeiten oh
   await page.getByRole("tab", { name: "Möbel", exact: true }).click();
   await expect(overview).toBeVisible();
   await expect(page.getByTitle("Auswahl (V)")).toHaveAttribute("aria-pressed", "true");
-  await overview.getByRole("button", { name: "Im Plan zeigen: Router Flur", exact: true }).click();
+  await overview.getByText("Router Flur", { exact: true }).click();
   await expect(page.getByRole("tab", { name: "Netzwerk", exact: true })).toHaveAttribute(
     "aria-selected",
     "true",
@@ -95,4 +98,46 @@ test("Schwebende Zigbee-Übersicht zeigt Router, Batterien und Offline-Zeiten oh
   await overview.getByRole("button", { name: "Zigbee-Übersicht schließen", exact: true }).click();
   await expect(overview).toHaveCount(0);
   expect(scans).toBe(0);
+});
+
+test("Gerätename wechselt zum anderen Geschoss, blendet Netzwerk ein und markiert das Gerät", async ({
+  page,
+}) => {
+  const project = createProject("Zigbee-Beispiel");
+  const upperId = crypto.randomUUID();
+  project.floors[upperId] = {
+    id: upperId,
+    name: "Obergeschoss",
+    elevation: 2800,
+    defaultRoomHeight: 2500,
+    metadata: {},
+  };
+  project.floorOrder.push(upperId);
+  const book = housebook(project);
+  book.zigbee = {
+    devices: [{ address: "0x0000000000000001", name: "Router oben", type: "Router", model: "", vendor: "" }],
+    links: [],
+    scannedAt: null,
+  };
+  setHousebook(project, book);
+  addNetworkNode(project, upperId, { x: 12000, y: 8000 }, "zigbee", "0x0000000000000001");
+  Object.values(project.layers).find((l) => l.kind === "network")!.visible = false;
+  await page.goto("/");
+  await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
+  await page.getByLabel("Projektdatei importieren").setInputFiles({
+    name: "zigbee.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(project)),
+  });
+  await expect(page.getByText("„Zigbee-Beispiel“ wurde importiert.")).toBeVisible();
+  await expect(page.getByTestId("drawing-surface").getByText("Erdgeschoss", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Netzwerk", exact: true }).click();
+  await page.getByRole("button", { name: "Zigbee-Übersicht", exact: true }).click();
+  const overview = page.getByRole("dialog", { name: "Zigbee-Übersicht", exact: true });
+  await overview.getByText("Router oben", { exact: true }).first().click();
+  await expect(page.getByTestId("drawing-surface").getByText("Obergeschoss", { exact: true })).toBeVisible();
+  await overview.getByRole("button", { name: "Zigbee-Übersicht schließen", exact: true }).click();
+  if (!(await page.getByLabel("Zigbee-Planname", { exact: true }).isVisible()))
+    await page.getByRole("button", { name: "Eigenschaften", exact: true }).click();
+  await expect(page.getByLabel("Zigbee-Planname", { exact: true })).toHaveValue("Router oben");
 });

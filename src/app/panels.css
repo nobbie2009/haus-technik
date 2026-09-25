@@ -593,6 +593,21 @@
   display: block;
   margin: 4px 0;
 }
+.zigbee-health-selectable {
+  cursor: pointer;
+  border-radius: 4px;
+}
+.zigbee-health-selectable:hover {
+  background: #edf5f1;
+}
+.zigbee-health-selectable:focus-visible {
+  outline: 2px solid #087e68;
+  outline-offset: -2px;
+}
+.zigbee-health-action {
+  color: #08715d;
+  font-weight: 600;
+}
 .modal.furniture-catalog-dialog {
   width: min(800px, 94vw);
 }
