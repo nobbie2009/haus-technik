@@ -4,6 +4,7 @@ test("Leitungsweg per Touch zeichnen und unmittelbar anschließen", async ({ pag
   await page.goto("/");
   await expect(page.getByText("Lokal gespeichert", { exact: true })).toBeVisible();
   await page.getByRole("tab", { name: "Elektrik", exact: true }).tap();
+  await page.getByLabel("Elektroobjekt", { exact: true }).selectOption("outlets");
   const box = (await page.getByTestId("drawing-surface").boundingBox())!;
   await page.touchscreen.tap(box.x + 160, box.y + 200);
   await page.touchscreen.tap(box.x + 380, box.y + 340);

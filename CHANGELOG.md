@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.61.2 · 25.09.2026
+
+- iPad-Prüfung für das Zeichnen und Anschließen einer Leitung an die bewusste Werkzeugwahl nach Tabwechsel anpassen. Der Test wählt jetzt zuerst Steckdosen aus; damit blockiert die veraltete Platzierungsannahme die Veröffentlichung nicht mehr.
+
 ## 0.61.1 · 25.09.2026
 
 - In allen Gruppen der schwebenden Zigbee-Übersicht den gesamten Eintrag eines platzierten Geräts anklickbar machen. Klick, Enter oder Leertaste wechseln zum Geschoss, blenden die Netzwerkebene ein, zentrieren und markieren das Gerät.
