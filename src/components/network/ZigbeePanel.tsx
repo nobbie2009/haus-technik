@@ -14,6 +14,7 @@ export function ZigbeeControls() {
   return (
     <>
       <button onClick={() => setOpen(true)}>Zigbee2MQTT · {running ? "Live aktiv" : "Geräte & Karte"}</button>
+      <button onClick={() => useZigbeeStore.setState({ overviewOpen: true })}>Zigbee-Übersicht</button>
       {running && (
         <button onClick={() => useZigbeeStore.getState().stop()}>Zigbee-Aktualisierung stoppen</button>
       )}

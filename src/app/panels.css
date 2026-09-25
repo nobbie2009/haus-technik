@@ -533,6 +533,66 @@
   background: #13272866;
   backdrop-filter: blur(2px);
 }
+.zigbee-overview {
+  position: fixed;
+  z-index: 90;
+  width: min(420px, calc(100vw - 16px));
+  max-height: calc(100dvh - 16px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid #9bb6ac;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px #13272840;
+  overflow: hidden;
+}
+.zigbee-overview header {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  background: #e7f2ed;
+}
+.zigbee-overview button {
+  min-height: 44px;
+}
+.zigbee-overview header > button:not(.zigbee-overview-handle) {
+  min-width: 44px;
+}
+.zigbee-overview-handle {
+  flex: 1;
+  cursor: grab;
+  touch-action: none;
+  font-weight: 600;
+}
+.zigbee-overview-handle:active {
+  cursor: grabbing;
+}
+.zigbee-overview-counts {
+  margin: 0;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+.zigbee-overview-body {
+  padding: 0 14px 14px;
+  overflow-y: auto;
+  max-height: 65dvh;
+  overscroll-behavior: contain;
+}
+.zigbee-overview summary {
+  padding: 10px 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+.zigbee-health-device {
+  border-top: 1px solid #d3ded3;
+  padding: 10px 0;
+  overflow-wrap: anywhere;
+}
+.zigbee-health-device small {
+  display: block;
+  margin: 4px 0;
+}
 .modal.furniture-catalog-dialog {
   width: min(800px, 94vw);
 }

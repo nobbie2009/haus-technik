@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.61.0 · 25.09.2026
+
+- Schwebende, verschiebbare und einklappbare Zigbee-Übersicht ergänzen. Router, niedrige Batteriestände, offline gemeldete Geräte und unbekannte Erreichbarkeit gruppieren; Suche und Sprung zum Gerät im Plan unterstützen.
+- Batteriegrenze auf 10, 20 oder 30 Prozent einstellen; Gerätewarnungen zusätzlich berücksichtigen. Offline-Beobachtung innerhalb der Empfangssitzung und letzte Zigbee-Nachricht aus Z2M getrennt anzeigen. Gespeicherte Meldungen, unbekannte Ausfallzeiten und gestoppten Empfang klar kennzeichnen.
+- Keine zusätzlichen Scans oder automatische Offline-Vermutungen aus Sendepausen. Anleitung, FAQ und Bildschirmbild ergänzen.
+
 ## 0.60.0 · 25.09.2026
 
 - Nach jedem Tabwechsel das Auswahlwerkzeug aktivieren; laufende Platzierungen beenden. Im Auswahlmodus lässt sich die Ansicht durch Ziehen auf freier Fläche mit Maus oder Finger verschieben.

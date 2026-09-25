@@ -247,6 +247,22 @@ Router und Netzwerkgeräte gehören in den Bereich **Netzwerk**. Ein Router ist 
 
 ## Zigbee2MQTT auf dem Grundriss anzeigen
 
+### Schwebende Übersicht für Router, Batterien und Erreichbarkeit
+
+Mit **Netzwerk → Zigbee-Übersicht** öffnest du ein schwebendes Fenster. Der Plan bleibt bedienbar und das Fenster bleibt beim Tabwechsel geöffnet. Am Titel ziehen, um es mit Maus oder Finger zu verschieben; mit fokussiertem Titel funktionieren auch die Pfeiltasten. Über **−** einklappen, **+** aufklappen oder **×** schließen. Schließen beendet den laufenden Empfang nicht. Ein Projektwechsel schließt die Übersicht.
+
+Die Gruppen zeigen **Router**, **Batterie niedrig**, **Nicht erreichbar (Z2M)** und **Erreichbarkeit unbekannt**. Als niedriger Batteriestand gilt standardmäßig **höchstens 20 %**; die Grenze lässt sich auf 10 oder 30 % ändern. Eine ausdrücklich gemeldete Batteriewarnung gilt unabhängig von diesem Grenzwert. Fehlende Batteriewerte gelten nicht als leer. Die Suche filtert Gerätenamen, Plannamen und IEEE-Adressen; die Gruppenzähler beziehen sich weiter auf alle Geräte. Platzierte Geräte zeigen Etage und gegebenenfalls Raum. **Im Plan zeigen** wechselt zur passenden Etage und zentriert das Gerät. Nicht platzierte Geräte bleiben ebenfalls in der Übersicht sichtbar.
+
+**Offline seit wann?** Offline wird nur anhand einer Z2M-Availability-Meldung ausgewiesen. Eine Sendepause oder ein fehlender Link im Netzwerkscan ist kein Ausfallnachweis. Angezeigt wird, seit wann die App das Gerät **in der aktuellen Empfangssitzung als offline beobachtet**. Wiederholte Offline-Meldungen setzen diese Zeit nicht zurück; bei einer Online-Meldung verschwindet der Eintrag aus der Offline-Gruppe. Eine beim Start empfangene gespeicherte Offline-Meldung enthält keinen Ausfallbeginn – dieser bleibt ausdrücklich unbekannt. Auch bei einer neuen Meldung kann Z2M einen Ausfall verzögert erkennen.
+
+**Letzte Zigbee-Nachricht (Z2M)** stammt ausschließlich aus `last_seen`, nicht aus der MQTT-Empfangszeit der App. Dafür in Zigbee2MQTT `last_seen` aktivieren (ISO-Zeit oder Epoch-Millisekunden); für den Online-/Offline-Status außerdem **Availability** aktivieren. Nicht gemeldete Angaben bleiben unbekannt. Die Übersicht verwendet denselben 5-/10-Sekunden-Empfang wie die Geräteliste und löst keine zusätzlichen Netzwerkscans aus. Nach Stoppen oder Verbindungsabbruch steht sichtbar **letzter bekannter Stand**. Ein neuer Live-Start beginnt eine neue Beobachtung; die App speichert keine Ausfallhistorie.
+
+![Schwebende Zigbee-Übersicht mit Router, niedriger Batterie und eindeutig gekennzeichneter Offline-Beobachtung.](bilder/zigbee-overview.png)
+
+Grundlagen: [Z2M-Geräteverfügbarkeit](https://www.zigbee2mqtt.io/guide/configuration/device-availability.html), [Z2M-Einstellungen für last_seen](https://www.zigbee2mqtt.io/guide/configuration/all-settings.html).
+
+### Empfang und Netzwerkkarte
+
 **Voraussetzung:** Zigbee2MQTT und Home Assistant verwenden denselben MQTT-Broker. Unter **Hausakte → Home Assistant** die erreichbare Basisadresse und einen Token mit **Administratorrechten** hinterlegen. Die MQTT-WebSocket-Schnittstelle verlangt diese Rechte. Eine separate Z2M-Webadresse ist nicht nötig. Eine über HTTPS geöffnete Hausplanung benötigt auch eine HTTPS-Adresse für Home Assistant.
 
 1. **Netzwerk → Zigbee2MQTT · Geräte & Karte** öffnen. Falls dein MQTT-Basistopic anders heißt, `zigbee2mqtt` ändern.
@@ -679,6 +695,10 @@ Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten P
 
 # FAQ und gezielte Fehlerhilfe {#faq}
 
+## Warum steht bei einem Offline-Gerät „Ausfallbeginn unbekannt“?
+
+Die gespeicherte Z2M-Meldung enthält nur den Zustand, keinen Zeitpunkt des Ausfalls. Die App zeigt ihre erste Offline-Beobachtung dieser Empfangssitzung und getrennt davon die letzte Zigbee-Nachricht, sofern `last_seen` aktiviert ist. Beides wird nicht als genauer Ausfallbeginn ausgegeben. Siehe [schwebende Zigbee-Übersicht](#netzwerk).
+
 ## Warum platziert ein Tabwechsel jetzt kein Objekt mehr?
 
 Jeder Tab startet mit **Auswahl**. Zum Platzieren bewusst eine Vorlage oder das passende Werkzeug wählen. Eine freie Fläche im Auswahlmodus ziehen, um die Ansicht zu verschieben. Siehe [Möbel und Bedienung](#moebel).
@@ -962,6 +982,8 @@ Begriffe sind verlinkt. Die Suche oben findet zusätzlich Synonyme und alle ausf
 | Wiederherstellung                          | Frühere [lokale Stände](#sicherung)                                                                     |
 
 Weitere Stichwörter: **Möbelkatalog, IKEA, Herstellermaße, Vorlagenimport, Freifläche und Tabwechsel** – siehe [Möbel und Bedienung](#moebel).
+
+**Zigbee-Übersicht, Router, Batterie niedrig, Offline seit, Availability und last_seen** – siehe [Zigbee im Netzwerk](#netzwerk).
 
 ## Grenzen der Dokumentation
 

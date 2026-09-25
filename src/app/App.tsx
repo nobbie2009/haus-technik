@@ -11,6 +11,7 @@ import { ToolPanel } from "../components/ToolPanel";
 import { PropertiesPanel } from "../components/PropertiesPanel";
 import { StatusBar } from "../components/StatusBar";
 import { PlanStage } from "../rendering/konva/PlanStage";
+import { ZigbeeOverview } from "../components/network/ZigbeeOverview";
 import { useKeyboard } from "../editor/interaction/keyboard";
 import { initializePersistence } from "../persistence/autosave";
 
@@ -72,6 +73,7 @@ export function App() {
         </div>
       </div>
       <StatusBar />
+      <ZigbeeOverview />
       {connectionRequest && <ConnectionDialog />}
       {(error || message) && (
         <div className={`toast ${error ? "toast-error" : ""}`} role={error ? "alert" : "status"}>

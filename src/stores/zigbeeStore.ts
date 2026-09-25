@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { readBattery, type BatteryState } from "../network/zigbeeBattery";
+import { readAvailability, type AvailabilityState } from "../network/zigbeeHealth";
 import { ZigbeeClient, type ZigbeeConnection } from "../network/zigbeeClient";
 import {
   emptyZigbee,
@@ -11,13 +12,14 @@ import {
 import { useProjectStore } from "./projectStore";
 import { housebook, setHousebook } from "../housebook/model";
 
-interface LiveDevice extends BatteryState {
+interface LiveDevice extends BatteryState, AvailabilityState {
   lqi: number | null;
   battery: number | null;
   availability: string;
   receivedAt: string;
 }
 interface State {
+  overviewOpen: boolean;
   interval: 5 | 10;
   projectId: string | null;
   running: boolean;
@@ -46,6 +48,7 @@ function persist(snapshot: ZigbeeSnapshot, projectId: string) {
   });
 }
 export const useZigbeeStore = create<State>((set, get) => ({
+  overviewOpen: false,
   interval: 10,
   projectId: null,
   running: false,
@@ -181,6 +184,9 @@ export const useZigbeeStore = create<State>((set, get) => ({
               batteryReceivedAt: null,
               batteryRetained: false,
               availability: "unbekannt",
+              offlineObservedAt: null,
+              offlineRetained: false,
+              lastSeen: null,
               receivedAt: "",
             };
             live[device.address] = {
@@ -190,10 +196,7 @@ export const useZigbeeStore = create<State>((set, get) => ({
                   ? value.linkquality
                   : old.lqi,
               ...readBattery(value, old, retained),
-              availability:
-                available && ["online", "offline"].includes(String(value.state ?? payload))
-                  ? String(value.state ?? payload)
-                  : old.availability,
+              ...readAvailability(old, payload, available, retained),
               receivedAt: new Date().toISOString(),
             };
           }
@@ -221,6 +224,12 @@ export const useZigbeeStore = create<State>((set, get) => ({
 useProjectStore.subscribe((state, before) => {
   if (state.project.id !== before.project.id) {
     useZigbeeStore.getState().stop();
-    useZigbeeStore.setState({ projectId: null, snapshot: emptyZigbee(), live: {}, error: "" });
+    useZigbeeStore.setState({
+      projectId: null,
+      snapshot: emptyZigbee(),
+      live: {},
+      error: "",
+      overviewOpen: false,
+    });
   }
 });

@@ -152,3 +152,21 @@ it("behält Platzierungen beim erneuten Import und validiert doppelte Geräte", 
   setHousebook(p, b);
   expect(() => parseProject(p)).toThrow(/Zigbee/);
 });
+it("übernimmt Offline und last_seen im Live-Takt; Neustart erfindet keine durchgehende Ausfalldauer", () => {
+  const ws = start();
+  ws.topic("Router Beispiel/availability", { state: "offline" });
+  ws.topic("Router Beispiel", { last_seen: "2025-01-01T00:00:00Z", battery: 10 });
+  vi.advanceTimersByTime(5000);
+  const first = useZigbeeStore.getState().live[devices[0]!.ieee_address]!;
+  expect(first).toMatchObject({ availability: "offline", battery: 10, lastSeen: "2025-01-01T00:00:00.000Z" });
+  ws.topic("Router Beispiel/availability", { state: "offline" });
+  vi.advanceTimersByTime(5000);
+  expect(useZigbeeStore.getState().live[devices[0]!.ieee_address]!.offlineObservedAt).toBe(
+    first.offlineObservedAt,
+  );
+  useZigbeeStore.setState({ overviewOpen: true });
+  start();
+  expect(useZigbeeStore.getState().live).toEqual({});
+  useProjectStore.getState().replace(createProject());
+  expect(useZigbeeStore.getState().overviewOpen).toBe(false);
+});
