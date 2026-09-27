@@ -58,12 +58,33 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Unraid-Image bauen und Installation prüfen
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          docker build -t "home-technik:$VERSION" .
+          python3 scripts/test-docker.py
+          mkdir -p exports
+          docker save "home-technik:$VERSION" | gzip > "exports/home-technik-docker-$VERSION.tar.gz"
+          cd exports
+          sha256sum "home-technik-docker-$VERSION.tar.gz" > "home-technik-docker-$VERSION.tar.gz.sha256"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: unraid-image
+          path: exports/home-technik-docker-*
+          retention-days: 3
+
   release:
-    needs: check
+    needs: [check, docker]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
@@ -73,6 +94,10 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: node scripts/package-release.mjs
+      - name: Geprüftes Docker-Image herunterladen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "$GITHUB_RUN_ID" --name unraid-image --dir exports
       - name: Geprüftes Installationspaket veröffentlichen
         env:
           GH_TOKEN: ${{ github.token }}
@@ -82,4 +107,4 @@ jobs:
             echo "Release v$VERSION existiert bereits; es wird nicht überschrieben."
             exit 1
           fi
-          gh release create "v$VERSION" "exports/home-technik-$VERSION.tar.gz" "exports/home-technik-$VERSION.tar.gz.sha256" --target "$GITHUB_SHA" --title "Home-Technik $VERSION" --notes-file CHANGELOG.md
+          gh release create "v$VERSION" "exports/home-technik-$VERSION.tar.gz" "exports/home-technik-$VERSION.tar.gz.sha256" "exports/home-technik-docker-$VERSION.tar.gz" "exports/home-technik-docker-$VERSION.tar.gz.sha256" exports/home-technik.xml docs/unraid.md --target "$GITHUB_SHA" --title "Home-Technik $VERSION" --notes-file CHANGELOG.md

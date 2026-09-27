@@ -2,6 +2,14 @@ import { mkdirSync, cpSync, readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 const version = JSON.parse(readFileSync("package.json")).version;
+mkdirSync("exports", { recursive: true });
+writeFileSync(
+  "exports/home-technik.xml",
+  readFileSync("deploy/unraid/home-technik.xml", "utf8").replace(
+    /<Repository>[^<]+<\/Repository>/,
+    `<Repository>home-technik:${version}</Repository>`,
+  ),
+);
 const dir = "exports/release-stage";
 // A fresh staging directory avoids stale build files in published artifacts.
 const stage = `${dir}-${Date.now()}`;

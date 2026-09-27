@@ -590,6 +590,10 @@ Speichere offene Formulare. Wenn du gemeinsame Projekte verwendest, kontrolliere
 
 Der optionale Projektdienst speichert gemeinsame Projekte auf deinem eigenen Hausserver. Die lokale Browserspeicherung bleibt bestehen. Du entscheidest, welche Projekte du erstmals bereitstellst und welche Serverstände du auf einem weiteren Gerät übernimmst.
 
+## Einmalige Vorbereitung auf Unraid
+
+Ab 0.64.0 enthält das Docker-Image den Projektdienst. Nach Installation über die Unraid-Vorlage in der Containerkonsole `python /app/start.py --set-key` ausführen, einen eigenen Schlüssel zweimal verdeckt eingeben und den Container neu starten. Anschließend unter **Hausakte → Gemeinsame Projekte** verbinden. Gemeinsame Projekte und Schlüssel liegen dauerhaft im zugeordneten Appdata-Ordner; lokale Browserprojekte weiterhin zusätzlich als JSON sichern. Die vollständige Unraid-Anleitung liegt im GitHub-Release als `unraid.md` bei.
+
 ## Einmalige Vorbereitung am LXC
 
 Nach Installation einer passenden App-Version im LXC **als Administrator** `Update --setup-projects` ausführen. Der Befehl richtet den Projektdienst ein und zeigt einen eigenen Zugriffsschlüssel einmalig an. Den Schlüssel sicher aufbewahren. Er ist nicht das Passwort für App-Updates und gewährt Zugriff auf alle gemeinsamen Projekte dieses Hausservers.
@@ -723,6 +727,8 @@ Die Versionsanzeige unterscheidet die **geöffnete Version im Browser**, die **V
 5. Projekt und Versionsanzeige erneut kontrollieren.
 
 Alternativ im eingerichteten LXC `Update --check` zum Prüfen und `Update` zum geführten Installieren verwenden. `Update --rollback` aktiviert einen vorherigen App-Stand; es ist keine Wiederherstellung älterer Hausdaten.
+
+**Unraid/Docker:** Daten sichern, das neue Docker-Image aus dem GitHub-Release herunterladen, Prüfsumme prüfen und importieren. Anschließend in der Unraid-Containerverwaltung die neue Image-Version auswählen und anwenden. Die App zeigt dafür einen Hinweis statt des LXC-Updateformulars. Datenpfad und Port beibehalten, danach den Browser neu laden. Details stehen in der mitgelieferten `unraid.md`.
 
 ## „Updateprüfung derzeit nicht möglich“
 
@@ -947,7 +953,7 @@ Ein anderes Gerät hat den Serverstand geändert, seit dein lokaler Stand verbun
 
 ## Warum ist der Projektdienst nicht erreichbar?
 
-Prüfen, ob auf diesem Server `Update --setup-projects` ausgeführt wurde, der Dienst läuft und dieselbe App-Adresse verwendet wird. Eine statische Vorschau allein enthält keinen laufenden Projektdienst. Bei ungültigem Schlüssel erneut verbinden.
+Prüfen, ob auf dem LXC `Update --setup-projects` ausgeführt wurde beziehungsweise unter Unraid der Projektschlüssel mit `python /app/start.py --set-key` eingerichtet und der Container anschließend neu gestartet wurde. Der Dienst muss laufen und dieselbe App-Adresse verwendet werden. Eine statische Vorschau allein enthält keinen laufenden Projektdienst. Bei ungültigem Schlüssel erneut verbinden.
 
 ## Warum muss ich den Projektschlüssel immer wieder eintippen?
 

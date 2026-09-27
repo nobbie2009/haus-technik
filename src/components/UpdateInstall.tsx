@@ -18,7 +18,11 @@ export function UpdateInstall({ onInstalled }: { onInstalled: () => void }) {
         const response = await fetch(endpoint, { cache: "no-store", signal: AbortSignal.timeout(5000) });
         if (!response.ok) throw Error();
         const data = await response.json();
-        if (data.supported !== true || typeof data.state !== "string" || typeof data.message !== "string")
+        if (
+          typeof data.supported !== "boolean" ||
+          typeof data.state !== "string" ||
+          typeof data.message !== "string"
+        )
           throw Error();
         if (active) {
           setService(data);
@@ -48,6 +52,7 @@ export function UpdateInstall({ onInstalled }: { onInstalled: () => void }) {
         <code>Update</code> und anschließend <code>Update --setup-web</code> ausführen.
       </p>
     );
+  if (!service.supported) return <p role="status">{service.message}</p>;
   return (
     <section aria-label="Update installieren">
       <h3>Update direkt installieren</h3>

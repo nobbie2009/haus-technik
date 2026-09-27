@@ -1,4 +1,19 @@
 import { test, expect } from "@playwright/test";
+test("Unraid zeigt externe Updates ohne LXC-Passwortformular", async ({ page }) => {
+  await page.route("**/api/home-technik-update", (route) =>
+    route.fulfill({
+      json: {
+        supported: false,
+        state: "external",
+        message: "Updates über die Unraid-Containerverwaltung installieren.",
+      },
+    }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Version und Updates", exact: true }).click();
+  await expect(page.getByText("Updates über die Unraid-Containerverwaltung installieren.")).toBeVisible();
+  await expect(page.getByLabel("Update-Passwort", { exact: true })).toHaveCount(0);
+});
 test("Updatehinweis unterscheidet Release und bereits aktualisierten Server", async ({ page }) => {
   await page.route("https://api.github.com/repos/nobbie2009/haus-technik/releases/latest", (route) =>
     route.fulfill({ json: { tag_name: "v9.0.0" } }),

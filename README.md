@@ -44,6 +44,13 @@ mit mindestens 12 Zeichen verdeckt festzulegen. Anschließend alle Geräte mit d
   sichtbarem Tab abgeglichen, neue Serverstände zur Übernahme angeboten und Konflikte nicht überschrieben.
   [Einrichtung und Sicherung](.agents/skills/home-technik-proxmox-lxc/references/deployment.md#gemeinsame-projekte-ab-0480).
 
+## Auf Unraid bereitstellen
+
+Ab **0.64.0** enthält jedes Release ein geprüftes Docker-Image (Linux/amd64) mit Weboberfläche,
+Handbuch und gemeinsamem Projektdienst sowie eine Unraid-Vorlage. Daten bleiben im eigenen
+Appdata-Ordner; Updates werden durch Import und Auswahl der neuen Image-Version installiert.
+[Installation, Prüfung, Sicherung und Updates](docs/unraid.md).
+
 ## Auf Proxmox bereitstellen
 
 Der Codex-Skill [home-technik-proxmox-lxc](.agents/skills/home-technik-proxmox-lxc/SKILL.md)

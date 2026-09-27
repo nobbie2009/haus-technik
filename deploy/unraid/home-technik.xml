@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>home-technik</Name>
+  <Repository>home-technik:0.64.0</Repository>
+  <Registry>https://github.com/nobbie2009/haus-technik/releases</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/nobbie2009/haus-technik/issues</Support>
+  <Project>https://github.com/nobbie2009/haus-technik</Project>
+  <Overview>Hausplaner mit gemeinsamen Projekten. Zuerst das Docker-Image aus dem GitHub-Release laden; Anleitung unter docs/unraid.md. Projektschlüssel danach über die Containerkonsole einrichten.</Overview>
+  <Category>HomeAutomation:</Category>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
+  <Shell>sh</Shell>
+  <Config Name="Weboberfläche" Target="8080" Default="8088" Mode="tcp" Description="Freien Host-Port wählen" Type="Port" Display="always" Required="true" Mask="false">8088</Config>
+  <Config Name="Projektdaten" Target="/data" Default="/mnt/user/appdata/home-technik" Mode="rw" Description="Vorher für UID/GID 10001 vorbereiten; enthält Schlüssel und SQLite-Datenbank" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/home-technik</Config>
+</Container>

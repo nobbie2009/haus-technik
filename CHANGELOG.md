@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.64.0 · 27.09.2026
+
+- Unraid-Betrieb mit fertigem Docker-Image für Linux/amd64, Webserver, Handbuch und gemeinsamem Projektdienst ergänzen. Dauerhafte Projektdaten im Appdata-Ordner und verdeckte Einrichtung beziehungsweise Änderung des Projektschlüssels ermöglichen.
+- Unraid-Vorlage sowie deutsche Anleitung für Installation, Sicherung, Updates und Rollback mitliefern. In der App auf die externe Containeraktualisierung hinweisen; bestehende LXC-Installation weiter unterstützen.
+- Vor Freigabe das echte Container-Image auf Installation, Webdateien, Zugriffsschutz, Schlüsselwechsel, Konflikte und Datenerhalt nach Containerersetzung prüfen. Genau dieses geprüfte Image mit Prüfsumme als zusätzlichen Release-Download veröffentlichen.
+
 ## 0.63.0 · 25.09.2026
 
 - Strg+A (am Mac auch Command+A) wählt alle Objekte der sichtbaren Ebenen im aktuellen Tab und Geschoss aus und aktiviert das Auswahlwerkzeug. Andere Tabs, Geschosse und ausgeblendete Ebenen bleiben unberührt; sichtbare Abschnitte geschossübergreifender Leitungen werden berücksichtigt.
