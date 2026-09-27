@@ -1,6 +1,6 @@
 # Home-Technik auf Unraid
 
-Ab Version 0.64.0 gibt es ein fertiges Docker-Image für **Linux/amd64**, einschließlich Webserver, Handbuch und Projektdienst. Auf dem Unraid-Server sind weder Node.js noch Python zu installieren. Proxmox wird nicht benötigt. Containerport: 8080; Beispiel-Hostport: 8088. Den Hostport bei Belegung ändern.
+Ab Version 0.64.1 gibt es ein fertiges Docker-Image für **Linux/amd64**, einschließlich Webserver, Handbuch und Projektdienst. Auf dem Unraid-Server sind weder Node.js noch Python zu installieren. Proxmox wird nicht benötigt. Containerport: 8080; Beispiel-Hostport: 8088. Den Hostport bei Belegung ändern.
 
 ## Installation
 
@@ -9,14 +9,14 @@ Ab Version 0.64.0 gibt es ein fertiges Docker-Image für **Linux/amd64**, einsch
    ```bash
    mkdir -p /mnt/user/appdata/home-technik-install
    cd /mnt/user/appdata/home-technik-install
-   VERSION=0.64.0
+   VERSION=0.64.1
    BASE="https://github.com/nobbie2009/haus-technik/releases/download/v$VERSION"
    curl -fL --retry 3 -O "$BASE/home-technik-docker-$VERSION.tar.gz"
    curl -fL --retry 3 -O "$BASE/home-technik-docker-$VERSION.tar.gz.sha256"
    sha256sum -c "home-technik-docker-$VERSION.tar.gz.sha256" && docker load -i "home-technik-docker-$VERSION.tar.gz"
    ```
 
-   Nur nach erfolgreicher Prüfsumme und Ausgabe `Loaded image: home-technik:0.64.0` fortfahren. Der Download ist ein Docker-Image, nicht das separate LXC-Installationspaket.
+   Nur nach erfolgreicher Prüfsumme und Ausgabe `Loaded image: home-technik:0.64.1` fortfahren. Der Download ist ein Docker-Image, nicht das separate LXC-Installationspaket.
 
 2. Den **neuen, leeren** Datenordner vorbereiten. Bei vorhandenen Daten zuerst sichern und Eigentümer prüfen; keine pauschalen rekursiven Rechteänderungen durchführen.
 
@@ -48,7 +48,7 @@ docker logs --tail 30 home-technik
 
 Nach etwa 30 Sekunden muss der Zustand `healthy` sein. Zusätzlich `/version.json` und `/handbuch/index.html` unter derselben App-Adresse öffnen. Die Version muss zur geladenen Version passen. Nach einem Containerneustart müssen gemeinsame Projekte weiter abrufbar sein.
 
-Bei `Permission denied` den Eigentümer des Datenordners prüfen (10001:10001). Bei belegtem Port einen anderen Hostport wählen. Bei einem Downloadversuch gegen Docker Hub kontrollieren, ob das Image geladen ist und das Feld **Repository** exakt `home-technik:0.64.0` lautet. Ein Registry-Updatecheck ist bei diesem lokal importierten Image nicht vorgesehen.
+Bei `Permission denied` den Eigentümer des Datenordners prüfen (10001:10001). Bei belegtem Port einen anderen Hostport wählen. Bei einem Downloadversuch gegen Docker Hub kontrollieren, ob das Image geladen ist und das Feld **Repository** exakt `home-technik:0.64.1` lautet. Ein Registry-Updatecheck ist bei diesem lokal importierten Image nicht vorgesehen.
 
 ## Updates und Rückkehr zur vorherigen Version
 

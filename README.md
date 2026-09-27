@@ -46,7 +46,7 @@ mit mindestens 12 Zeichen verdeckt festzulegen. Anschließend alle Geräte mit d
 
 ## Auf Unraid bereitstellen
 
-Ab **0.64.0** enthält jedes Release ein geprüftes Docker-Image (Linux/amd64) mit Weboberfläche,
+Ab **0.64.1** enthält jedes Release ein geprüftes Docker-Image (Linux/amd64) mit Weboberfläche,
 Handbuch und gemeinsamem Projektdienst sowie eine Unraid-Vorlage. Daten bleiben im eigenen
 Appdata-Ordner; Updates werden durch Import und Auswahl der neuen Image-Version installiert.
 [Installation, Prüfung, Sicherung und Updates](docs/unraid.md).

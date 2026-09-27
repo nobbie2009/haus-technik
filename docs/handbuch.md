@@ -592,7 +592,7 @@ Der optionale Projektdienst speichert gemeinsame Projekte auf deinem eigenen Hau
 
 ## Einmalige Vorbereitung auf Unraid
 
-Ab 0.64.0 enthält das Docker-Image den Projektdienst. Nach Installation über die Unraid-Vorlage in der Containerkonsole `python /app/start.py --set-key` ausführen, einen eigenen Schlüssel zweimal verdeckt eingeben und den Container neu starten. Anschließend unter **Hausakte → Gemeinsame Projekte** verbinden. Gemeinsame Projekte und Schlüssel liegen dauerhaft im zugeordneten Appdata-Ordner; lokale Browserprojekte weiterhin zusätzlich als JSON sichern. Die vollständige Unraid-Anleitung liegt im GitHub-Release als `unraid.md` bei.
+Ab 0.64.1 enthält das Docker-Image den Projektdienst. Nach Installation über die Unraid-Vorlage in der Containerkonsole `python /app/start.py --set-key` ausführen, einen eigenen Schlüssel zweimal verdeckt eingeben und den Container neu starten. Anschließend unter **Hausakte → Gemeinsame Projekte** verbinden. Gemeinsame Projekte und Schlüssel liegen dauerhaft im zugeordneten Appdata-Ordner; lokale Browserprojekte weiterhin zusätzlich als JSON sichern. Die vollständige Unraid-Anleitung liegt im GitHub-Release als `unraid.md` bei.
 
 ## Einmalige Vorbereitung am LXC
 

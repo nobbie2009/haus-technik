@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>home-technik</Name>
-  <Repository>home-technik:0.64.0</Repository>
+  <Repository>home-technik:0.64.1</Repository>
   <Registry>https://github.com/nobbie2009/haus-technik/releases</Registry>
   <Network>bridge</Network>
   <Privileged>false</Privileged>

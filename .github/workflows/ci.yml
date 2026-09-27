@@ -67,11 +67,14 @@ jobs:
         run: |
           VERSION=$(node -p 'require("./package.json").version')
           docker build -t "home-technik:$VERSION" .
-          python3 scripts/test-docker.py
           mkdir -p exports
           docker save "home-technik:$VERSION" | gzip > "exports/home-technik-docker-$VERSION.tar.gz"
           cd exports
           sha256sum "home-technik-docker-$VERSION.tar.gz" > "home-technik-docker-$VERSION.tar.gz.sha256"
+          sha256sum -c "home-technik-docker-$VERSION.tar.gz.sha256"
+          docker load -i "home-technik-docker-$VERSION.tar.gz"
+          cd ..
+          python3 scripts/test-docker.py
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: unraid-image

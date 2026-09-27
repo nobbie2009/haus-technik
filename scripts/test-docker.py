@@ -20,6 +20,10 @@ def docker(*args, **kwargs):
 
 def start():
     docker('run', '-d', '--name', NAME, '-p', '127.0.0.1::8080', '-v', VOLUME + ':/data', IMAGE)
+    return ready()
+
+
+def ready():
     port = docker('port', NAME, '8080/tcp').rsplit(':', 1)[1]
     base = 'http://127.0.0.1:' + port
     for _ in range(60):
@@ -91,7 +95,7 @@ try:
     new_token = uuid.uuid4().hex
     docker('exec', '-i', NAME, 'python', '/app/start.py', '--set-key', input=new_token + '\n' + new_token + '\n')
     docker('restart', NAME)
-    time.sleep(2)
+    base = ready()
     assert request(api, token)[0] == 401
     assert json.loads(request(path, new_token)[2]) == project
     print('Docker-Installation, Zugriffsschutz, Schlüsselwechsel und persistente Projekte erfolgreich geprüft.')

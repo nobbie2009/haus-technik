@@ -1,6 +1,6 @@
 # Änderungen
 
-## 0.64.0 · 27.09.2026
+## 0.64.1 · 27.09.2026
 
 - Unraid-Betrieb mit fertigem Docker-Image für Linux/amd64, Webserver, Handbuch und gemeinsamem Projektdienst ergänzen. Dauerhafte Projektdaten im Appdata-Ordner und verdeckte Einrichtung beziehungsweise Änderung des Projektschlüssels ermöglichen.
 - Unraid-Vorlage sowie deutsche Anleitung für Installation, Sicherung, Updates und Rollback mitliefern. In der App auf die externe Containeraktualisierung hinweisen; bestehende LXC-Installation weiter unterstützen.
