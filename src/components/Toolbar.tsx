@@ -306,6 +306,8 @@ export function Toolbar() {
               ["Strg+Z / Strg+Y", "Rückgängig / Wiederholen"],
               ["Strg+A", "Alles im aktuellen Tab und Geschoss auswählen"],
               ["Strg+D / Delete", "Duplizieren / Löschen"],
+              ["Strg+C / Strg+X / Strg+V", "Kopieren / Ausschneiden / Einfügen"],
+              ["Rechtsklick / Finger halten", "Kontextmenü"],
               ["Strg+S / Home", "Speichern / alles anzeigen"],
               ["Escape", "Aktuellen Zeichenvorgang abbrechen"],
             ].map(([key, label]) => (

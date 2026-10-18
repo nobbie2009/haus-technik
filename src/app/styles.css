@@ -301,6 +301,8 @@ p {
   overflow: hidden;
   background: #f6f7f3;
   touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 .canvas-title {
   position: absolute;

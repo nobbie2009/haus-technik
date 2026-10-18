@@ -758,10 +758,15 @@ Tastenkürzel gelten im Editor, nicht beim Schreiben in ein Textfeld. Auf dem Ma
 | Strg+Z / Strg+Y     | Rückgängig / Wiederholen                                               |
 | Strg+A              | Alle Objekte sichtbarer Ebenen im aktuellen Tab und Geschoss auswählen |
 | Strg+D / Entf       | Duplizieren / Löschen                                                  |
+| Strg+C / X / V      | Kopieren / Ausschneiden / Einfügen, auch auf ein anderes Geschoss      |
+| Rechtsklick         | Kontextmenü für das angeklickte Objekt oder die freie Fläche           |
+| Finger halten       | Kontextmenü auf dem iPad                                               |
 | Strg+S / Pos1       | Speichern / alles anzeigen                                             |
 | Escape              | Aktuellen Vorgang abbrechen beziehungsweise Dialog schließen           |
 | Ein Finger          | Auswählen, Punkt setzen oder Objekt verschieben                        |
 | Zwei Finger im Plan | Ansicht verschieben und zoomen                                         |
+
+Das **Kontextmenü** öffnet sich per Rechtsklick oder auf dem iPad durch langes Antippen (etwa eine halbe Sekunde halten). Es wählt das Objekt unter dem Zeiger aus und bietet Ausschneiden, Kopieren, „Hier einfügen“, Duplizieren, Eigenschaften, Auswahl aufheben und Löschen; bei Möbeln zusätzlich Drehen um 90°. Auf freier Fläche stehen „Hier einfügen“, „Alles auswählen“ und „Alles anzeigen“ bereit. „Hier einfügen“ setzt die Kopie mittig an die angeklickte Stelle; Strg+V fügt jede weitere Kopie leicht versetzt ein, nach dem Ausschneiden zuerst wieder an der ursprünglichen Stelle. Die Zwischenablage gilt für das geöffnete Fenster.
 
 Auf Touchgeräten ersetzen **Raum schließen**, **Wandzug beenden**, **Letzten Punkt entfernen**, **Abbrechen**, **Rechtwinklig** und **Mehrfachauswahl** die entsprechenden Tastaturaktionen. Eine abgebrochene Geste soll keine Platzierung speichern. Bei Textmarkierungen darf der Zeiger über den Dialogrand hinausgezogen werden, ohne dass dies allein das Popup schließt.
 

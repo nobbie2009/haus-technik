@@ -1071,3 +1071,63 @@
   max-width: 320px;
   margin-inline: auto;
 }
+.context-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 240px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgb(20 40 30 / 18%);
+  font-size: 13px;
+}
+.context-menu-title {
+  padding: 4px 10px 6px;
+  color: #607265;
+  font-size: 11px;
+}
+.context-menu-group + .context-menu-group {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.context-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  text-align: left;
+}
+.context-menu button:hover:not(:disabled),
+.context-menu button:focus-visible {
+  background: rgb(22 132 107 / 10%);
+  outline: none;
+}
+.context-menu button:disabled {
+  opacity: 0.45;
+}
+.context-menu button.danger {
+  color: #b42318;
+}
+.context-menu button span {
+  flex: 1;
+}
+.context-menu kbd {
+  color: #859287;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+@media (pointer: coarse) {
+  .context-menu button {
+    min-height: 44px;
+  }
+  .context-menu kbd {
+    display: none;
+  }
+}

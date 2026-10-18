@@ -10,6 +10,8 @@ import { consumerShape } from "../../electrical/consumerLibrary";
 import { useProjectStore } from "../../stores/projectStore";
 import { useEditorStore } from "../../stores/editorStore";
 import { deleteSelection, duplicateSelection } from "../actions/edit";
+import { copyContent, pasteContent, type ClipboardContent } from "../actions/clipboard";
+import type { Vec2 } from "../../models/common";
 import { worldToScreen } from "../../geometry/coordinates";
 
 export function deleteSelected(): void {
@@ -34,6 +36,50 @@ export function duplicateSelected(): void {
     })
   )
     useEditorStore.setState({ selection: result });
+}
+let clipboard: ClipboardContent | null = null;
+let pastes = 0;
+export const hasClipboard = () => clipboard !== null;
+
+export function copySelected(): boolean {
+  const { selection, floorId } = useEditorStore.getState();
+  if (!selection.length) return false;
+  clipboard = copyContent(useProjectStore.getState().project, selection, floorId);
+  pastes = 0;
+  useEditorStore.setState({ message: `${selection.length} Objekt(e) kopiert.` });
+  return true;
+}
+export function cutSelected(): void {
+  if (copySelected()) {
+    // Beim Einfügen nach dem Ausschneiden bleibt die ursprüngliche Lage erhalten.
+    pastes = -1;
+    deleteSelected();
+    useEditorStore.setState({ message: "Ausgeschnitten. Mit Strg+V wieder einfügen." });
+  }
+}
+/** Ohne Ziel wird jede weitere Kopie etwas versetzt eingefügt, mit Ziel an dieser Planposition. */
+export function pasteClipboard(target?: Vec2): void {
+  const content = clipboard;
+  if (!content) {
+    useProjectStore.setState({ error: "Die Zwischenablage ist leer. Zuerst ein Objekt kopieren." });
+    return;
+  }
+  const { floorId } = useEditorStore.getState();
+  const step = target ? 0 : ++pastes;
+  let result: ReturnType<typeof pasteContent> = [];
+  if (
+    useProjectStore.getState().commit("Einfügen", (project) => {
+      result = pasteContent(
+        project,
+        content,
+        floorId,
+        target ? { target } : { offset: { x: 500 * step, y: -500 * step } },
+      );
+    })
+  ) {
+    useEditorStore.getState().setTool("select");
+    useEditorStore.setState({ selection: result, message: `${result.length} Objekt(e) eingefügt.` });
+  }
 }
 export function fitView(): void {
   const editor = useEditorStore.getState();

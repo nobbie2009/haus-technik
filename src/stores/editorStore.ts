@@ -59,6 +59,8 @@ interface EditorState {
   dragResize: { id: string; handle: number; grid: number } | null;
   ready: boolean;
   message: string | null;
+  /** Geöffnetes Kontextmenü in Bildschirm- und Planposition. */
+  contextMenu: { client: Vec2; world: Vec2 } | null;
   setTool: (tool: Tool) => void;
   setFloor: (id: UUID) => void;
   cancel: () => void;
@@ -132,6 +134,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   dragOffset: null,
   ready: false,
   message: null,
+  contextMenu: null,
   setTool(tool) {
     const category = categoryForTool(tool, get().category);
     set({
@@ -189,6 +192,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   cancel() {
     set({
+      contextMenu: null,
       tool: get().tool === "networkCable" ? "select" : get().tool,
       draft: emptyDraft(),
       cableStartId: null,

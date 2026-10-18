@@ -8,7 +8,14 @@ import { useEditorStore } from "../../stores/editorStore";
 import { useProjectStore } from "../../stores/projectStore";
 import { saveNow } from "../../persistence/autosave";
 import { confirmDrawing, updateCursor } from "./drawing";
-import { deleteSelected, duplicateSelected, fitView } from "./commands";
+import {
+  copySelected,
+  cutSelected,
+  deleteSelected,
+  duplicateSelected,
+  fitView,
+  pasteClipboard,
+} from "./commands";
 import { moveSelection } from "../actions/edit";
 import type { Tool } from "../types";
 import { selectAllInView } from "./selectAll";
@@ -29,6 +36,15 @@ export function useKeyboard(): void {
           selection,
           message: `${selection.length} Objekte im aktuellen Tab ausgewählt.`,
         });
+        return;
+      }
+      if (modifier && !event.altKey && ["c", "x", "v"].includes(event.key.toLowerCase())) {
+        // Markierter Seitentext bleibt normal kopierbar.
+        if (event.key.toLowerCase() !== "v" && window.getSelection()?.toString()) return;
+        event.preventDefault();
+        if (event.key.toLowerCase() === "c") copySelected();
+        if (event.key.toLowerCase() === "x") cutSelected();
+        if (event.key.toLowerCase() === "v") pasteClipboard();
         return;
       }
       if (modifier && ["z", "y", "s", "d"].includes(event.key.toLowerCase())) {
