@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.65.0 · 18.10.2026
+
+- Wandversatz für Schornsteine, Vorsprünge und Nischen ergänzen: Wandmaß antippen, „Versatz einfügen“ wählen und Abstand, Breite sowie Tiefe angeben. Die übrigen Raumecken bleiben stehen; in einer Raumecke wird die anschließende Wand gekürzt. Türen und Fenster im Versatzbereich werden geschützt.
+- Auf dem iPad für alle Maßfelder die Zifferntastatur anzeigen. Beim Antippen eines Wandmaßes öffnet sich die Tastatur sofort mit markiertem Wert; Zahlen ohne Einheit gelten in der Anzeigeeinheit.
+- Anleitung ergänzen; Versatz in Raummitte, Raumecke und nach außen sowie die iPad-Bedienung prüfen.
+
 ## 0.64.1 · 27.09.2026
 
 - Unraid-Betrieb mit fertigem Docker-Image für Linux/amd64, Webserver, Handbuch und gemeinsamem Projektdienst ergänzen. Dauerhafte Projektdaten im Appdata-Ordner und verdeckte Einrichtung beziehungsweise Änderung des Projektschlüssels ermöglichen.

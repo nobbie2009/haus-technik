@@ -9,12 +9,14 @@ export function TextField({
   onCommit,
   disabled = false,
   hint,
+  inputMode,
 }: {
   label: string;
   value: string;
   onCommit: (value: string) => boolean;
   disabled?: boolean;
   hint?: string;
+  inputMode?: "decimal";
 }) {
   const [input, setInput] = useState(value);
   const id = useId();
@@ -31,6 +33,8 @@ export function TextField({
         aria-describedby={hint ? `${id}-hint` : undefined}
         value={input}
         disabled={disabled}
+        inputMode={inputMode}
+        onFocus={inputMode ? (event) => event.currentTarget.select() : undefined}
         onChange={(event) => setInput(event.target.value)}
         onBlur={submit}
         onKeyDown={(event) => {
@@ -70,6 +74,7 @@ export function LengthField({
       label={label}
       value={formatLength(value, unit)}
       disabled={disabled}
+      inputMode="decimal"
       {...(hint ? { hint } : {})}
       onCommit={(input) => {
         try {

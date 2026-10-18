@@ -162,3 +162,148 @@ export function addWallPath(
   }
   return { pointIds, wallIds };
 }
+
+/**
+ * Setzt einen rechteckigen Wandversatz, etwa für einen Schornstein oder eine Nische, in eine Wand.
+ * Positive Tiefe ragt in den angrenzenden Raum, negative Tiefe nach außen. Liegt der Versatz in einer
+ * Raumecke, wird die anschließende Wand gekürzt statt doppelt belegt.
+ */
+export function insertWallOffset(
+  project: Project,
+  wallId: UUID,
+  from: "start" | "end",
+  offset: number,
+  width: number,
+  depth: number,
+): void {
+  const wall = project.walls[wallId]!;
+  const start = project.points[wall.startPointId]!.position;
+  const end = project.points[wall.endPointId]!.position;
+  const length = distance(start, end);
+  if (width < 1) throw new Error("Die Breite des Versatzes muss mindestens 1 mm betragen.");
+  if (Math.abs(depth) < 1) throw new Error("Die Tiefe des Versatzes muss mindestens 1 mm betragen.");
+  if (offset < 0 || offset + width > length + LENGTH_EPSILON)
+    throw new Error("Abstand und Breite des Versatzes müssen innerhalb der Wandlänge liegen.");
+  const startOffset = Math.max(0, Math.min(from === "start" ? offset : length - offset - width, length));
+  const endOffset = Math.min(length, startOffset + width);
+  const unit = { x: (end.x - start.x) / length, y: (end.y - start.y) / length };
+  const at = (value: number): UUID =>
+    value <= LENGTH_EPSILON
+      ? wall.startPointId
+      : length - value <= LENGTH_EPSILON
+        ? wall.endPointId
+        : pointAt(project, wall.floorId, { x: start.x + unit.x * value, y: start.y + unit.y * value });
+  const a = at(startOffset);
+  splitWall(project, wallId, a);
+  const b = at(endOffset);
+  for (const candidate of Object.values(project.walls)) splitWall(project, candidate.id, b);
+  const middle = Object.values(project.walls).find(
+    (candidate) => candidate.startPointId === a && candidate.endPointId === b,
+  );
+  if (!middle) throw new Error("Der Versatz konnte nicht in die Wand eingefügt werden.");
+  if (
+    [...Object.values(project.doors), ...Object.values(project.windows)].some(
+      (opening) => opening.wallId === middle.id,
+    )
+  )
+    throw new Error("Im Bereich des Versatzes liegt eine Tür oder ein Fenster.");
+  const room = Object.values(project.rooms).find((candidate) => candidate.wallIds.includes(middle.id));
+  let normal = { x: -unit.y, y: unit.x };
+  if (room) {
+    const polygon = room.polygon.pointIds.map((id) => project.points[id]!.position);
+    const index = room.wallIds.indexOf(middle.id);
+    const forward = room.polygon.pointIds[index] === a;
+    const area = polygon.reduce((sum, point, i) => sum + cross(point, polygon[(i + 1) % polygon.length]!), 0);
+    if (area > 0 !== forward) normal = { x: unit.y, y: -unit.x };
+  }
+  const shift = (id: UUID): UUID => {
+    const position = project.points[id]!.position;
+    const next = newId();
+    project.points[next] = {
+      id: next,
+      floorId: wall.floorId,
+      position: { x: position.x + normal.x * depth, y: position.y + normal.y * depth },
+      metadata: {},
+    };
+    return next;
+  };
+  const c = shift(a);
+  const d = shift(b);
+  const side = (from: UUID, to: UUID): UUID => {
+    const id = newId();
+    project.walls[id] = { ...structuredClone(middle), id, startPointId: from, endPointId: to };
+    return id;
+  };
+  const first = side(a, c);
+  const last = side(d, b);
+  middle.startPointId = c;
+  middle.endPointId = d;
+  for (const candidate of Object.values(project.rooms)) {
+    const index = candidate.wallIds.indexOf(middle.id);
+    if (index < 0) continue;
+    if (candidate.polygon.pointIds[index] === a) {
+      candidate.polygon.pointIds.splice(index + 1, 0, c, d);
+      candidate.wallIds.splice(index, 1, first, middle.id, last);
+    } else {
+      candidate.polygon.pointIds.splice(index + 1, 0, d, c);
+      candidate.wallIds.splice(index, 1, last, middle.id, first);
+    }
+  }
+  collapseCornerSpur(project, a, first, c);
+  collapseCornerSpur(project, b, last, d);
+}
+
+/** Entfernt eine Ecke, wenn die neue Versatzwand auf der anschließenden Wand zurückläuft. */
+function collapseCornerSpur(project: Project, cornerId: UUID, spurId: UUID, tipId: UUID): void {
+  const attached = Object.values(project.walls).filter(
+    (wall) => wall.id !== spurId && (wall.startPointId === cornerId || wall.endPointId === cornerId),
+  );
+  const corner = project.points[cornerId]!.position;
+  const tip = project.points[tipId]!.position;
+  const spur = subtract(tip, corner);
+  const overlapping = attached.filter((wall) => {
+    const other =
+      project.points[wall.startPointId === cornerId ? wall.endPointId : wall.startPointId]!.position;
+    const direction = subtract(other, corner);
+    return (
+      Math.abs(cross(direction, spur)) <= LENGTH_EPSILON * distance(other, corner) &&
+      direction.x * spur.x + direction.y * spur.y > 0
+    );
+  });
+  if (!overlapping.length) return;
+  const wall = overlapping[0]!;
+  const otherId = wall.startPointId === cornerId ? wall.endPointId : wall.startPointId;
+  const remaining = distance(project.points[otherId]!.position, tip);
+  if (
+    attached.length !== 1 ||
+    distance(project.points[otherId]!.position, corner) <= distance(corner, tip) + 1
+  )
+    throw new Error("Der Versatz ist in dieser Ecke zu tief oder überlagert eine weitere Wand.");
+  const removed = distance(corner, tip);
+  for (const opening of [...Object.values(project.doors), ...Object.values(project.windows)]) {
+    if (opening.wallId !== wall.id) continue;
+    if (wall.startPointId === cornerId) opening.position -= removed;
+    if (
+      opening.position - opening.width / 2 < -LENGTH_EPSILON ||
+      opening.position + opening.width / 2 > remaining + LENGTH_EPSILON
+    )
+      throw new Error("Eine Tür oder ein Fenster liegt im Bereich des Versatzes.");
+  }
+  if (wall.startPointId === cornerId) wall.startPointId = tipId;
+  else wall.endPointId = tipId;
+  delete project.walls[spurId];
+  for (const room of Object.values(project.rooms)) {
+    const index = room.polygon.pointIds.indexOf(cornerId);
+    if (index < 0) continue;
+    room.polygon.pointIds.splice(index, 1);
+    room.wallIds.splice(room.wallIds.indexOf(spurId), 1);
+  }
+  delete project.points[cornerId];
+  for (const dimension of Object.values(project.dimensions))
+    if (
+      [dimension.start, dimension.end].some(
+        (anchor) => anchor.kind === "point" && anchor.pointId === cornerId,
+      )
+    )
+      delete project.dimensions[dimension.id];
+}
