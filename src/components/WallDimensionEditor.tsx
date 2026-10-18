@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, type FocusEvent } from "react";
 import { useEditorStore } from "../stores/editorStore";
 import { useProjectStore } from "../stores/projectStore";
 import { editableDimensions } from "../geometry/editableDimensions";
@@ -6,6 +6,12 @@ import { formatLength, parseLength } from "../utils/units";
 import { resizeWall } from "../editor/actions/edit";
 import { insertWallOffset } from "../editor/actions/topology";
 import { Modal } from "./dialogs/Modal";
+import { NumericKeypad, pressKey, type KeypadKey } from "./NumericKeypad";
+
+type Field = "value" | "offset" | "width" | "depth";
+
+// iPadOS hat keine reine Zifferntastatur; auf Touchgeräten ersetzt ein eigener Ziffernblock die Systemtastatur.
+const touch = typeof window !== "undefined" && !!window.matchMedia?.("(any-pointer: coarse)").matches;
 
 export function WallDimensionEditor() {
   const editor = useEditorStore();
@@ -18,12 +24,30 @@ export function WallDimensionEditor() {
   const [width, setWidth] = useState("");
   const [depth, setDepth] = useState("");
   const [error, setError] = useState("");
+  const [active, setActive] = useState<Field>("value");
+  const [fresh, setFresh] = useState(true);
   const input = useRef<HTMLInputElement>(null);
-  const keyboard = useRef<HTMLInputElement>(null);
   const unit = project.units.display;
-  useEffect(() => {
-    if (!wallId) keyboard.current?.blur();
-  }, [wallId]);
+  const fields: Record<Field, [string, (next: string) => void]> = {
+    value: [value, setValue],
+    offset: [offset, setOffset],
+    width: [width, setWidth],
+    depth: [depth, setDepth],
+  };
+  const numeric = (field: Field) => ({
+    inputMode: touch ? ("none" as const) : ("decimal" as const),
+    onFocus: (event: FocusEvent<HTMLInputElement>) => {
+      setActive(field);
+      setFresh(true);
+      event.currentTarget.select();
+    },
+  });
+  const press = (key: KeypadKey) => {
+    const [current, update] = fields[active];
+    update(pressKey(current, key, fresh));
+    setFresh(false);
+    setError("");
+  };
   const wall = wallId ? project.walls[wallId] : undefined;
   if (editor.category !== "building" || editor.tool !== "select" || editor.spacePressed) return null;
   const labels = editableDimensions(project, editor.floorId, editor.viewport, editor.showMeasurements);
@@ -34,8 +58,6 @@ export function WallDimensionEditor() {
       onPointerUp={(e) => e.stopPropagation()}
       onPointerCancel={(e) => e.stopPropagation()}
     >
-      {/* iPadOS öffnet die Tastatur nur bei Fokus innerhalb der Tippgeste; der Dialog übernimmt sie danach. */}
-      <input ref={keyboard} className="keyboard-proxy" inputMode="decimal" aria-hidden="true" tabIndex={-1} />
       {!editor.dragOffset &&
         labels
           .filter(
@@ -55,7 +77,8 @@ export function WallDimensionEditor() {
                 transform: `translate(-50%, -50%) rotate(${label.angle}deg)`,
               }}
               onClick={() => {
-                keyboard.current?.focus({ preventScroll: true });
+                setActive("value");
+                setFresh(true);
                 setWallId(label.wallId);
                 setMode("length");
                 setOffset(formatLength(0, unit));
@@ -101,6 +124,8 @@ export function WallDimensionEditor() {
                 value={mode}
                 onChange={(event) => {
                   setMode(event.target.value as "length" | "offset");
+                  setActive(event.target.value === "length" ? "value" : "offset");
+                  setFresh(true);
                   setError("");
                 }}
               >
@@ -114,9 +139,8 @@ export function WallDimensionEditor() {
                 <input
                   aria-label="Neue Wandlänge"
                   ref={input}
-                  inputMode="decimal"
+                  {...numeric("value")}
                   value={value}
-                  onFocus={(event) => event.currentTarget.select()}
                   onChange={(event) => setValue(event.target.value)}
                 />
               </label>
@@ -124,20 +148,19 @@ export function WallDimensionEditor() {
               <div className="field-row">
                 {(
                   [
-                    ["Abstand", offset, setOffset],
-                    ["Breite", width, setWidth],
-                    ["Tiefe", depth, setDepth],
+                    ["Abstand", "offset"],
+                    ["Breite", "width"],
+                    ["Tiefe", "depth"],
                   ] as const
-                ).map(([label, current, update], index) => (
+                ).map(([label, field], index) => (
                   <label className="field" key={label}>
                     {label} ({unit})
                     <input
                       aria-label={`Versatz ${label}`}
                       ref={index === 0 ? input : undefined}
-                      inputMode="decimal"
-                      value={current}
-                      onFocus={(event) => event.currentTarget.select()}
-                      onChange={(event) => update(event.target.value)}
+                      {...numeric(field)}
+                      value={fields[field][0]}
+                      onChange={(event) => fields[field][1](event.target.value)}
                     />
                   </label>
                 ))}
@@ -156,8 +179,9 @@ export function WallDimensionEditor() {
             </label>
             {mode === "length" ? (
               <p>
-                Wandachsmaß, zum Beispiel 4,25 m oder 425 cm. Nur der andere Endpunkt wird entlang der Wand
-                verschoben; angeschlossene Wände folgen am gemeinsamen Punkt.
+                {touch ? `Wandachsmaß in ${unit}.` : "Wandachsmaß, zum Beispiel 4,25 m oder 425 cm."} Nur der
+                andere Endpunkt wird entlang der Wand verschoben; angeschlossene Wände folgen am gemeinsamen
+                Punkt.
               </p>
             ) : (
               <p>
@@ -166,6 +190,7 @@ export function WallDimensionEditor() {
                 die Raumecke. Die übrigen Raumecken bleiben stehen.
               </p>
             )}
+            {touch && <NumericKeypad onPress={press} />}
             {error && <p role="alert">{error}</p>}
             <div className="book-actions">
               <button type="submit">Maß übernehmen</button>

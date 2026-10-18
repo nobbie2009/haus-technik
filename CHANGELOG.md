@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.65.1 · 18.10.2026
+
+- Raum automatisch anlegen, sobald neue Wände zusammen mit bestehenden Wänden einen geschlossenen Umriss bilden, zum Beispiel nach dem Löschen und Neusetzen einer Raumwand. Bereiche innerhalb vorhandener Räume erhalten keinen zusätzlichen Raum; Nachbarräume an gemeinsamen Wänden werden erkannt.
+- Im Dialog „Wandmaß ändern“ auf Touchgeräten einen eigenen Ziffernblock mit Komma, Löschtaste und Vorzeichen anzeigen. Die iPad-Systemtastatur kennt keine reine Zifferntastatur und öffnete weiterhin mit Buchstaben; der erste Tastendruck ersetzt den markierten Wert.
+- Anleitung ergänzen; Raumerkennung für geschlossene, offene, geteilte und angrenzende Wandzüge sowie die Eingabe über den Ziffernblock prüfen.
+
 ## 0.65.0 · 18.10.2026
 
 - Wandversatz für Schornsteine, Vorsprünge und Nischen ergänzen: Wandmaß antippen, „Versatz einfügen“ wählen und Abstand, Breite sowie Tiefe angeben. Die übrigen Raumecken bleiben stehen; in einer Raumecke wird die anschließende Wand gekürzt. Türen und Fenster im Versatzbereich werden geschützt.

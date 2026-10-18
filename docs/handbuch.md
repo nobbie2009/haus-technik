@@ -76,7 +76,7 @@ Die Anzeige lässt sich zwischen mm, cm und m wechseln. Achte immer auf die Einh
 
 Für unregelmäßige Räume das Polygonraum-Werkzeug verwenden, die Ecken in umlaufender Reihenfolge setzen und **Raum schließen** wählen. Überschneidende Kanten und ungültige Flächen werden abgewiesen. **Letzten Punkt entfernen** korrigiert den begonnenen Umriss.
 
-Mit dem Wand-Werkzeug den Anfang setzen, die Richtung vorgeben und die Länge eintippen. Beispielsweise legt **4350 + Enter** eine 4350 mm lange Wand fest. Weitere Wände können direkt anschließen. Ein einfacher geschlossener Wandzug erzeugt einen Raum. T-Anschlüsse und Kreuzungen werden geometrisch verbunden; prüfe danach die beteiligten Räume.
+Mit dem Wand-Werkzeug den Anfang setzen, die Richtung vorgeben und die Länge eintippen. Beispielsweise legt **4350 + Enter** eine 4350 mm lange Wand fest. Weitere Wände können direkt anschließen. Ein einfacher geschlossener Wandzug erzeugt einen Raum. Das gilt auch, wenn neue Wände an bestehende Wände anschließen und so einen Umriss schließen, etwa nach dem Löschen einer Raumwand. Der neue Raum heißt zunächst „Raum N“; Name und Raumtyp danach in den Eigenschaften anpassen. Liegt der geschlossene Bereich bereits in einem Raum, entsteht kein zusätzlicher Raum. T-Anschlüsse und Kreuzungen werden geometrisch verbunden; prüfe danach die beteiligten Räume.
 
 ## Einen Eckpunkt verändern
 
@@ -88,7 +88,7 @@ Wähle das betreffende Raum- oder Wandobjekt und ziehe seinen Punktgriff. Ein ei
 
 Tür- oder Fensterwerkzeug wählen und die zugehörige Wand anklicken. In den Eigenschaften Breite, Höhe, Position und gegebenenfalls Anschlag beziehungsweise Brüstungshöhe ergänzen. Eine Öffnung gehört zu einer Wand; sie ist kein frei schwebendes Möbelsymbol.
 
-**Schornstein, Vorsprung oder Nische einzeichnen:** Im Auswahlmodus das Wandmaß antippen und unter „Änderung“ den Eintrag „Versatz einfügen“ wählen. Abstand ab Anfangs- oder Endpunkt, Breite und Tiefe eingeben. Positive Tiefe ragt in den Raum, negative Tiefe nach außen. Mit Abstand 0 sitzt der Versatz direkt in der Raumecke; die anschließende Wand wird dann passend gekürzt. Alle übrigen Raumecken bleiben stehen. Auf dem iPad öffnet sich für Maßfelder direkt die Zifferntastatur; Zahlen ohne Einheit gelten in der eingestellten Anzeigeeinheit.
+**Schornstein, Vorsprung oder Nische einzeichnen:** Im Auswahlmodus das Wandmaß antippen und unter „Änderung“ den Eintrag „Versatz einfügen“ wählen. Abstand ab Anfangs- oder Endpunkt, Breite und Tiefe eingeben. Positive Tiefe ragt in den Raum, negative Tiefe nach außen. Mit Abstand 0 sitzt der Versatz direkt in der Raumecke; die anschließende Wand wird dann passend gekürzt. Alle übrigen Raumecken bleiben stehen. Auf dem iPad und anderen Touchgeräten zeigt der Dialog „Wandmaß ändern“ einen eigenen Ziffernblock mit Komma, Löschtaste und ± für negative Tiefen, weil die iPad-Systemtastatur keine reine Zifferntastatur bietet. Die Werte gelten in der eingestellten Anzeigeeinheit.
 
 Automatische Wandmaße helfen bei der Kontrolle. Für zusätzliche Abstände eine manuelle Bemaßung setzen und die gewünschten Bezugspunkte wählen. Raster und Fangpunkte unterstützen das Zeichnen, ersetzen aber keine abschließende Maßkontrolle.
 

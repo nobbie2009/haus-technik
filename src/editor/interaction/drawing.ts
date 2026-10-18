@@ -9,7 +9,7 @@ import { distance } from "../../geometry/distance";
 import { parseLength } from "../../utils/units";
 import { resizeWallEndpoints } from "../../geometry/wallGeometry";
 import { addWallPath } from "../actions/topology";
-import { createDimension, createRoom } from "../actions/create";
+import { createDimension, createRoom, detectClosedRooms } from "../actions/create";
 import { selectedPointIds } from "../actions/edit";
 
 export function updateCursor(raw: Vec2, shift = false): Vec2 {
@@ -161,6 +161,7 @@ export function confirmDrawing(point: Vec2, closePolygon = false): void {
         const path = addWallPath(project, floorId, anchor, point);
         selected = path.wallIds[0]!;
         if (closed) createRoom(project, floorId, draft.points);
+        else detectClosedRooms(project, floorId, path.wallIds);
       })
     ) {
       useEditorStore.setState({
