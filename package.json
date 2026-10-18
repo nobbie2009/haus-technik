@@ -27,7 +27,7 @@
   "dependencies": {
     "@noble/hashes": "^2.4.0",
     "jspdf": "^4.2.1",
-    "konva": "^10.5.0",
+    "konva": "^10.7.0",
     "lucide-react": "^1.47.0",
     "pdfjs-dist": "^6.3.289",
     "qrcode": "^1.5.4",
