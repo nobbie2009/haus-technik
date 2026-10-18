@@ -11,7 +11,7 @@ import { addElectrical } from "../../electrical/actions";
 import { placeConsumer } from "../../electrical/placeConsumer";
 import { addFurniture } from "../../furniture/actions";
 import { useEffect, useMemo, useRef } from "react";
-import type { PointerEvent } from "react";
+import type { MouseEvent, PointerEvent } from "react";
 import { useEditorStore } from "../../stores/editorStore";
 import { useProjectStore } from "../../stores/projectStore";
 import { panBy, screenToWorld, zoomAt } from "../../geometry/coordinates";
@@ -41,6 +41,7 @@ export function useCanvasInteraction() {
   const pinch = useRef<{ viewport: Viewport; center: Vec2; distance: number } | null>(null);
   const navigating = useRef(false);
   const pen = useRef<number | null>(null);
+  const longPress = useRef<{ timer: number; screen: Vec2 } | null>(null);
   const project = useProjectStore((s) => s.project);
   const editor = useEditorStore();
   useEffect(() => {
@@ -101,6 +102,13 @@ export function useCanvasInteraction() {
     else moveSelection(next, editor.selection, editor.dragOffset);
     return next;
   }, [project, editor.selection, editor.dragOffset, editor.dragPointId, editor.dragResize]);
+  const capture = (event: PointerEvent<HTMLDivElement>) => {
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Bereits beendete oder synthetische Zeiger lassen sich nicht einfangen; die Geste läuft trotzdem.
+    }
+  };
   const pointer = (event: PointerEvent<HTMLDivElement>): Vec2 => {
     const rect = event.currentTarget.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -112,7 +120,7 @@ export function useCanvasInteraction() {
     const world = screenToWorld(screen, editor.viewport);
     if (event.button === 1 || editor.spacePressed || editor.tool === "pan") {
       event.preventDefault();
-      event.currentTarget.setPointerCapture(event.pointerId);
+      capture(event);
       gesture.current = { type: "pan", screen, world, selection: [], moved: false };
       return;
     }
@@ -146,7 +154,7 @@ export function useCanvasInteraction() {
       const hadStart = useEditorStore.getState().cableStartId;
       confirmConnection(world);
       if (!hadStart && useEditorStore.getState().cableStartId) {
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capture(event);
         gesture.current = { type: "connect", screen, world, selection: [], moved: false };
       }
       return;
@@ -247,7 +255,7 @@ export function useCanvasInteraction() {
             dragResize: { id: item.id, handle: nearest.handle, grid: editor.snapGrid ? editor.gridSize : 0 },
             dragOffset: null,
           });
-          event.currentTarget.setPointerCapture(event.pointerId);
+          capture(event);
           gesture.current = { type: "resize", screen, world, selection: editor.selection, moved: false };
           return;
         }
@@ -269,7 +277,7 @@ export function useCanvasInteraction() {
         );
         const selection: Selection[] = room ? [room] : [{ kind: "walls", id: pointHit.wallId }];
         useEditorStore.setState({ selection, dragPointId: pointHit.pointId, dragOffset: null });
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capture(event);
         gesture.current = {
           type: "point",
           pointId: pointHit.pointId,
@@ -296,10 +304,10 @@ export function useCanvasInteraction() {
       }
       useEditorStore.setState({ selection });
       if (hit && !event.shiftKey && !editor.multiSelect) {
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capture(event);
         gesture.current = { type: "move", screen, world, selection, moved: false };
       } else if (!hit && !event.shiftKey && !editor.multiSelect) {
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capture(event);
         gesture.current = { type: "pan", screen, world, selection: [], moved: false };
       }
       return;
@@ -334,12 +342,44 @@ export function useCanvasInteraction() {
       distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
     };
   };
+  const stopLongPress = () => {
+    if (longPress.current) window.clearTimeout(longPress.current.timer);
+    longPress.current = null;
+  };
+  /** Rechtsklick oder langes Antippen: Objekt unter dem Zeiger auswählen und das Kontextmenü öffnen. */
+  const showContextMenu = (screen: Vec2, client: Vec2, select: boolean) => {
+    const current = useEditorStore.getState();
+    if (!["select", "pan"].includes(current.tool) || !current.ready) return;
+    const world = screenToWorld(screen, current.viewport);
+    if (select) {
+      const hit = hitTest(project, current.floorId, world, current.viewport.scale, false, current.category);
+      if (!hit) useEditorStore.setState({ selection: [] });
+      else if (!current.selection.some((s) => s.id === hit.id)) useEditorStore.setState({ selection: [hit] });
+    }
+    gesture.current = null;
+    useEditorStore.setState({
+      contextMenu: { client, world },
+      dragPointId: null,
+      dragResize: null,
+      dragOffset: null,
+    });
+  };
+  const contextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if ((event.target as HTMLElement).closest("button, input, label, select, dialog")) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    showContextMenu(
+      { x: event.clientX - rect.left, y: event.clientY - rect.top },
+      { x: event.clientX, y: event.clientY },
+      true,
+    );
+  };
   const down = (event: PointerEvent<HTMLDivElement>) => {
     if ((event.target as HTMLElement).closest("button, input, label, select") || !editor.ready) return;
     if (event.pointerType === "touch") {
       if (pen.current !== null) return;
       event.preventDefault();
-      event.currentTarget.setPointerCapture(event.pointerId);
+      capture(event);
       touches.current.set(event.pointerId, pointer(event));
       const pair = touchPair();
       if (pair) {
@@ -347,8 +387,21 @@ export function useCanvasInteraction() {
         pinch.current = { ...pair, viewport: useEditorStore.getState().viewport };
         gesture.current = null;
         useEditorStore.setState({ dragPointId: null, dragResize: null, dragOffset: null });
-      } else if (!navigating.current && (editor.tool === "select" || editor.tool === "pan"))
+      } else if (!navigating.current && (editor.tool === "select" || editor.tool === "pan")) {
         performDown(event);
+        const screen = pointer(event),
+          client = { x: event.clientX, y: event.clientY };
+        stopLongPress();
+        // Langes Antippen ersetzt auf dem iPad den Rechtsklick; die Auswahl erfolgte schon beim Aufsetzen.
+        longPress.current = {
+          screen,
+          timer: window.setTimeout(() => {
+            longPress.current = null;
+            showContextMenu(screen, client, false);
+          }, 550),
+        };
+      }
+      if (pair) stopLongPress();
       return;
     }
     if (event.pointerType === "pen") {
@@ -363,6 +416,11 @@ export function useCanvasInteraction() {
     if (event.pointerType === "touch") {
       if (!touches.current.has(event.pointerId)) return;
       touches.current.set(event.pointerId, screen);
+      if (
+        longPress.current &&
+        Math.hypot(screen.x - longPress.current.screen.x, screen.y - longPress.current.screen.y) > 10
+      )
+        stopLongPress();
       const pair = touchPair();
       if (navigating.current) {
         if (pair && pinch.current) {
@@ -420,6 +478,7 @@ export function useCanvasInteraction() {
     updateCursor(world, event.shiftKey);
   };
   const up = (event: PointerEvent<HTMLDivElement>) => {
+    stopLongPress();
     if (event.pointerType === "touch") {
       if (!touches.current.has(event.pointerId)) return;
       touches.current.delete(event.pointerId);
@@ -471,6 +530,7 @@ export function useCanvasInteraction() {
     });
 
   const cancel = () => {
+    stopLongPress();
     if (gesture.current?.type === "connect") useEditorStore.getState().cancel();
     gesture.current = null;
     touches.current.clear();
@@ -479,5 +539,5 @@ export function useCanvasInteraction() {
     pen.current = null;
     useEditorStore.setState({ dragPointId: null, dragResize: null, dragOffset: null });
   };
-  return { host, project, editor, preview, down, move, up, cancel, zoom };
+  return { host, project, editor, preview, down, move, up, cancel, zoom, contextMenu };
 }

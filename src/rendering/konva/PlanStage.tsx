@@ -1,6 +1,8 @@
 import { SiteRenderer } from "./SiteRenderer";
 import { HaLiveOverlay } from "./HaLiveOverlay";
 import { WallDimensionEditor } from "../../components/WallDimensionEditor";
+import { CanvasContextMenu } from "../../components/CanvasContextMenu";
+import { createPortal } from "react-dom";
 import { NetworkRenderer } from "./NetworkRenderer";
 import { UtilityRenderer } from "./UtilityRenderer";
 import { CableRenderer } from "./CableRenderer";
@@ -33,7 +35,7 @@ const hints = {
   cable: "Startobjekt, Wegpunkte, Endobjekt anklicken. Backspace: Punkt entfernen. Escape: abbrechen.",
   electrical: "Objekt oben w\u00e4hlen und platzieren. V oder Escape: Auswahl. Anschluss rechts zuordnen.",
   furniture: "Vorlage oben w\u00e4hlen, Mittelpunkt anklicken, Ma\u00dfe und Drehung rechts bearbeiten",
-  select: "Klicken zum Auswählen · Shift für Mehrfachauswahl · Ziehen zum Verschieben",
+  select: "Klicken zum Auswählen · Shift für Mehrfachauswahl · Ziehen zum Verschieben · Rechtsklick: Menü",
   pan: "Zeichenfläche ziehen · Mausrad zum Zoomen",
   wall: "Punkte setzen · Länge tippen + Enter · Shift: rechtwinklig · Esc: beenden",
   rectangle: "Zwei gegenüberliegende Ecken anklicken",
@@ -44,7 +46,8 @@ const hints = {
 };
 
 export function PlanStage() {
-  const { host, project, editor, preview, down, move, up, cancel, zoom } = useCanvasInteraction();
+  const { host, project, editor, preview, down, move, up, cancel, zoom, contextMenu } =
+    useCanvasInteraction();
   const floorIds = orderedFloorIds(project);
   return (
     <main
@@ -57,7 +60,7 @@ export function PlanStage() {
       onPointerMove={move}
       onPointerUp={up}
       onPointerCancel={cancel}
-      onContextMenu={(event) => event.preventDefault()}
+      onContextMenu={contextMenu}
     >
       <div className="canvas-title">
         <span className="eyebrow">
@@ -147,6 +150,7 @@ export function PlanStage() {
         </Layer>
       </Stage>
       <WallDimensionEditor />
+      {createPortal(<CanvasContextMenu />, document.body)}
       <SimulationPlanControls />
       <TouchDrawingControls />
       <div className="canvas-help">

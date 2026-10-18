@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.66.0 · 18.10.2026
+
+- Kontextmenü per Rechtsklick und auf dem iPad durch langes Antippen ergänzen. Es wählt das Objekt unter dem Zeiger aus und bietet Ausschneiden, Kopieren, „Hier einfügen“, Duplizieren, Eigenschaften, Auswahl aufheben und Löschen, bei Möbeln zusätzlich Drehen um 90°. Auf freier Fläche: Hier einfügen, Alles auswählen, Alles anzeigen.
+- Kopieren, Ausschneiden und Einfügen mit Strg+C, Strg+X und Strg+V (am Mac ⌘). Eingefügte Objekte bringen zugehörige Wände, Punkte und Öffnungen mit, landen bei „Hier einfügen“ mittig an der angeklickten Stelle und übernehmen auf einem anderen Geschoss dieses Geschoss. Nach dem Ausschneiden fügt Strg+V zuerst an der ursprünglichen Stelle ein.
+- Anleitung und Tastenkürzelübersicht ergänzen; Zwischenablage, Kontextmenü am Desktop und langes Antippen in WebKit prüfen.
+
 ## 0.65.1 · 18.10.2026
 
 - Raum automatisch anlegen, sobald neue Wände zusammen mit bestehenden Wänden einen geschlossenen Umriss bilden, zum Beispiel nach dem Löschen und Neusetzen einer Raumwand. Bereiche innerhalb vorhandener Räume erhalten keinen zusätzlichen Raum; Nachbarräume an gemeinsamen Wänden werden erkannt.
