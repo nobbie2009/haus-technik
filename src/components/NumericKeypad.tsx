@@ -47,10 +47,15 @@ export function NumericKeypad({ onPress }: { onPress: (key: KeypadKey) => void }
           type="button"
           className={key === "0" ? "wide" : undefined}
           aria-label={names[key] ?? label}
-          // Fokus im Maßfeld halten, damit keine Systemtastatur erscheint.
-          onPointerDown={(event) => event.preventDefault()}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => onPress(key)}
+          // Beim Antippen auslösen und den Fokus im Maßfeld halten; Safari verwirft danach den Klick.
+          onPointerDown={(event) => {
+            event.preventDefault();
+            onPress(key);
+          }}
+          // Tastaturbedienung (Enter, Leertaste) löst nur einen Klick ohne Zeiger aus.
+          onClick={(event) => {
+            if (event.detail === 0) onPress(key);
+          }}
         >
           {label}
         </button>
