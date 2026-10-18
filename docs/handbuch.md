@@ -76,7 +76,7 @@ Die Anzeige lässt sich zwischen mm, cm und m wechseln. Achte immer auf die Einh
 
 Für unregelmäßige Räume das Polygonraum-Werkzeug verwenden, die Ecken in umlaufender Reihenfolge setzen und **Raum schließen** wählen. Überschneidende Kanten und ungültige Flächen werden abgewiesen. **Letzten Punkt entfernen** korrigiert den begonnenen Umriss.
 
-Mit dem Wand-Werkzeug den Anfang setzen, die Richtung vorgeben und die Länge eintippen. Beispielsweise legt **4350 + Enter** eine 4350 mm lange Wand fest. Weitere Wände können direkt anschließen. Ein einfacher geschlossener Wandzug erzeugt einen Raum. T-Anschlüsse und Kreuzungen werden geometrisch verbunden; prüfe danach die beteiligten Räume.
+Mit dem Wand-Werkzeug den Anfang setzen, die Richtung vorgeben und die Länge eintippen. Beispielsweise legt **4350 + Enter** eine 4350 mm lange Wand fest. Weitere Wände können direkt anschließen. Ein einfacher geschlossener Wandzug erzeugt einen Raum. Das gilt auch, wenn neue Wände an bestehende Wände anschließen und so einen Umriss schließen, etwa nach dem Löschen einer Raumwand. Der neue Raum heißt zunächst „Raum N“; Name und Raumtyp danach in den Eigenschaften anpassen. Liegt der geschlossene Bereich bereits in einem Raum, entsteht kein zusätzlicher Raum. T-Anschlüsse und Kreuzungen werden geometrisch verbunden; prüfe danach die beteiligten Räume.
 
 ## Einen Eckpunkt verändern
 
